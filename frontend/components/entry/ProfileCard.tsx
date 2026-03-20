@@ -26,24 +26,24 @@ export default function ProfileCard({ profile, onContinue }: ProfileCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
     >
-      <Card className="glass-panel emerald-edge rounded-xl border-emerald-400/50">
+      <Card className="glass-panel emerald-edge rounded-xl border-amber-400/45">
         <CardContent className="space-y-5 p-6 sm:p-7">
-          <p className="font-mono text-xs uppercase tracking-[0.25em] text-emerald-200/90">
+          <p className="font-mono text-xs uppercase tracking-[0.25em] text-amber-200/90">
             Profile Ready
           </p>
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full border border-emerald-400/40 bg-emerald-500/20">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full border border-amber-400/40 bg-amber-500/20">
               {isGitHub ? (
-                <GitBranch className="h-6 w-6 text-emerald-400" />
+                <GitBranch className="h-6 w-6 text-amber-300" />
               ) : (
-                <User className="h-6 w-6 text-emerald-400" />
+                <User className="h-6 w-6 text-amber-300" />
               )}
             </div>
             <div>
               <h3 className="text-lg font-bold text-white">
                 {isGitHub ? profile.username : "Your Profile"}
               </h3>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-slate-300">
                 {seniority.charAt(0).toUpperCase() + seniority.slice(1)} · {years} years
               </p>
             </div>
@@ -51,7 +51,7 @@ export default function ProfileCard({ profile, onContinue }: ProfileCardProps) {
 
           <div className="flex flex-wrap gap-1.5">
             {skills.slice(0, 12).map((skill) => (
-              <Badge key={skill} className="border-cyan-400/35 bg-cyan-500/20 text-cyan-200">
+              <Badge key={skill} className="border-violet-400/35 bg-violet-500/20 text-violet-200">
                 {skill}
               </Badge>
             ))}
@@ -69,7 +69,7 @@ export default function ProfileCard({ profile, onContinue }: ProfileCardProps) {
           ) : null}
 
           {isGitHub && profile.notable_patterns.length > 0 ? (
-            <ul className="space-y-1 text-sm text-slate-400">
+            <ul className="space-y-1 text-sm text-slate-300">
               {profile.notable_patterns.slice(0, 4).map((pattern) => (
                 <li key={pattern}>- {pattern}</li>
               ))}
@@ -77,7 +77,7 @@ export default function ProfileCard({ profile, onContinue }: ProfileCardProps) {
           ) : null}
 
           {isGitHub ? (
-            <div className="flex flex-wrap gap-4 text-sm text-slate-400">
+            <div className="flex flex-wrap gap-4 text-sm text-slate-300">
               <span className="flex items-center gap-1">
                 <GitBranch className="h-3 w-3" /> {profile.total_repos} repos
               </span>
@@ -89,7 +89,7 @@ export default function ProfileCard({ profile, onContinue }: ProfileCardProps) {
 
           <Button
             onClick={onContinue}
-            className="emerald-edge h-11 w-full bg-emerald-600 text-white hover:bg-emerald-500"
+            className="emerald-edge pl-cta-btn h-11 w-full"
           >
             Continue to Diagnosis
             <ArrowRight className="ml-2 h-4 w-4" />

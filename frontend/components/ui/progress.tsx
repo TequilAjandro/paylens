@@ -3,11 +3,13 @@ import { cn } from "@/lib/utils";
 
 export interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
   value?: number;
+  indicatorClassName?: string;
 }
 
 export function Progress({
   className,
   value = 0,
+  indicatorClassName,
   ...props
 }: ProgressProps) {
   const safeValue = Math.max(0, Math.min(100, value));
@@ -21,7 +23,7 @@ export function Progress({
       {...props}
     >
       <div
-        className="h-full bg-primary transition-all"
+        className={cn("h-full bg-primary transition-all", indicatorClassName)}
         style={{ width: `${safeValue}%` }}
       />
     </div>

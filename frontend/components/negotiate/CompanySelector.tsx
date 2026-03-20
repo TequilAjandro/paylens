@@ -32,7 +32,7 @@ const COMPANIES: NegotiationCompany[] = [
     description: "Client-facing platform reliability across global product teams.",
     salaryRange: "$35K - $70K",
     icon: Globe2,
-    accentClass: "from-cyan-500/25 to-blue-500/5 border-cyan-400/35",
+    accentClass: "from-violet-500/25 to-violet-500/5 border-violet-400/35",
   },
   {
     id: "nubank",
@@ -50,7 +50,7 @@ const COMPANIES: NegotiationCompany[] = [
     description: "Fast-paced product delivery with marketplace-scale backend flows.",
     salaryRange: "$35K - $65K",
     icon: Rocket,
-    accentClass: "from-emerald-500/25 to-teal-500/5 border-emerald-400/35",
+    accentClass: "from-rose-500/25 to-red-500/5 border-rose-400/35",
   },
 ];
 
@@ -60,10 +60,10 @@ interface CompanySelectorProps {
 
 export default function CompanySelector({ onSelect }: CompanySelectorProps) {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-[#0b1526] to-[#071224] p-5 sm:p-7">
+    <main className="pl-bg-main relative min-h-screen overflow-hidden p-5 sm:p-7">
       <div className="paylens-grid pointer-events-none absolute inset-0" />
-      <div className="pointer-events-none absolute -left-24 top-16 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
-      <div className="pointer-events-none absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-emerald-500/10 blur-3xl" />
+      <div className="pointer-events-none absolute -left-24 top-16 h-80 w-80 rounded-full bg-violet-500/10 blur-3xl" />
+      <div className="pointer-events-none absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-amber-500/10 blur-3xl" />
 
       <div className="relative mx-auto max-w-5xl space-y-8">
         <div className="space-y-2 text-center">
@@ -87,13 +87,13 @@ export default function CompanySelector({ onSelect }: CompanySelectorProps) {
                 className="text-left"
               >
                 <Card
-                  className={`h-full overflow-hidden rounded-xl border bg-gradient-to-br ${company.accentClass} from-35% to-100% transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-300/55 hover:shadow-[0_16px_42px_rgba(16,185,129,0.18)]`}
+                  className={`h-full overflow-hidden rounded-xl border bg-gradient-to-br ${company.accentClass} from-35% to-100% transition-all duration-300 hover:-translate-y-0.5 hover:border-amber-300/55 hover:shadow-[0_16px_42px_rgba(245,158,11,0.18)]`}
                 >
                   <CardContent className="space-y-4 p-5">
                     <div className="flex items-start justify-between gap-3">
                       <div className="space-y-1">
                         <h2 className="text-lg font-bold text-white">{company.name}</h2>
-                        <p className="text-sm font-medium text-emerald-200">{company.role}</p>
+                        <p className="text-sm font-medium text-amber-100">{company.role}</p>
                       </div>
                       <span className="rounded-lg border border-white/15 bg-white/5 p-2">
                         <Icon className="h-5 w-5 text-white" />

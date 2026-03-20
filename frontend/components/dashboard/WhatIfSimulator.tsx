@@ -5,7 +5,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Check, Lightbulb } from "lucide-react";
 import type { WhatIfResponse } from "@/lib/types";
 import { getWhatIf } from "@/lib/api";
+import AsyncState from "@/components/ui/async-state";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import InfoTooltip from "@/components/ui/info-tooltip";
 
 interface WhatIfSimulatorProps {
   currentSkills: string[];
@@ -36,6 +38,7 @@ export default function WhatIfSimulator({
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [result, setResult] = useState<WhatIfResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<"idle" | "calling" | "thinking" | "loaded" | "error">("idle");
 
   const handleToggle = async (skill: string) => {
     const nextSelection = selectedSkills.includes(skill)
@@ -46,10 +49,13 @@ export default function WhatIfSimulator({
 
     if (nextSelection.length === 0) {
       setResult(null);
+      setStatus("idle");
       return;
     }
 
     setIsLoading(true);
+    setStatus("calling");
+    const thinkingTimer = setTimeout(() => setStatus("thinking"), 350);
     try {
       const response = await getWhatIf({
         current_skills: currentSkills,
@@ -59,9 +65,12 @@ export default function WhatIfSimulator({
         location,
       });
       setResult(response);
+      setStatus("loaded");
     } catch {
       setResult(MOCK_WHAT_IF);
+      setStatus("error");
     } finally {
+      clearTimeout(thinkingTimer);
       setIsLoading(false);
     }
   };
@@ -71,9 +80,12 @@ export default function WhatIfSimulator({
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-white">
           <Lightbulb className="h-5 w-5 text-yellow-300" />
-          What If You Learned...?
+          <span className="inline-flex items-center gap-1.5">
+            What If You Learned...?
+            <InfoTooltip text="Simulates how adding selected skills could change your score, salary, and role access." />
+          </span>
         </CardTitle>
-        <p className="text-sm text-slate-400">Toggle skills to see how your market position changes.</p>
+        <p className="text-sm text-slate-300">Toggle skills to see how your market position changes.</p>
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -87,7 +99,7 @@ export default function WhatIfSimulator({
                 onClick={() => void handleToggle(skill)}
                 className={
                   active
-                    ? "inline-flex items-center gap-1 rounded-full border border-emerald-300/60 bg-emerald-500 px-3 py-1.5 text-sm font-medium text-white shadow-lg shadow-emerald-500/25 transition-all"
+                    ? "inline-flex items-center gap-1 rounded-full border border-amber-300/60 bg-amber-500 px-3 py-1.5 text-sm font-medium text-slate-950 shadow-lg shadow-amber-500/25 transition-all"
                     : "inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 transition-all hover:bg-slate-700"
                 }
               >
@@ -128,15 +140,22 @@ export default function WhatIfSimulator({
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="rounded-lg border border-emerald-500/35 bg-emerald-950/30 p-3 text-sm text-emerald-200"
+            className="rounded-lg border border-violet-500/35 bg-violet-950/30 p-3 text-sm text-violet-100"
           >
             {result.insight}
           </motion.p>
         ) : null}
 
-        {isLoading ? (
-          <p className="text-center text-sm text-slate-400 animate-pulse">Recalculating...</p>
-        ) : null}
+        <AsyncState
+          state={status}
+          labels={{
+            calling: "Calling what-if endpoint...",
+            thinking: "Recalculating with selected skills...",
+            loaded: "What-if scenario updated",
+            error: "Using fallback simulation data",
+          }}
+          className={isLoading ? "animate-pulse" : ""}
+        />
       </CardContent>
     </Card>
   );
@@ -153,9 +172,9 @@ function ResultCard({
 }) {
   return (
     <div className="rounded-lg border border-slate-700/70 bg-slate-900/60 p-3 text-center">
-      <p className="text-xs text-slate-400">{label}</p>
+      <p className="text-xs text-slate-300">{label}</p>
       <p className="font-mono text-xl font-bold text-white">{value}</p>
-      {change ? <p className="text-xs text-emerald-300">{change}</p> : null}
+      {change ? <p className="text-xs text-amber-300">{change}</p> : null}
     </div>
   );
 }

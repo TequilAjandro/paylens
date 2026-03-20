@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import type { SyntheticEvent } from "react";
 import {
   Legend,
   PolarAngleAxis,
@@ -14,6 +15,7 @@ import {
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import InfoTooltip from "@/components/ui/info-tooltip";
 
 interface PeerComparison {
   axes: string[];
@@ -61,6 +63,11 @@ export default function SkillRadarChart({ peerComparison }: RadarChartProps) {
   const seniorityText = peerComparison.seniority_group || "mid-level";
   const percentileText =
     peerComparison.percentile_label || `Top ${peerComparison.overall_percentile || 34}%`;
+  const suppressFocusOnPointer = (event: SyntheticEvent) => {
+    event.preventDefault();
+    const target = event.currentTarget as HTMLElement;
+    target.blur();
+  };
 
   return (
     <motion.div
@@ -71,27 +78,39 @@ export default function SkillRadarChart({ peerComparison }: RadarChartProps) {
       <Card className="glass-panel rounded-xl border-slate-700/80">
         <CardHeader className="space-y-2">
           <CardTitle className="flex flex-col justify-between gap-2 text-white sm:flex-row sm:items-center">
-            <span>Fair Benchmark · You vs Market</span>
-            <Badge className="border-cyan-400/35 bg-cyan-500/15 text-cyan-100">{percentileText}</Badge>
+            <span className="inline-flex items-center gap-1.5">
+              Market Benchmark · You vs Market
+              <InfoTooltip text="Compares your skill profile versus peers at similar seniority and region." />
+            </span>
+            <Badge className="border-violet-400/35 bg-violet-500/15 text-violet-100">{percentileText}</Badge>
           </CardTitle>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-300">
             Compared against {seniorityText} developers in {locationText}
           </p>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 focus-within:outline-none [&_svg_*]:outline-none [&_svg_*]:focus:outline-none [&_svg_*]:focus-visible:outline-none">
           <ResponsiveContainer width="100%" height={400}>
-            <RechartsRadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
+            <RechartsRadarChart
+              accessibilityLayer={false}
+              rootTabIndex={-1}
+              onMouseDownCapture={suppressFocusOnPointer}
+              onTouchStartCapture={suppressFocusOnPointer}
+              cx="50%"
+              cy="50%"
+              outerRadius="80%"
+              data={chartData}
+            >
               <PolarGrid stroke="#334155" />
-              <PolarAngleAxis dataKey="subject" tick={{ fill: "#94a3b8", fontSize: 14 }} />
-              <PolarRadiusAxis angle={30} domain={[0, 10]} tick={{ fill: "#64748b", fontSize: 11 }} />
+              <PolarAngleAxis dataKey="subject" tick={{ fill: "#cbd5e1", fontSize: 14 }} />
+              <PolarRadiusAxis angle={30} domain={[0, 10]} tick={{ fill: "#94a3b8", fontSize: 11 }} />
 
               <Radar
                 name="Market Average"
                 dataKey="peers"
-                stroke="#64748b"
-                fill="#64748b"
-                fillOpacity={0.1}
+                stroke="#a78bfa"
+                fill="#a78bfa"
+                fillOpacity={0.08}
                 strokeWidth={2}
                 strokeDasharray="5 5"
               />
@@ -100,9 +119,9 @@ export default function SkillRadarChart({ peerComparison }: RadarChartProps) {
                 <Radar
                   name="You"
                   dataKey="user"
-                  stroke="#3b82f6"
-                  fill="#3b82f6"
-                  fillOpacity={0.25}
+                  stroke="#f59e0b"
+                  fill="#f59e0b"
+                  fillOpacity={0.24}
                   strokeWidth={2.5}
                   isAnimationActive
                   animationDuration={1500}
@@ -112,11 +131,12 @@ export default function SkillRadarChart({ peerComparison }: RadarChartProps) {
 
               <Legend wrapperStyle={{ color: "#94a3b8", paddingTop: 20 }} />
               <Tooltip
+                cursor={false}
                 contentStyle={{
-                  backgroundColor: "#0f172a",
-                  border: "1px solid #334155",
+                  backgroundColor: "#111827",
+                  border: "1px solid #6b7280",
                   borderRadius: 10,
-                  color: "#e2e8f0",
+                  color: "#f1f5f9",
                 }}
               />
             </RechartsRadarChart>
@@ -130,9 +150,9 @@ export default function SkillRadarChart({ peerComparison }: RadarChartProps) {
                   key={item.subject}
                   className="rounded-lg border border-slate-700/70 bg-slate-900/55 p-3 text-center"
                 >
-                  <p className="text-xs text-slate-400">{item.subject}</p>
+                  <p className="text-xs text-slate-300">{item.subject}</p>
                   <p className="font-mono text-lg font-bold text-white">{item.user}/10</p>
-                  <p className={`text-xs ${diff >= 0 ? "text-emerald-300" : "text-red-300"}`}>
+                  <p className={`text-xs ${diff >= 0 ? "text-emerald-300" : "text-rose-300"}`}>
                     {diff >= 0 ? `+${diff}` : diff} vs peers
                   </p>
                 </div>

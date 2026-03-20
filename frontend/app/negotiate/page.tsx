@@ -58,6 +58,7 @@ function toNegotiationProfile(profile: unknown): ManualProfile {
 export default function NegotiatePage() {
   const [selectedCompany, setSelectedCompany] = useState<NegotiationCompany | null>(null);
   const [report, setReport] = useState<NegotiationReportType | null>(null);
+  const [reportStatus, setReportStatus] = useState<"idle" | "calling" | "thinking" | "loaded" | "error">("idle");
 
   const userProfile = useMemo(() => {
     if (typeof window === "undefined") return DEMO_PROFILE;
@@ -74,6 +75,9 @@ export default function NegotiatePage() {
   const handleNegotiationComplete = async (conversation: ChatMessage[], finalOffer: number, initialOffer: number) => {
     if (!selectedCompany) return;
 
+    setReportStatus("calling");
+    const thinkingTimer = setTimeout(() => setReportStatus("thinking"), 420);
+
     try {
       const response = await getNegotiationReport({
         company: selectedCompany.id,
@@ -84,6 +88,7 @@ export default function NegotiatePage() {
         initial_offer: initialOffer,
       });
       setReport(response);
+      setReportStatus("loaded");
     } catch {
       const base = ROLE_BASELINE_SALARY[selectedCompany.id];
       const resolvedInitial = initialOffer || base;
@@ -109,6 +114,9 @@ export default function NegotiatePage() {
           { skill: "Observability", impact_usd: 5000 },
         ],
       });
+      setReportStatus("error");
+    } finally {
+      clearTimeout(thinkingTimer);
     }
   };
 
@@ -126,6 +134,7 @@ export default function NegotiatePage() {
       companyName={selectedCompany.name}
       roleTitle={selectedCompany.role}
       userProfile={userProfile}
+      reportStatus={reportStatus}
       onComplete={handleNegotiationComplete}
     />
   );

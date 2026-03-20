@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Target } from "lucide-react";
 import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import InfoTooltip from "@/components/ui/info-tooltip";
 import { Progress } from "@/components/ui/progress";
 
 interface ScoreGaugeProps {
@@ -21,8 +22,8 @@ const BREAKDOWN_LABELS: Record<string, string> = {
 
 function getScoreColor(score: number): string {
   if (score >= 70) return "#34d399";
-  if (score >= 40) return "#facc15";
-  return "#f87171";
+  if (score >= 40) return "#f59e0b";
+  return "#fb7185";
 }
 
 export default function ScoreGauge({ score, breakdown, percentileLabel }: ScoreGaugeProps) {
@@ -43,8 +44,11 @@ export default function ScoreGauge({ score, breakdown, percentileLabel }: ScoreG
       <Card className="glass-panel rounded-xl border-slate-700/80">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-white">
-            <Target className="h-5 w-5 text-cyan-300" />
-            Market Readiness Score
+            <Target className="h-5 w-5 text-violet-300" />
+            <span className="inline-flex items-center gap-1.5">
+              Market Readiness Score
+              <InfoTooltip text="Composite score (0-100) combining demand, breadth, fit, and growth potential." />
+            </span>
           </CardTitle>
         </CardHeader>
 
@@ -54,7 +58,7 @@ export default function ScoreGauge({ score, breakdown, percentileLabel }: ScoreG
               <path
                 d="M 20 100 A 80 80 0 0 1 180 100"
                 fill="none"
-                stroke="#334155"
+                stroke="#475569"
                 strokeWidth="12"
                 strokeLinecap="round"
               />
@@ -79,7 +83,7 @@ export default function ScoreGauge({ score, breakdown, percentileLabel }: ScoreG
           </div>
 
           <div className="w-full flex-1 space-y-3">
-            <p className="text-sm text-slate-400">{percentileLabel}</p>
+            <p className="text-sm text-slate-300">{percentileLabel}</p>
             {entries.map(([key, value], index) => {
               const label = BREAKDOWN_LABELS[key] || key;
               const barValue = Math.max(0, Math.min(100, value));
@@ -93,10 +97,17 @@ export default function ScoreGauge({ score, breakdown, percentileLabel }: ScoreG
                   transition={{ duration: 0.4, delay: 1.0 + index * 0.1 }}
                 >
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-300">{label}</span>
+                    <span className="inline-flex items-center gap-1.5 text-slate-300">
+                      {label}
+                      <InfoTooltip text={`${label} contribution to overall readiness score.`} />
+                    </span>
                     <span className="font-mono font-medium text-white">{barValue}</span>
                   </div>
-                  <Progress value={barValue} className="h-2 bg-slate-800" />
+                  <Progress
+                    value={barValue}
+                    className="h-2 bg-slate-600/40"
+                    indicatorClassName="bg-gradient-to-r from-rose-500 via-red-500 to-amber-400"
+                  />
                 </motion.div>
               );
             })}

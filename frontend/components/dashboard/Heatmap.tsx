@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { BarChart3, Minus, TrendingDown, TrendingUp } from "lucide-react";
 import type { DiagnosisResponse } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import InfoTooltip from "@/components/ui/info-tooltip";
 
 type HeatmapEntry = DiagnosisResponse["demand_heatmap"][number];
 
@@ -20,8 +21,11 @@ export default function SkillHeatmap({ entries }: HeatmapProps) {
     <Card className="glass-panel rounded-xl border-slate-700/80">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-white">
-          <BarChart3 className="h-5 w-5 text-cyan-300" />
-          Skill Demand Trends · LATAM 2025
+          <BarChart3 className="h-5 w-5 text-violet-300" />
+          <span className="inline-flex items-center gap-1.5">
+            Skill Demand Trends · LATAM 2025
+            <InfoTooltip text="Shows demand direction and growth rate for skills across LATAM market data." />
+          </span>
         </CardTitle>
       </CardHeader>
 
@@ -47,9 +51,9 @@ export default function SkillHeatmap({ entries }: HeatmapProps) {
         {declining.length > 0 ? (
           <TrendRow
             label="Declining"
-            icon={<TrendingDown className="h-4 w-4 text-red-300" />}
+            icon={<TrendingDown className="h-4 w-4 text-rose-300" />}
             entries={declining}
-            colorClass="border-red-400/35 bg-red-500/20 text-red-200"
+            colorClass="border-rose-400/35 bg-rose-500/20 text-rose-100"
           />
         ) : null}
       </CardContent>

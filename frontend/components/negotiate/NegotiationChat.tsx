@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Send } from "lucide-react";
 import { negotiate } from "@/lib/api";
 import type { ManualProfile } from "@/lib/types";
+import AsyncState from "@/components/ui/async-state";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -18,6 +19,7 @@ interface NegotiationChatProps {
   companyName: string;
   roleTitle: string;
   userProfile: ManualProfile;
+  reportStatus: "idle" | "calling" | "thinking" | "loaded" | "error";
   onComplete: (conversation: ChatMessage[], finalOffer: number, initialOffer: number) => void;
 }
 
@@ -51,6 +53,7 @@ export default function NegotiationChat({
   companyName,
   roleTitle,
   userProfile,
+  reportStatus,
   onComplete,
 }: NegotiationChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -61,6 +64,7 @@ export default function NegotiationChat({
   const [turnNumber, setTurnNumber] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [requestPhase, setRequestPhase] = useState<"idle" | "calling" | "thinking">("idle");
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const bootstrappedRef = useRef(false);
 
@@ -70,7 +74,9 @@ export default function NegotiationChat({
 
     const startNegotiation = async () => {
       setLoading(true);
+      setRequestPhase("calling");
       setError(null);
+      const thinkingTimer = setTimeout(() => setRequestPhase("thinking"), 420);
 
       try {
         const response = (await negotiate({
@@ -95,6 +101,8 @@ export default function NegotiationChat({
         setTurnNumber(1);
         setError("Live negotiation is temporarily unavailable. Running in local simulation mode.");
       } finally {
+        clearTimeout(thinkingTimer);
+        setRequestPhase("idle");
         setLoading(false);
       }
     };
@@ -118,8 +126,10 @@ export default function NegotiationChat({
     }
 
     setLoading(true);
+    setRequestPhase("calling");
     setError(null);
     setInput("");
+    const thinkingTimer = setTimeout(() => setRequestPhase("thinking"), 420);
 
     try {
       const response = (await negotiate({
@@ -174,6 +184,8 @@ export default function NegotiationChat({
 
       setError("Live negotiation is temporarily unavailable. Running in local simulation mode.");
     } finally {
+      clearTimeout(thinkingTimer);
+      setRequestPhase("idle");
       setLoading(false);
     }
   }
@@ -184,19 +196,34 @@ export default function NegotiationChat({
     void sendMessage(input.trim());
   };
 
+  const modeLabel = error ? "Simulated mode" : "Live mode";
+  const modeClass = error
+    ? "border-amber-400/35 bg-amber-500/10 text-amber-100"
+    : "border-emerald-400/35 bg-emerald-500/10 text-emerald-100";
+
   return (
-    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-[#0a1426] to-[#06111f] p-4 sm:p-6">
+    <main className="pl-bg-main relative min-h-screen overflow-hidden p-4 sm:p-6">
       <div className="paylens-grid pointer-events-none absolute inset-0" />
 
       <div className="relative mx-auto flex h-[calc(100vh-2rem)] max-w-4xl flex-col gap-4 sm:h-[calc(100vh-3rem)]">
-        <Card className="rounded-xl border-emerald-400/35 bg-slate-900/75 px-4 py-3 sm:px-5">
+        <Card className="rounded-xl border-amber-400/35 bg-slate-900/75 px-4 py-3 sm:px-5">
           <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Negotiation Session</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">Negotiation Session</p>
               <h1 className="text-lg font-bold text-white sm:text-xl">
                 Negotiating with {companyName}
               </h1>
-              <p className="text-sm text-slate-400">{roleTitle}</p>
+              <p className="text-sm text-slate-300">{roleTitle}</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <span className={`rounded-md border px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${modeClass}`}>
+                  {modeLabel}
+                </span>
+                {reportStatus === "calling" || reportStatus === "thinking" ? (
+                  <span className="rounded-md border border-violet-400/35 bg-violet-500/10 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-violet-100">
+                    {reportStatus === "calling" ? "Report: Calling API" : "Report: Generating"}
+                  </span>
+                ) : null}
+              </div>
             </div>
             <div className="rounded-lg border border-emerald-400/35 bg-emerald-500/10 px-3 py-2">
               <p className="text-xs uppercase tracking-[0.16em] text-emerald-200">Current Offer</p>
@@ -224,7 +251,7 @@ export default function NegotiationChat({
                   <div
                     className={`max-w-[84%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                       message.role === "user"
-                        ? "border border-blue-400/35 bg-blue-600/95 text-white"
+                        ? "border border-rose-400/35 bg-rose-600/95 text-white"
                         : "border border-slate-700 bg-slate-800/95 text-slate-200"
                     }`}
                   >
@@ -237,11 +264,18 @@ export default function NegotiationChat({
             {loading ? (
               <div className="flex justify-start">
                 <div className="rounded-2xl border border-slate-700 bg-slate-800/95 px-4 py-3 text-sm text-slate-300">
-                  <span className="inline-flex items-center gap-1.5">
+                  <div className="inline-flex items-center gap-2">
                     <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:-0.22s]" />
                     <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:-0.1s]" />
                     <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400" />
-                  </span>
+                    <AsyncState
+                      state={requestPhase}
+                      labels={{
+                        calling: "Calling model...",
+                        thinking: "AI thinking...",
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             ) : null}
@@ -252,7 +286,7 @@ export default function NegotiationChat({
               <Button
                 type="button"
                 onClick={() => onComplete(messages, currentOffer, initialOffer || currentOffer)}
-                className="w-full rounded-xl bg-emerald-600 py-6 text-base font-semibold text-white hover:bg-emerald-500"
+                className="w-full rounded-xl pl-cta-btn py-6 text-base font-semibold"
               >
                 View Negotiation Report
               </Button>
@@ -262,13 +296,13 @@ export default function NegotiationChat({
                   value={input}
                   onChange={(event) => setInput(event.target.value)}
                   placeholder="Make your argument..."
-                  className="flex-1 rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-blue-400/55 focus:outline-none"
+                  className="flex-1 rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-rose-400/55 focus:outline-none"
                   disabled={loading}
                 />
                 <Button
                   type="submit"
                   disabled={loading || !input.trim()}
-                  className="h-[46px] rounded-xl bg-blue-600 px-4 text-white hover:bg-blue-500 disabled:opacity-50"
+                  className="h-[46px] rounded-xl pl-cta-btn px-4 text-white disabled:opacity-50"
                 >
                   <Send className="h-4 w-4" />
                 </Button>
