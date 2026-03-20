@@ -123,4 +123,50 @@ export const DEMO_DIAGNOSIS: DiagnosisResponse = {
     "Your backend foundation is strong, but missing cloud-native depth is limiting your compensation ceiling. Today, your profile maps to 127 matching roles; adding one strategic infrastructure skill can unlock 347 positions and improve annual salary potential by approximately $24,000.",
   value_narrative:
     "I build reliable backend systems with Python, FastAPI, and SQL, and I am scaling my cloud-native expertise to deliver stronger platform impact and higher business velocity across distributed engineering teams.",
+  skill_learning_plans: [
+    {
+      skill: "Kubernetes",
+      company_course: { name: "Learning Kubernetes", platform: "LinkedIn Learning", price: "Free", url_hint: "", is_company_benefit: true },
+      courses: [{ name: "Kubernetes for Developers", platform: "KodeKloud", price: "$30", url_hint: "kodekloud.com", is_company_benefit: false }],
+      certifications: [{ name: "Certified Kubernetes Administrator (CKA)", provider: "CNCF", price: "$395", duration: "2 hours" }],
+      free_resources: [
+        { name: "Official Kubernetes Documentation", type: "docs", url_hint: "kubernetes.io/docs" },
+        { name: "TechWorld with Nana", type: "youtube", url_hint: "youtube.com" },
+      ],
+      timeline: "2-3 months for a mid-level dev with Docker experience",
+      first_step: "Start with the official K8s tutorial — deploy a pod, then a service",
+    },
+    {
+      skill: "AWS",
+      company_course: { name: "AWS Essential Training", platform: "LinkedIn Learning", price: "Free", url_hint: "", is_company_benefit: true },
+      courses: [{ name: "AWS Cloud Practitioner", platform: "Udemy", price: "$15", url_hint: "udemy.com", is_company_benefit: false }],
+      certifications: [{ name: "AWS Cloud Practitioner", provider: "Amazon", price: "$100", duration: "90 min" }],
+      free_resources: [
+        { name: "AWS Skill Builder", type: "tutorial", url_hint: "skillbuilder.aws" },
+      ],
+      timeline: "2-3 months",
+      first_step: "Create a free tier AWS account and deploy a Lambda function",
+    },
+    {
+      skill: "TypeScript",
+      company_course: { name: "TypeScript Essential Training", platform: "LinkedIn Learning", price: "Free", url_hint: "", is_company_benefit: true },
+      courses: [{ name: "Understanding TypeScript", platform: "Udemy", price: "$15", url_hint: "udemy.com", is_company_benefit: false }],
+      certifications: [],
+      free_resources: [
+        { name: "TypeScript Handbook", type: "docs", url_hint: "typescriptlang.org" },
+        { name: "Matt Pocock TypeScript Tips", type: "youtube", url_hint: "youtube.com" },
+      ],
+      timeline: "1-2 months for someone who already knows JavaScript",
+      first_step: "Convert one existing JS file to TS in a real project",
+    },
+  ],
+  learning_roadmap: {
+    total_duration: "6 months",
+    phases: [
+      { months: "1-2", skill: "Kubernetes", why: "Highest salary impact (+30%) and you already have Docker experience", milestone: "Deploy a FastAPI app on K8s with CI/CD" },
+      { months: "3-4", skill: "AWS", why: "Complements K8s — most job postings require both", milestone: "Pass AWS Cloud Practitioner certification" },
+      { months: "5-6", skill: "TypeScript", why: "Closes your frontend gap — React + TS is the standard", milestone: "Convert one React project to TypeScript" },
+    ],
+    summary: "This roadmap targets a $20K salary increase by closing your cloud-native and frontend gaps. Each phase builds on the previous one.",
+  },
 };
