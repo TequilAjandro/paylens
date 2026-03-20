@@ -1,7 +1,13 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export function useDemoMode(): boolean {
-  const searchParams = useSearchParams();
-  return searchParams.get("demo") === "true";
+  const [isDemo, setIsDemo] = useState(false);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    setIsDemo(searchParams.get("demo") === "true");
+  }, []);
+
+  return isDemo;
 }

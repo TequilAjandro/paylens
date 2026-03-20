@@ -7,6 +7,7 @@ import type { GitHubProfileOutput, ManualProfile } from "@/lib/types";
 import GitHubInput from "@/components/entry/GitHubInput";
 import ProfileCard from "@/components/entry/ProfileCard";
 import QuickInputForm from "@/components/entry/QuickInputForm";
+import BrandLockup from "@/components/ui/brand-lockup";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DEMO_PROFILE } from "@/data/demo-data";
 import { useDemoMode } from "@/lib/use-demo-mode";
@@ -15,7 +16,7 @@ type EntryProfile = GitHubProfileOutput | (ManualProfile & { profile_ready?: boo
 type EntryTab = "github" | "manual";
 
 const ENTRY_COPY = {
-  title: "PayLens",
+  title: "Market Lens",
   subtitle: "Know your true market value with market-grounded signals from 49,000 developer profiles.",
   chips: [
     {
@@ -28,7 +29,7 @@ const ENTRY_COPY = {
     },
     {
       label: "Instant salary positioning preview",
-      className: "rounded-full border border-amber-400/45 bg-amber-500/15 text-amber-100",
+      className: "pl-chip-warning",
     },
   ],
 };
@@ -75,7 +76,10 @@ export default function EntryPage() {
         className="glass-panel relative z-10 w-full max-w-3xl rounded-2xl p-5 sm:p-8"
       >
         <div className="mb-7 space-y-3 text-center">
-          <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl">
+          <div className="flex justify-center">
+            <BrandLockup className="rounded-2xl" />
+          </div>
+          <h1 className="text-3xl font-bold leading-tight text-white sm:text-4xl">
             <span className="pl-title-accent">{ENTRY_COPY.title}</span>
           </h1>
           <p className="mx-auto max-w-2xl text-base text-slate-200 sm:text-lg">
@@ -101,7 +105,7 @@ export default function EntryPage() {
           >
             <div className="relative h-12 w-full rounded-full border border-slate-600/90 bg-slate-900/80 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
               <motion.div
-                className="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full border border-amber-400/70 bg-slate-700 shadow-[0_0_0_1px_rgba(245,158,11,0.4)]"
+                className="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full border border-violet-300/65 bg-violet-600/90 shadow-[0_0_0_1px_rgba(0,87,240,0.35)]"
                 initial={false}
                 animate={{ x: activeTab === "github" ? "0%" : "100%" }}
                 transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.7 }}
@@ -110,13 +114,13 @@ export default function EntryPage() {
               <TabsList className="relative z-10 grid h-full w-full grid-cols-2 bg-transparent p-0">
                 <TabsTrigger
                   value="github"
-                  className="h-10 rounded-full border border-transparent text-slate-300 aria-selected:font-semibold aria-selected:text-amber-100 data-active:font-semibold data-active:text-amber-100 focus-visible:ring-2 focus-visible:ring-amber-400/40 focus-visible:ring-offset-0"
+                  className="h-10 rounded-full border border-transparent text-slate-300 aria-selected:font-semibold aria-selected:text-violet-100 data-active:font-semibold data-active:text-violet-100 focus-visible:ring-2 focus-visible:ring-violet-400/40 focus-visible:ring-offset-0"
                 >
                   GitHub Profile
                 </TabsTrigger>
                 <TabsTrigger
                   value="manual"
-                  className="h-10 rounded-full border border-transparent text-slate-300 aria-selected:font-semibold aria-selected:text-amber-100 data-active:font-semibold data-active:text-amber-100 focus-visible:ring-2 focus-visible:ring-amber-400/40 focus-visible:ring-offset-0"
+                  className="h-10 rounded-full border border-transparent text-slate-300 aria-selected:font-semibold aria-selected:text-violet-100 data-active:font-semibold data-active:text-violet-100 focus-visible:ring-2 focus-visible:ring-violet-400/40 focus-visible:ring-offset-0"
                 >
                   Quick Input
                 </TabsTrigger>

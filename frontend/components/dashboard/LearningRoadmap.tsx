@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Target } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface LearningPhase {
@@ -69,7 +69,7 @@ export default function LearningRoadmap({ roadmap }: LearningRoadmapProps) {
                 </div>
                 <p className="text-sm text-slate-300">{phase.why}</p>
                 <div className="flex items-start gap-1.5 rounded-lg border border-violet-400/25 bg-violet-500/10 px-3 py-2">
-                  <span className="mt-0.5 text-sm">🎯</span>
+                  <Target className="mt-0.5 h-4 w-4 shrink-0 text-violet-300" />
                   <p className="text-sm text-violet-100">
                     <span className="font-medium">Milestone:</span> {phase.milestone}
                   </p>
@@ -85,7 +85,7 @@ export default function LearningRoadmap({ roadmap }: LearningRoadmapProps) {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: roadmap.phases.length * 0.15 + 0.2, duration: 0.4 }}
-          className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3 text-sm leading-relaxed text-emerald-100"
+          className="rounded-xl border border-amber-400/30 bg-amber-500/10 px-4 py-3 text-sm leading-relaxed text-amber-100"
         >
           {roadmap.summary}
         </motion.p>

@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import type { NegotiationReport as NegotiationReportType } from "@/lib/types";
 import CurrencyToggle from "@/components/ui/currency-toggle";
+import BrandLockup from "@/components/ui/brand-lockup";
 import {
   formatCurrencyFromUsd,
   type DisplayCurrency,
@@ -33,7 +34,8 @@ export default function NegotiationReport({ report, currency, onCurrencyChange }
       <div className="pointer-events-none absolute -right-24 top-20 h-80 w-80 rounded-full bg-amber-500/10 blur-3xl" />
 
       <div className="relative mx-auto max-w-4xl space-y-5">
-        <div className="flex justify-end">
+        <div className="flex items-center justify-between gap-3">
+          <BrandLockup className="rounded-2xl" />
           <CurrencyToggle currency={currency} onChange={onCurrencyChange} />
         </div>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>

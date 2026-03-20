@@ -165,8 +165,6 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
               skillsInvalid ? "border border-rose-500/60" : "border border-slate-700/70"
             }`}
             role="group"
-            aria-invalid={skillsInvalid}
-            aria-describedby={skillsInvalid ? "quick-input-error" : undefined}
           >
             {skills.map((skill) => (
               <Badge
@@ -217,8 +215,8 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
                 onClick={() => setSeniority(level)}
                 className={
                   seniority === level
-                    ? "rounded-full border border-amber-300/60 bg-amber-500 px-3.5 py-1.5 text-sm font-medium text-slate-950 shadow-[0_0_0_1px_rgba(245,158,11,0.45)]"
-                    : "rounded-full border border-slate-700 bg-slate-900 px-3.5 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-800"
+                    ? "rounded-full border border-violet-300/65 bg-violet-600 px-3.5 py-1.5 text-sm font-semibold text-white shadow-[0_0_0_1px_rgba(0,87,240,0.35)]"
+                    : "rounded-full border border-slate-600/80 bg-slate-900/85 px-3.5 py-1.5 text-sm font-medium text-slate-200 hover:border-violet-300/40 hover:bg-slate-800"
                 }
               >
                 {level.charAt(0).toUpperCase() + level.slice(1)}

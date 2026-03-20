@@ -2,9 +2,20 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronUp, Clock, Minus, TrendingDown, TrendingUp, Zap } from "lucide-react";
+import {
+  Award,
+  Building2,
+  ChevronDown,
+  ChevronRight,
+  ChevronUp,
+  CircleCheck,
+  Clock,
+  Minus,
+  TrendingDown,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
 import type { DiagnosisResponse } from "@/lib/types";
-import type { z } from "zod";
 import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -86,9 +97,10 @@ function LearningPath({ plan }: { plan: SkillLearningPlan }) {
   return (
     <div className="space-y-3 text-sm">
       {plan.company_course && (
-        <div className="rounded-lg border border-blue-400/30 bg-blue-500/10 p-3">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-blue-300">
-            🏢 Included in your company plan
+        <div className="rounded-lg border border-violet-400/30 bg-violet-500/10 p-3">
+          <p className="mb-1 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-violet-200">
+            <Building2 className="h-3.5 w-3.5" />
+            Included in your company plan
           </p>
           <a
             href={buildSearchUrl(plan.company_course.platform, plan.company_course.name)}
@@ -136,9 +148,10 @@ function LearningPath({ plan }: { plan: SkillLearningPlan }) {
                   href={buildSearchUrl(cert.provider, cert.name)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-violet-300 hover:text-violet-200 hover:underline"
+                  className="inline-flex items-center gap-1 text-violet-300 hover:text-violet-200 hover:underline"
                 >
-                  🏆 {cert.name}
+                  <Award className="h-3.5 w-3.5" />
+                  {cert.name}
                 </a>
                 <p className="text-xs text-slate-400">{cert.provider} · {cert.duration}</p>
               </div>
@@ -155,12 +168,12 @@ function LearningPath({ plan }: { plan: SkillLearningPlan }) {
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Free resources</p>
           {plan.free_resources.map((r, i) => (
             <div key={i} className="flex items-center gap-1.5">
-              <span className="text-xs text-emerald-400">🆓</span>
+              <CircleCheck className="h-3.5 w-3.5 text-amber-300" />
               <a
                 href={r.url_hint ? `https://${r.url_hint.replace(/^https?:\/\//, "")}` : buildSearchUrl(r.type, r.name)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-emerald-300 hover:text-emerald-200 hover:underline"
+                className="text-amber-200 hover:text-amber-100 hover:underline"
               >
                 {r.name}
               </a>
@@ -171,16 +184,16 @@ function LearningPath({ plan }: { plan: SkillLearningPlan }) {
       )}
 
       {plan.timeline && (
-        <p className="text-slate-300">
-          <span className="mr-1">⏱</span>
+        <p className="inline-flex items-center gap-1.5 text-slate-300">
+          <Clock className="h-3.5 w-3.5 text-violet-300" />
           <span className="font-medium">Timeline:</span> {plan.timeline}
         </p>
       )}
 
       {plan.first_step && (
         <div className="rounded-lg border border-amber-400/25 bg-amber-500/10 p-2.5">
-          <p className="text-slate-200">
-            <span className="mr-1">👉</span>
+          <p className="inline-flex items-start gap-1.5 text-slate-200">
+            <ChevronRight className="mt-[1px] h-4 w-4 shrink-0 text-amber-200" />
             <span className="font-medium text-amber-200">First step:</span> {plan.first_step}
           </p>
         </div>
