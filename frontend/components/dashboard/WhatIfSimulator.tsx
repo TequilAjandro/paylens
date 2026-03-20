@@ -7,6 +7,7 @@ import type { WhatIfResponse } from "@/lib/types";
 import { getWhatIf } from "@/lib/api";
 import AsyncState from "@/components/ui/async-state";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import InfoTooltip from "@/components/ui/info-tooltip";
 
 interface WhatIfSimulatorProps {
   currentSkills: string[];
@@ -79,9 +80,12 @@ export default function WhatIfSimulator({
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-white">
           <Lightbulb className="h-5 w-5 text-yellow-300" />
-          What If You Learned...?
+          <span className="inline-flex items-center gap-1.5">
+            What If You Learned...?
+            <InfoTooltip text="Simulates how adding selected skills could change your score, salary, and role access." />
+          </span>
         </CardTitle>
-        <p className="text-sm text-slate-400">Toggle skills to see how your market position changes.</p>
+        <p className="text-sm text-slate-300">Toggle skills to see how your market position changes.</p>
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -168,7 +172,7 @@ function ResultCard({
 }) {
   return (
     <div className="rounded-lg border border-slate-700/70 bg-slate-900/60 p-3 text-center">
-      <p className="text-xs text-slate-400">{label}</p>
+      <p className="text-xs text-slate-300">{label}</p>
       <p className="font-mono text-xl font-bold text-white">{value}</p>
       {change ? <p className="text-xs text-emerald-300">{change}</p> : null}
     </div>

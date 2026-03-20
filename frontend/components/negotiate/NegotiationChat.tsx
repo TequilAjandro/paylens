@@ -19,6 +19,7 @@ interface NegotiationChatProps {
   companyName: string;
   roleTitle: string;
   userProfile: ManualProfile;
+  reportStatus: "idle" | "calling" | "thinking" | "loaded" | "error";
   onComplete: (conversation: ChatMessage[], finalOffer: number, initialOffer: number) => void;
 }
 
@@ -52,6 +53,7 @@ export default function NegotiationChat({
   companyName,
   roleTitle,
   userProfile,
+  reportStatus,
   onComplete,
 }: NegotiationChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -194,19 +196,34 @@ export default function NegotiationChat({
     void sendMessage(input.trim());
   };
 
+  const modeLabel = error ? "Simulated mode" : "Live mode";
+  const modeClass = error
+    ? "border-amber-400/35 bg-amber-500/10 text-amber-100"
+    : "border-emerald-400/35 bg-emerald-500/10 text-emerald-100";
+
   return (
-    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-[#0a1426] to-[#06111f] p-4 sm:p-6">
+    <main className="pl-bg-main relative min-h-screen overflow-hidden p-4 sm:p-6">
       <div className="paylens-grid pointer-events-none absolute inset-0" />
 
       <div className="relative mx-auto flex h-[calc(100vh-2rem)] max-w-4xl flex-col gap-4 sm:h-[calc(100vh-3rem)]">
         <Card className="rounded-xl border-emerald-400/35 bg-slate-900/75 px-4 py-3 sm:px-5">
           <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Negotiation Session</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">Negotiation Session</p>
               <h1 className="text-lg font-bold text-white sm:text-xl">
                 Negotiating with {companyName}
               </h1>
-              <p className="text-sm text-slate-400">{roleTitle}</p>
+              <p className="text-sm text-slate-300">{roleTitle}</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <span className={`rounded-md border px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${modeClass}`}>
+                  {modeLabel}
+                </span>
+                {reportStatus === "calling" || reportStatus === "thinking" ? (
+                  <span className="rounded-md border border-cyan-400/35 bg-cyan-500/10 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-cyan-100">
+                    {reportStatus === "calling" ? "Report: Calling API" : "Report: Generating"}
+                  </span>
+                ) : null}
+              </div>
             </div>
             <div className="rounded-lg border border-emerald-400/35 bg-emerald-500/10 px-3 py-2">
               <p className="text-xs uppercase tracking-[0.16em] text-emerald-200">Current Offer</p>

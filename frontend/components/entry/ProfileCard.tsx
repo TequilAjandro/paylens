@@ -43,7 +43,7 @@ export default function ProfileCard({ profile, onContinue }: ProfileCardProps) {
               <h3 className="text-lg font-bold text-white">
                 {isGitHub ? profile.username : "Your Profile"}
               </h3>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-slate-300">
                 {seniority.charAt(0).toUpperCase() + seniority.slice(1)} · {years} years
               </p>
             </div>
@@ -69,7 +69,7 @@ export default function ProfileCard({ profile, onContinue }: ProfileCardProps) {
           ) : null}
 
           {isGitHub && profile.notable_patterns.length > 0 ? (
-            <ul className="space-y-1 text-sm text-slate-400">
+            <ul className="space-y-1 text-sm text-slate-300">
               {profile.notable_patterns.slice(0, 4).map((pattern) => (
                 <li key={pattern}>- {pattern}</li>
               ))}
@@ -77,7 +77,7 @@ export default function ProfileCard({ profile, onContinue }: ProfileCardProps) {
           ) : null}
 
           {isGitHub ? (
-            <div className="flex flex-wrap gap-4 text-sm text-slate-400">
+            <div className="flex flex-wrap gap-4 text-sm text-slate-300">
               <span className="flex items-center gap-1">
                 <GitBranch className="h-3 w-3" /> {profile.total_repos} repos
               </span>

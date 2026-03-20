@@ -60,7 +60,7 @@ interface CompanySelectorProps {
 
 export default function CompanySelector({ onSelect }: CompanySelectorProps) {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-[#0b1526] to-[#071224] p-5 sm:p-7">
+    <main className="pl-bg-main relative min-h-screen overflow-hidden p-5 sm:p-7">
       <div className="paylens-grid pointer-events-none absolute inset-0" />
       <div className="pointer-events-none absolute -left-24 top-16 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
       <div className="pointer-events-none absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-emerald-500/10 blur-3xl" />

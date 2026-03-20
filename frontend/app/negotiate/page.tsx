@@ -7,7 +7,6 @@ import NegotiationReport from "@/components/negotiate/NegotiationReport";
 import { getNegotiationReport } from "@/lib/api";
 import type { ManualProfile, NegotiationReport as NegotiationReportType } from "@/lib/types";
 import { DEMO_PROFILE } from "@/data/demo-data";
-import AsyncState from "@/components/ui/async-state";
 
 type ChatMessage = {
   role: "user" | "assistant";
@@ -130,27 +129,13 @@ export default function NegotiatePage() {
   }
 
   return (
-    <>
-      {reportStatus !== "idle" && reportStatus !== "loaded" ? (
-        <div className="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-4">
-          <div className="rounded-lg border border-slate-600/80 bg-slate-950/80 px-3 py-2 backdrop-blur-sm">
-            <AsyncState
-              state={reportStatus}
-              labels={{
-                calling: "Calling report endpoint...",
-                thinking: "Generating negotiation report...",
-              }}
-            />
-          </div>
-        </div>
-      ) : null}
-      <NegotiationChat
-        companyId={selectedCompany.id}
-        companyName={selectedCompany.name}
-        roleTitle={selectedCompany.role}
-        userProfile={userProfile}
-        onComplete={handleNegotiationComplete}
-      />
-    </>
+    <NegotiationChat
+      companyId={selectedCompany.id}
+      companyName={selectedCompany.name}
+      roleTitle={selectedCompany.role}
+      userProfile={userProfile}
+      reportStatus={reportStatus}
+      onComplete={handleNegotiationComplete}
+    />
   );
 }

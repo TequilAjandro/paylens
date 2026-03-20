@@ -21,7 +21,7 @@ export default function NegotiationReport({ report }: NegotiationReportProps) {
   );
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-[#0a1426] to-[#06111f] p-4 sm:p-6">
+    <main className="pl-bg-main relative min-h-screen overflow-hidden p-4 sm:p-6">
       <div className="paylens-grid pointer-events-none absolute inset-0" />
       <div className="pointer-events-none absolute -right-24 top-20 h-80 w-80 rounded-full bg-emerald-500/10 blur-3xl" />
 
@@ -97,12 +97,12 @@ export default function NegotiationReport({ report }: NegotiationReportProps) {
             <CardContent className="space-y-4">
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-400">Current ceiling</span>
+                  <span className="text-slate-300">Current ceiling</span>
                   <span className="font-mono text-white">${report.current_ceiling.toLocaleString()}</span>
                 </div>
                 <Progress value={ceilingProgress} className="h-2 bg-slate-800" />
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-400">Potential ceiling</span>
+                  <span className="text-slate-300">Potential ceiling</span>
                   <span className="font-mono text-emerald-300">${report.potential_ceiling.toLocaleString()}</span>
                 </div>
               </div>

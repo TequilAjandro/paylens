@@ -15,10 +15,21 @@ import SkillHeatmap from "@/components/dashboard/Heatmap";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AsyncState from "@/components/ui/async-state";
+import InfoTooltip from "@/components/ui/info-tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Copy, Sparkles, Trophy } from "lucide-react";
 
 const DEFAULT_SUGGESTED_SKILLS = ["TypeScript", "AWS", "CI/CD", "Go", "GraphQL", "Terraform"];
+const DASHBOARD_SECTIONS = [
+  { id: "overview", label: "Overview" },
+  { id: "salary", label: "Salary" },
+  { id: "score", label: "Score" },
+  { id: "radar", label: "Radar" },
+  { id: "opportunities", label: "Opportunities" },
+  { id: "what-if", label: "What-if" },
+  { id: "trends", label: "Trends" },
+  { id: "summary", label: "Summary" },
+];
 
 function isGitHubProfile(profile: unknown): profile is GitHubProfileOutput {
   return !!profile && typeof profile === "object" && "username" in profile;
@@ -128,19 +139,23 @@ export default function DashboardPage() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-[#09182a] to-[#040b17] p-4 sm:p-6">
+    <main className="pl-bg-main relative min-h-screen overflow-x-hidden p-4 sm:p-6">
       <div className="paylens-grid pointer-events-none absolute inset-0" />
       <div className="pointer-events-none absolute -left-20 top-24 h-72 w-72 rounded-full bg-emerald-500/15 blur-3xl" />
       <div className="pointer-events-none absolute -right-20 top-20 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
 
-      <div className="relative z-10 mx-auto max-w-6xl space-y-8">
-        <AnimatedSection index={0}>
-          <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Market Diagnosis</p>
+      <div className="relative z-10 mx-auto max-w-7xl">
+        <div className="min-w-0 space-y-8 lg:pr-[16rem]">
+        <AnimatedSection index={0} className="scroll-mt-24" >
+          <div id="overview" className="space-y-1">
+            <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-slate-300">
+              Market Diagnosis
+              <InfoTooltip text="AI-generated market view of your salary position, role availability, and skill leverage." />
+            </p>
             <h1 className="text-3xl font-bold text-white sm:text-4xl">
               Your Market <span className="text-emerald-300">Diagnosis</span>
             </h1>
-            <p className="text-sm text-slate-400">Based on 49,000 developers across LATAM market signals.</p>
+            <p className="text-sm text-slate-300">Based on 49,000 developers across LATAM market signals.</p>
           </div>
         </AnimatedSection>
 
@@ -204,15 +219,19 @@ export default function DashboardPage() {
             </AnimatedSection>
 
             <AnimatedSection index={2}>
-              <SalaryDiagnosis diagnosis={diagnosis} />
+              <section id="salary" className="scroll-mt-24">
+                <SalaryDiagnosis diagnosis={diagnosis} />
+              </section>
             </AnimatedSection>
 
             <AnimatedSection index={3}>
-              <ScoreGauge
-                score={diagnosis.market_score.overall}
-                breakdown={diagnosis.market_score.breakdown}
-                percentileLabel={diagnosis.peer_comparison.percentile_label}
-              />
+              <section id="score" className="scroll-mt-24">
+                <ScoreGauge
+                  score={diagnosis.market_score.overall}
+                  breakdown={diagnosis.market_score.breakdown}
+                  percentileLabel={diagnosis.peer_comparison.percentile_label}
+                />
+              </section>
             </AnimatedSection>
 
             <div className="md:hidden">
@@ -228,41 +247,52 @@ export default function DashboardPage() {
 
             <div className={`${showDetailsMobile ? "space-y-5" : "hidden"} md:space-y-5 md:block`}>
               <AnimatedSection index={4}>
-                <SkillRadarChart peerComparison={diagnosis.peer_comparison} />
+                <section id="radar" className="scroll-mt-24">
+                  <SkillRadarChart peerComparison={diagnosis.peer_comparison} />
+                </section>
               </AnimatedSection>
 
               <AnimatedSection index={5}>
-                <OpportunityCards opportunities={diagnosis.opportunities} />
+                <section id="opportunities" className="scroll-mt-24">
+                  <OpportunityCards opportunities={diagnosis.opportunities} />
+                </section>
               </AnimatedSection>
 
               <AnimatedSection index={6}>
-                <WhatIfSimulator
-                  currentSkills={profile.skills}
-                  seniority={profile.seniority}
-                  location={profile.location}
-                  suggestedSkills={suggestedSkills}
-                />
+                <section id="what-if" className="scroll-mt-24">
+                  <WhatIfSimulator
+                    currentSkills={profile.skills}
+                    seniority={profile.seniority}
+                    location={profile.location}
+                    suggestedSkills={suggestedSkills}
+                  />
+                </section>
               </AnimatedSection>
 
               <AnimatedSection index={7}>
-                <SkillHeatmap entries={diagnosis.demand_heatmap} />
+                <section id="trends" className="scroll-mt-24">
+                  <SkillHeatmap entries={diagnosis.demand_heatmap} />
+                </section>
               </AnimatedSection>
 
               <AnimatedSection index={8}>
-                <Card className="relative overflow-hidden rounded-2xl border-emerald-400/30 bg-gradient-to-br from-emerald-950/50 via-slate-900/85 to-cyan-950/35 shadow-[0_24px_70px_rgba(16,185,129,0.22)]">
+                <Card id="summary" className="relative overflow-hidden rounded-2xl border-emerald-400/30 bg-gradient-to-br from-emerald-950/50 via-slate-900/85 to-cyan-950/35 shadow-[0_24px_70px_rgba(16,185,129,0.22)] scroll-mt-24">
                   <div className="pointer-events-none absolute -right-10 -top-16 h-40 w-40 rounded-full bg-emerald-400/15 blur-3xl" />
                   <CardHeader className="pb-2">
                     <CardTitle className="flex items-center gap-2 text-white">
                       <Sparkles className="h-5 w-5 text-emerald-300" />
-                      Market Summary
+                      <span className="inline-flex items-center gap-1.5">
+                        Market Summary
+                        <InfoTooltip text="Concise interpretation of your current standing and primary upside opportunity." />
+                      </span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex flex-wrap gap-2">
-                      <span className="rounded-md border border-emerald-400/40 bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-100">
+                      <span className="pl-chip-success rounded-md px-2.5 py-1 text-xs font-semibold">
                         ${diagnosis.salary_diagnosis.gap_annual.toLocaleString()} annual upside
                       </span>
-                      <span className="rounded-md border border-cyan-400/40 bg-cyan-500/15 px-2.5 py-1 text-xs font-semibold text-cyan-100">
+                      <span className="pl-chip-insight rounded-md px-2.5 py-1 text-xs font-semibold">
                         Top {diagnosis.peer_comparison.overall_percentile}%
                       </span>
                       <span className="rounded-md border border-blue-400/40 bg-blue-500/15 px-2.5 py-1 text-xs font-semibold text-blue-100">
@@ -281,7 +311,10 @@ export default function DashboardPage() {
                     <CardTitle className="flex items-center justify-between gap-2 text-white">
                       <span className="flex items-center gap-2">
                         <Trophy className="h-5 w-5 text-blue-200" />
-                        Your Value Statement
+                        <span className="inline-flex items-center gap-1.5">
+                          Your Value Statement
+                          <InfoTooltip text="Reusable negotiation narrative based on your strongest market signals." />
+                        </span>
                       </span>
                       <span className="rounded-md border border-blue-300/35 bg-blue-500/15 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-blue-100">
                         Final Output
@@ -319,6 +352,26 @@ export default function DashboardPage() {
             </AnimatedSection>
           </div>
         )}
+        </div>
+      </div>
+
+      <div className="pointer-events-none fixed inset-0 z-40 hidden lg:block">
+        <div className="relative mx-auto h-full max-w-7xl px-4 sm:px-6">
+          <aside className="pointer-events-auto absolute right-4 top-6 max-h-[calc(100vh-3rem)] w-52 overflow-y-auto rounded-xl border border-slate-700/70 bg-slate-900/80 p-3 backdrop-blur sm:right-6">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.15em] text-slate-200">Jump To</p>
+            <nav className="space-y-1.5">
+              {DASHBOARD_SECTIONS.map((section) => (
+                <a
+                  key={section.id}
+                  href={`#${section.id}`}
+                  className="block rounded-md px-2 py-1.5 text-sm text-slate-300 transition-colors hover:bg-slate-800/80 hover:text-white"
+                >
+                  {section.label}
+                </a>
+              ))}
+            </nav>
+          </aside>
+        </div>
       </div>
     </main>
   );
@@ -333,6 +386,13 @@ function SummaryStat({
   value: string;
   tone: "emerald" | "cyan" | "blue" | "amber";
 }) {
+  const hints: Record<string, string> = {
+    "Annual Upside": "Estimated yearly compensation increase if you close the top skill gap.",
+    "Market Position": "Percentile rank versus comparable LATAM developers.",
+    "Potential Roles": "Estimated number of matching roles with your projected profile.",
+    "Best Next Skill": "Highest-impact skill to improve salary range and role access.",
+  };
+
   const toneClass: Record<"emerald" | "cyan" | "blue" | "amber", string> = {
     emerald: "border-emerald-400/35 bg-emerald-500/10 text-emerald-100",
     cyan: "border-cyan-400/35 bg-cyan-500/10 text-cyan-100",
@@ -342,9 +402,12 @@ function SummaryStat({
 
   return (
     <Card className={`rounded-xl border ${toneClass[tone]}`}>
-      <CardContent className="space-y-1 p-3 sm:p-4">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-300">{label}</p>
-        <p className="text-sm font-semibold sm:text-base">{value}</p>
+      <CardContent className="space-y-1 p-2.5 sm:p-3">
+        <p className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-300">
+          {label}
+          <InfoTooltip text={hints[label] || "Key market metric derived from your profile and diagnosis response."} />
+        </p>
+        <p className="text-sm font-semibold">{value}</p>
       </CardContent>
     </Card>
   );

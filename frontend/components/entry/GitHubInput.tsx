@@ -30,6 +30,8 @@ export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
     [cleanedInput],
   );
   const showInlineError = touched && cleanedInput.length > 0 && !isValidInput;
+  const hasError = showInlineError || Boolean(error);
+  const displayError = showInlineError ? "Use a full GitHub profile URL or a username only." : error;
 
   const handleSubmit = async () => {
     setTouched(true);
@@ -73,12 +75,13 @@ export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
           </span>
           <div>
             <p className="font-semibold">Paste your GitHub profile URL</p>
-            <p className="text-xs text-slate-400">We parse repos, languages, and contribution patterns.</p>
+            <p className="text-xs text-slate-300">We parse repos, languages, and contribution patterns.</p>
           </div>
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row">
           <Input
+            id="github-profile-input"
             placeholder="https://github.com/username"
             value={url}
             onChange={(event) => {
@@ -90,6 +93,8 @@ export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
             className={`h-11 bg-slate-900/90 text-white placeholder:text-slate-500 focus-visible:border-emerald-400/70 focus-visible:ring-emerald-500/30 ${
               showInlineError ? "border-rose-500/70" : "border-slate-600"
             }`}
+            aria-invalid={hasError}
+            aria-describedby={hasError ? "github-input-error" : "github-input-help"}
             disabled={isLoading}
           />
           <Button
@@ -107,16 +112,21 @@ export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
             )}
           </Button>
         </div>
-        <p className="text-xs text-slate-400">
+        <p id="github-input-help" className="text-xs text-slate-300">
           Example: <span className="text-slate-300">https://github.com/octocat</span> or{" "}
           <span className="text-slate-300">octocat</span>
         </p>
 
-        {showInlineError ? (
-          <p className="text-sm text-rose-300">Use a full GitHub profile URL or a username only.</p>
+        {displayError ? (
+          <p
+            id="github-input-error"
+            role="alert"
+            aria-live="polite"
+            className={`text-sm ${showInlineError ? "text-rose-300" : "text-red-400"}`}
+          >
+            {displayError}
+          </p>
         ) : null}
-
-        {error ? <p className="text-sm text-red-400">{error}</p> : null}
 
         <AsyncState
           state={status}

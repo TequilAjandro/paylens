@@ -94,6 +94,8 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
   const skillsReady = skills.length > 0;
   const roleReady = currentRole.trim().length >= 2;
   const minimumReady = skillsReady && roleReady;
+  const roleInvalid = attemptedSubmit && !roleReady;
+  const skillsInvalid = attemptedSubmit && !skillsReady;
 
   const handleSubmit = async () => {
     setAttemptedSubmit(true);
@@ -142,13 +144,13 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
     <Card className="glass-panel rounded-xl border-slate-700/80">
       <CardContent className="space-y-6 p-6 sm:p-7">
         <div className="rounded-lg border border-slate-700/70 bg-slate-900/55 p-3">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Minimum Required</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-300">Minimum Required</p>
           <div className="mt-2 space-y-1 text-sm">
-            <p className={skillsReady ? "text-emerald-200" : "text-slate-400"}>
+            <p className={skillsReady ? "text-emerald-200" : "text-slate-300"}>
               {skillsReady ? <CheckCircle2 className="mr-1 inline h-3.5 w-3.5" /> : null}
               At least one skill selected
             </p>
-            <p className={roleReady ? "text-emerald-200" : "text-slate-400"}>
+            <p className={roleReady ? "text-emerald-200" : "text-slate-300"}>
               {roleReady ? <CheckCircle2 className="mr-1 inline h-3.5 w-3.5" /> : null}
               Current role (2+ characters)
             </p>
@@ -156,12 +158,15 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Skills</label>
+          <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">Skills</label>
 
           <div
             className={`flex min-h-[34px] flex-wrap gap-1.5 rounded-lg bg-slate-900/60 p-2 ${
-              attemptedSubmit && !skillsReady ? "border border-rose-500/60" : "border border-slate-700/70"
+              skillsInvalid ? "border border-rose-500/60" : "border border-slate-700/70"
             }`}
+            role="group"
+            aria-invalid={skillsInvalid}
+            aria-describedby={skillsInvalid ? "quick-input-error" : undefined}
           >
             {skills.map((skill) => (
               <Badge
@@ -201,7 +206,7 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+          <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
             Seniority
           </label>
           <div className="flex flex-wrap gap-2">
@@ -223,7 +228,7 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+          <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
             Location
           </label>
           <select
@@ -242,7 +247,7 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+            <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
               Years of Experience
             </label>
             <Input
@@ -257,10 +262,11 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+            <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
               Current Role
             </label>
             <Input
+              id="quick-input-current-role"
               placeholder="Backend Developer"
               value={currentRole}
               onChange={(event) => {
@@ -268,14 +274,20 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
                 if (error) setError(null);
               }}
               className={`h-11 bg-slate-900/90 text-white placeholder:text-slate-500 ${
-                attemptedSubmit && !roleReady ? "border-rose-500/70" : "border-slate-600"
+                roleInvalid ? "border-rose-500/70" : "border-slate-600"
               }`}
+              aria-invalid={roleInvalid}
+              aria-describedby={roleInvalid || error ? "quick-input-error" : undefined}
               disabled={isLoading}
             />
           </div>
         </div>
 
-        {error ? <p className="text-sm text-red-400">{error}</p> : null}
+        {error ? (
+          <p id="quick-input-error" role="alert" aria-live="polite" className="text-sm text-red-400">
+            {error}
+          </p>
+        ) : null}
 
         <AsyncState
           state={status}

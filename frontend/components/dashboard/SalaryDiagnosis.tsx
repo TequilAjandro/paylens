@@ -5,6 +5,7 @@ import type { DiagnosisResponse } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
+import InfoTooltip from "@/components/ui/info-tooltip";
 
 interface SalaryDiagnosisProps {
   diagnosis: Pick<DiagnosisResponse, "salary_diagnosis">;
@@ -30,20 +31,21 @@ export default function SalaryDiagnosis({ diagnosis }: SalaryDiagnosisProps) {
           transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
         >
           <Card className="glass-panel h-full rounded-xl border-slate-700/80">
-            <CardContent className="space-y-3 p-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+            <CardContent className="space-y-2.5 p-5">
+              <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
                 You Today
+                <InfoTooltip text="Estimated salary range from your current profile and skill set." />
               </p>
-              <p className="text-sm text-slate-400">Based on your current skills and profile.</p>
+              <p className="text-sm text-slate-300">Based on your current skills and profile.</p>
               <div className="pt-2">
-                <div className="text-3xl font-bold text-white sm:text-4xl">
+                <div className="text-2xl font-bold text-white sm:text-3xl">
                   <AnimatedCounter value={sd.current_range.min} prefix="$" delay={0.8} />
-                  <span className="px-2 text-slate-400">-</span>
+                  <span className="px-2 text-slate-300">-</span>
                   <AnimatedCounter value={sd.current_range.max} prefix="$" delay={0.8} />
                 </div>
-                <p className="mt-1 text-sm text-slate-400">USD / year</p>
+                <p className="mt-1 text-sm text-slate-300">USD / year</p>
               </div>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-slate-300">
                 {sd.current_job_count.toLocaleString()} matching positions
               </p>
             </CardContent>
@@ -56,9 +58,10 @@ export default function SalaryDiagnosis({ diagnosis }: SalaryDiagnosisProps) {
           transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
         >
           <Card className="glass-panel h-full rounded-xl border-emerald-500/45 shadow-[0_16px_40px_rgba(16,185,129,0.15)]">
-            <CardContent className="space-y-3 p-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+            <CardContent className="space-y-2.5 p-5">
+              <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
                 You + 1 Strategic Skill
+                <InfoTooltip text="Projected range after adding your highest-impact missing skill." />
               </p>
               <p className="text-sm text-slate-300">
                 If you also mastered{" "}
@@ -74,12 +77,12 @@ export default function SalaryDiagnosis({ diagnosis }: SalaryDiagnosisProps) {
                 .
               </p>
               <div className="pt-2">
-                <div className="text-3xl font-bold text-emerald-300 sm:text-4xl">
+                <div className="text-2xl font-bold text-emerald-300 sm:text-3xl">
                   <AnimatedCounter value={sd.potential_range.min} prefix="$" delay={1.5} />
                   <span className="px-2 text-emerald-200/70">-</span>
                   <AnimatedCounter value={sd.potential_range.max} prefix="$" delay={1.5} />
                 </div>
-                <p className="mt-1 text-sm text-slate-400">USD / year</p>
+                <p className="mt-1 text-sm text-slate-300">USD / year</p>
               </div>
               <p className="text-sm text-slate-300">
                 {sd.potential_job_count.toLocaleString()} positions
@@ -105,21 +108,17 @@ export default function SalaryDiagnosis({ diagnosis }: SalaryDiagnosisProps) {
         className="mx-auto max-w-md"
       >
         <Card className="rounded-xl border-red-500/55 bg-gradient-to-br from-red-950/70 to-[#2b0f17] shadow-[0_18px_42px_rgba(239,68,68,0.25)]">
-          <CardContent className="space-y-2 p-6 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-red-300">
+          <CardContent className="space-y-2 p-5 text-center">
+            <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-red-300">
               Left on the Table
+              <InfoTooltip text="Estimated annual compensation gap between your current and potential range." />
             </p>
             <motion.div
-              animate={{
-                textShadow: [
-                  "0 0 0px rgba(248,113,113,0)",
-                  "0 0 24px rgba(248,113,113,0.55)",
-                  "0 0 0px rgba(248,113,113,0)",
-                ],
-              }}
-              transition={{ duration: 2, repeat: 2, delay: 2.5 }}
+              initial={{ opacity: 0.9 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.35, delay: 1.7 }}
             >
-              <div className="text-5xl font-extrabold text-red-300">
+              <div className="text-4xl font-extrabold text-red-300">
                 <AnimatedCounter value={sd.gap_annual} prefix="$" delay={2} />
               </div>
             </motion.div>
