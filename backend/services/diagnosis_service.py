@@ -11,7 +11,7 @@ from models.schemas import (
     Opportunity,
     HeatmapEntry,
 )
-from services.llm_service import generate_diagnosis_narrative, generate_value_narrative
+from services.llm_service import generate_diagnosis_narrative, generate_value_narrative, generate_learning_plans, generate_learning_roadmap
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 
@@ -431,6 +431,68 @@ async def compute_diagnosis(profile: ManualProfileInput) -> DiagnosisResponse:
     except Exception:
         value_narrative = _generate_narrative(profile)
 
+    # 8. Learning resources (LLM-generated)
+    from models.schemas import SkillLearningPlan, LearningRoadmap, CourseRecommendation, CertificationRecommendation, FreeResource, LearningPhase
+
+    try:
+        opp_dicts = [
+            {
+                "skill": o.skill,
+                "salary_increase_pct": o.salary_increase_pct,
+                "difficulty": o.difficulty,
+                "time_to_learn": o.time_to_learn,
+            }
+            for o in opportunities[:3]
+        ]
+        learning_plans_raw = await generate_learning_plans(
+            current_skills=profile.skills,
+            opportunities=opp_dicts,
+            seniority=profile.seniority.value,
+        )
+        roadmap_raw = await generate_learning_roadmap(
+            current_skills=profile.skills,
+            opportunities=opp_dicts,
+            seniority=profile.seniority.value,
+            years_experience=profile.years_experience,
+        )
+    except Exception:
+        learning_plans_raw = []
+        roadmap_raw = None
+
+    skill_learning_plans = []
+    for plan in learning_plans_raw:
+        try:
+            company_course = None
+            if plan.get("company_course"):
+                cc = plan["company_course"]
+                company_course = CourseRecommendation(
+                    name=cc.get("name", ""),
+                    platform=cc.get("platform", ""),
+                    is_company_benefit=True,
+                )
+            skill_learning_plans.append(SkillLearningPlan(
+                skill=plan.get("skill", ""),
+                company_course=company_course,
+                courses=[CourseRecommendation(**c) for c in plan.get("courses", [])],
+                certifications=[CertificationRecommendation(**c) for c in plan.get("certifications", [])],
+                free_resources=[FreeResource(**r) for r in plan.get("free_resources", [])],
+                timeline=plan.get("timeline", ""),
+                first_step=plan.get("first_step", ""),
+            ))
+        except Exception:
+            continue
+
+    learning_roadmap = None
+    if roadmap_raw:
+        try:
+            learning_roadmap = LearningRoadmap(
+                total_duration=roadmap_raw.get("total_duration", "6 months"),
+                phases=[LearningPhase(**p) for p in roadmap_raw.get("phases", [])],
+                summary=roadmap_raw.get("summary", ""),
+            )
+        except Exception:
+            learning_roadmap = None
+
     return DiagnosisResponse(
         salary_diagnosis=salary_diagnosis,
         market_score=market_score,
@@ -440,4 +502,6 @@ async def compute_diagnosis(profile: ManualProfileInput) -> DiagnosisResponse:
         demand_heatmap=demand_heatmap,
         market_summary=market_summary,
         value_narrative=value_narrative,
+        skill_learning_plans=skill_learning_plans,
+        learning_roadmap=learning_roadmap,
     )

@@ -118,6 +118,51 @@ class HeatmapEntry(BaseModel):
     color: HeatmapColor
 
 
+# --- Learning Resources ---
+class CourseRecommendation(BaseModel):
+    name: str
+    platform: str
+    price: str = "Free"
+    url_hint: str = ""
+    is_company_benefit: bool = False
+
+
+class CertificationRecommendation(BaseModel):
+    name: str
+    provider: str
+    price: str = ""
+    duration: str = ""
+
+
+class FreeResource(BaseModel):
+    name: str
+    type: str
+    url_hint: str = ""
+
+
+class SkillLearningPlan(BaseModel):
+    skill: str
+    company_course: CourseRecommendation | None = None
+    courses: list[CourseRecommendation] = []
+    certifications: list[CertificationRecommendation] = []
+    free_resources: list[FreeResource] = []
+    timeline: str = ""
+    first_step: str = ""
+
+
+class LearningPhase(BaseModel):
+    months: str
+    skill: str
+    why: str
+    milestone: str
+
+
+class LearningRoadmap(BaseModel):
+    total_duration: str = "6 months"
+    phases: list[LearningPhase] = []
+    summary: str = ""
+
+
 class DiagnosisResponse(BaseModel):
     salary_diagnosis: SalaryDiagnosis
     market_score: MarketScore
@@ -127,6 +172,8 @@ class DiagnosisResponse(BaseModel):
     demand_heatmap: list[HeatmapEntry]
     market_summary: str
     value_narrative: str
+    skill_learning_plans: list[SkillLearningPlan] = []
+    learning_roadmap: LearningRoadmap | None = None
 
 
 # --- What-If ---
