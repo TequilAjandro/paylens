@@ -1,105 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import type { DiagnosisResponse, GitHubProfileOutput, ManualProfile } from "@/lib/types";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getDiagnosis } from "@/lib/api";
+import type { DiagnosisResponse, GitHubProfileOutput, ManualProfile } from "@/lib/types";
+import { DEMO_DIAGNOSIS, DEMO_PROFILE } from "@/data/demo-data";
+import AnimatedSection from "@/components/dashboard/AnimatedSection";
 import SalaryDiagnosis from "@/components/dashboard/SalaryDiagnosis";
 import ScoreGauge from "@/components/dashboard/ScoreGauge";
 import SkillRadarChart from "@/components/dashboard/RadarChart";
 import OpportunityCards from "@/components/dashboard/OpportunityCards";
 import WhatIfSimulator from "@/components/dashboard/WhatIfSimulator";
 import SkillHeatmap from "@/components/dashboard/Heatmap";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Copy, Sparkles, Trophy } from "lucide-react";
 
-const DEFAULT_CURRENT_SKILLS = ["Python", "FastAPI", "PostgreSQL", "Docker", "React"];
-const SUGGESTED_SKILLS = [
-  "Kubernetes",
-  "AWS",
-  "TypeScript",
-  "CI/CD",
-  "Go",
-  "GraphQL",
-  "Terraform",
-  "Docker",
-];
-
-const MOCK_DIAGNOSIS: DiagnosisResponse = {
-  salary_diagnosis: {
-    current_range: { min: 38000, max: 45000, currency: "USD" },
-    potential_range: { min: 62000, max: 78000, currency: "USD" },
-    gap_annual: 24000,
-    gap_3year: 72000,
-    current_job_count: 127,
-    potential_job_count: 347,
-    job_count_increase_pct: 173,
-    key_missing_skill: "Kubernetes",
-    secondary_missing_skills: ["CI/CD", "AWS"],
-  },
-  market_score: {
-    overall: 73,
-    breakdown: {
-      skill_demand: 78,
-      skill_breadth: 65,
-      market_fit: 76,
-      growth_potential: 72,
-    },
-  },
-  skills_analysis: [],
-  peer_comparison: {
-    axes: ["Frontend", "Backend", "DevOps", "Data", "AI/ML", "Soft Skills"],
-    user_values: [3, 8, 4, 6, 2, 7],
-    peer_avg_values: [6, 7, 6, 5, 4, 6],
-    seniority_group: "mid-level",
-    region: "Mexico",
-    overall_percentile: 34,
-    percentile_label: "Top 34% of mid-level LATAM developers",
-  },
-  opportunities: [
-    {
-      skill: "Kubernetes",
-      unlock_count: 47,
-      salary_increase_pct: 30,
-      salary_increase_usd: 12000,
-      demand_trend: "rising",
-      trend_growth_pct: 140,
-      difficulty: "medium",
-      time_to_learn: "2-3 months",
-    },
-    {
-      skill: "AWS",
-      unlock_count: 38,
-      salary_increase_pct: 25,
-      salary_increase_usd: 10000,
-      demand_trend: "rising",
-      trend_growth_pct: 18,
-      difficulty: "medium",
-      time_to_learn: "3-4 months",
-    },
-    {
-      skill: "TypeScript",
-      unlock_count: 29,
-      salary_increase_pct: 15,
-      salary_increase_usd: 6000,
-      demand_trend: "rising",
-      trend_growth_pct: 35,
-      difficulty: "low",
-      time_to_learn: "1-2 months",
-    },
-  ],
-  demand_heatmap: [
-    { skill: "Kubernetes", trend: "rising", growth_pct: 140, color: "green" },
-    { skill: "TypeScript", trend: "rising", growth_pct: 35, color: "green" },
-    { skill: "CI/CD", trend: "rising", growth_pct: 30, color: "green" },
-    { skill: "Docker", trend: "rising", growth_pct: 25, color: "green" },
-    { skill: "Python", trend: "stable", growth_pct: 5, color: "yellow" },
-    { skill: "React", trend: "stable", growth_pct: 8, color: "yellow" },
-    { skill: "SQL", trend: "stable", growth_pct: 3, color: "yellow" },
-    { skill: "Angular", trend: "declining", growth_pct: -8, color: "red" },
-    { skill: "jQuery", trend: "declining", growth_pct: -15, color: "red" },
-  ],
-  market_summary: "",
-  value_narrative: "",
-};
+const DEFAULT_SUGGESTED_SKILLS = ["TypeScript", "AWS", "CI/CD", "Go", "GraphQL", "Terraform"];
 
 function isGitHubProfile(profile: unknown): profile is GitHubProfileOutput {
   return !!profile && typeof profile === "object" && "username" in profile;
@@ -139,10 +57,9 @@ function toManualProfile(profile: unknown): ManualProfile | null {
 }
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const [profile, setProfile] = useState<ManualProfile>(DEMO_PROFILE);
   const [diagnosis, setDiagnosis] = useState<DiagnosisResponse | null>(null);
-  const [currentSkills, setCurrentSkills] = useState<string[]>(DEFAULT_CURRENT_SKILLS);
-  const [seniority, setSeniority] = useState<string>("mid");
-  const [location, setLocation] = useState<string>("Mexico");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -154,7 +71,8 @@ export default function DashboardPage() {
       try {
         const rawProfile = sessionStorage.getItem("userProfile");
         if (!rawProfile) {
-          setDiagnosis(MOCK_DIAGNOSIS);
+          setProfile(DEMO_PROFILE);
+          setDiagnosis(DEMO_DIAGNOSIS);
           return;
         }
 
@@ -162,19 +80,19 @@ export default function DashboardPage() {
         const manualProfile = toManualProfile(parsed);
 
         if (!manualProfile || manualProfile.skills.length === 0) {
-          setDiagnosis(MOCK_DIAGNOSIS);
+          setProfile(DEMO_PROFILE);
+          setDiagnosis(DEMO_DIAGNOSIS);
           return;
         }
 
-        setCurrentSkills(manualProfile.skills.length > 0 ? manualProfile.skills : DEFAULT_CURRENT_SKILLS);
-        setSeniority(manualProfile.seniority);
-        setLocation(manualProfile.location);
-
+        setProfile(manualProfile);
         const response = await getDiagnosis(manualProfile);
         setDiagnosis(response);
+        sessionStorage.setItem("diagnosisResult", JSON.stringify(response));
       } catch {
-        setDiagnosis(MOCK_DIAGNOSIS);
-        setError("Live diagnosis unavailable, showing demo data.");
+        setProfile(DEMO_PROFILE);
+        setDiagnosis(DEMO_DIAGNOSIS);
+        setError("Live diagnosis is temporarily unavailable. Showing demo market data.");
       } finally {
         setIsLoading(false);
       }
@@ -183,18 +101,40 @@ export default function DashboardPage() {
     void loadDiagnosis();
   }, []);
 
+  const suggestedSkills = useMemo(() => {
+    if (!diagnosis) return DEFAULT_SUGGESTED_SKILLS;
+
+    const fromOpportunities = diagnosis.opportunities.map((item) => item.skill);
+    const uniques = Array.from(new Set([...fromOpportunities, ...DEFAULT_SUGGESTED_SKILLS]));
+    return uniques.filter((skill) => !profile.skills.includes(skill)).slice(0, 8);
+  }, [diagnosis, profile.skills]);
+
+  const handleCopyNarrative = async () => {
+    if (!diagnosis?.value_narrative) return;
+
+    try {
+      await navigator.clipboard.writeText(diagnosis.value_narrative);
+    } catch {
+      setError("Unable to copy to clipboard in this browser session.");
+    }
+  };
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-[#09182a] to-[#040b17] p-4 sm:p-6">
       <div className="paylens-grid pointer-events-none absolute inset-0" />
       <div className="pointer-events-none absolute -left-20 top-24 h-72 w-72 rounded-full bg-emerald-500/15 blur-3xl" />
+      <div className="pointer-events-none absolute -right-20 top-20 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
 
-      <div className="relative z-10 mx-auto max-w-6xl space-y-5">
-        <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Market Diagnosis</p>
-          <h1 className="text-3xl font-bold text-white sm:text-4xl">
-            Salary Gap <span className="text-emerald-300">Reality Check</span>
-          </h1>
-        </div>
+      <div className="relative z-10 mx-auto max-w-6xl space-y-8">
+        <AnimatedSection delay={0}>
+          <div className="space-y-1">
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Market Diagnosis</p>
+            <h1 className="text-3xl font-bold text-white sm:text-4xl">
+              Your Market <span className="text-emerald-300">Diagnosis</span>
+            </h1>
+            <p className="text-sm text-slate-400">Based on 49,000 developers across LATAM market signals.</p>
+          </div>
+        </AnimatedSection>
 
         {error ? (
           <p className="rounded-lg border border-amber-500/35 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">
@@ -203,35 +143,127 @@ export default function DashboardPage() {
         ) : null}
 
         {isLoading || !diagnosis ? (
-          <div className="space-y-4">
+          <div className="space-y-5">
+            <Skeleton className="h-10 w-72 rounded-xl bg-slate-800/80" />
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               <Skeleton className="h-[220px] rounded-xl bg-slate-800/80" />
               <Skeleton className="h-[220px] rounded-xl bg-slate-800/80" />
             </div>
             <Skeleton className="mx-auto h-[180px] max-w-md rounded-xl bg-slate-800/80" />
-            <Skeleton className="h-[300px] rounded-xl bg-slate-800/80" />
-            <Skeleton className="h-[620px] rounded-xl bg-slate-800/80" />
+            <Skeleton className="h-[320px] rounded-xl bg-slate-800/80" />
+            <Skeleton className="h-[580px] rounded-xl bg-slate-800/80" />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <Skeleton className="h-[210px] rounded-xl bg-slate-800/80" />
+              <Skeleton className="h-[210px] rounded-xl bg-slate-800/80" />
+              <Skeleton className="h-[210px] rounded-xl bg-slate-800/80" />
+            </div>
             <Skeleton className="h-[280px] rounded-xl bg-slate-800/80" />
             <Skeleton className="h-[260px] rounded-xl bg-slate-800/80" />
             <Skeleton className="h-[260px] rounded-xl bg-slate-800/80" />
           </div>
         ) : (
           <div className="space-y-5">
-            <SalaryDiagnosis diagnosis={diagnosis} />
-            <ScoreGauge
-              score={diagnosis.market_score.overall}
-              breakdown={diagnosis.market_score.breakdown}
-              percentileLabel={diagnosis.peer_comparison.percentile_label}
-            />
-            <SkillRadarChart peerComparison={diagnosis.peer_comparison} />
-            <OpportunityCards opportunities={diagnosis.opportunities} />
-            <WhatIfSimulator
-              currentSkills={currentSkills}
-              seniority={seniority}
-              location={location}
-              suggestedSkills={SUGGESTED_SKILLS}
-            />
-            <SkillHeatmap entries={diagnosis.demand_heatmap} />
+            <AnimatedSection delay={0.3}>
+              <SalaryDiagnosis diagnosis={diagnosis} />
+            </AnimatedSection>
+
+            <AnimatedSection delay={1.5}>
+              <ScoreGauge
+                score={diagnosis.market_score.overall}
+                breakdown={diagnosis.market_score.breakdown}
+                percentileLabel={diagnosis.peer_comparison.percentile_label}
+              />
+            </AnimatedSection>
+
+            <AnimatedSection delay={2.5}>
+              <SkillRadarChart peerComparison={diagnosis.peer_comparison} />
+            </AnimatedSection>
+
+            <AnimatedSection delay={3.5}>
+              <OpportunityCards opportunities={diagnosis.opportunities} />
+            </AnimatedSection>
+
+            <AnimatedSection delay={4.5}>
+              <WhatIfSimulator
+                currentSkills={profile.skills}
+                seniority={profile.seniority}
+                location={profile.location}
+                suggestedSkills={suggestedSkills}
+              />
+            </AnimatedSection>
+
+            <AnimatedSection delay={5.0}>
+              <SkillHeatmap entries={diagnosis.demand_heatmap} />
+            </AnimatedSection>
+
+            <AnimatedSection delay={5.5}>
+              <Card className="relative overflow-hidden rounded-2xl border-emerald-400/30 bg-gradient-to-br from-emerald-950/50 via-slate-900/85 to-cyan-950/35 shadow-[0_24px_70px_rgba(16,185,129,0.22)]">
+                <div className="pointer-events-none absolute -right-10 -top-16 h-40 w-40 rounded-full bg-emerald-400/15 blur-3xl" />
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center gap-2 text-white">
+                    <Sparkles className="h-5 w-5 text-emerald-300" />
+                    Market Summary
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex flex-wrap gap-2">
+                    <span className="rounded-md border border-emerald-400/40 bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-100">
+                      ${diagnosis.salary_diagnosis.gap_annual.toLocaleString()} annual upside
+                    </span>
+                    <span className="rounded-md border border-cyan-400/40 bg-cyan-500/15 px-2.5 py-1 text-xs font-semibold text-cyan-100">
+                      Top {diagnosis.peer_comparison.overall_percentile}%
+                    </span>
+                    <span className="rounded-md border border-blue-400/40 bg-blue-500/15 px-2.5 py-1 text-xs font-semibold text-blue-100">
+                      {diagnosis.salary_diagnosis.potential_job_count} roles unlocked
+                    </span>
+                  </div>
+                  <p className="leading-relaxed text-slate-100/95">{diagnosis.market_summary}</p>
+                </CardContent>
+              </Card>
+            </AnimatedSection>
+
+            <AnimatedSection delay={6.0}>
+              <Card className="relative overflow-hidden rounded-2xl border-blue-400/30 bg-gradient-to-br from-blue-950/60 via-[#0a1730] to-slate-950 shadow-[0_24px_75px_rgba(59,130,246,0.2)]">
+                <div className="pointer-events-none absolute -left-12 bottom-0 h-44 w-44 rounded-full bg-blue-400/15 blur-3xl" />
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center justify-between gap-2 text-white">
+                    <span className="flex items-center gap-2">
+                      <Trophy className="h-5 w-5 text-blue-200" />
+                      Your Value Statement
+                    </span>
+                    <span className="rounded-md border border-blue-300/35 bg-blue-500/15 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-blue-100">
+                      Final Output
+                    </span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <p className="border-l-2 border-blue-300/60 pl-4 text-[15px] italic leading-relaxed text-blue-50">
+                    &quot;{diagnosis.value_narrative}&quot;
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => void handleCopyNarrative()}
+                    className="w-full border-blue-300/40 bg-blue-500/10 text-blue-50 hover:bg-blue-500/20 sm:w-auto"
+                  >
+                    <Copy className="mr-2 h-4 w-4" />
+                    Copy to clipboard
+                  </Button>
+                </CardContent>
+              </Card>
+            </AnimatedSection>
+
+            <AnimatedSection delay={6.5}>
+              <div className="flex justify-center pt-2">
+                <Button
+                  type="button"
+                  onClick={() => router.push("/negotiate")}
+                  className="rounded-xl bg-emerald-600 px-6 py-6 text-base font-semibold text-white shadow-[0_18px_45px_rgba(16,185,129,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-emerald-500"
+                >
+                  Practice Salary Negotiation
+                </Button>
+              </div>
+            </AnimatedSection>
           </div>
         )}
       </div>
