@@ -52,6 +52,8 @@ class GitHubProfileOutput(BaseModel):
     total_commits_last_year: int
     notable_patterns: list[str]
     profile_summary: str
+    location: str = ""
+    inferred_role: str = "Software Engineer"
 
 
 # --- Diagnosis ---
