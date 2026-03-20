@@ -71,7 +71,7 @@ export default function SkillRadarChart({ peerComparison }: RadarChartProps) {
       <Card className="glass-panel rounded-xl border-slate-700/80">
         <CardHeader className="space-y-2">
           <CardTitle className="flex flex-col justify-between gap-2 text-white sm:flex-row sm:items-center">
-            <span>Fair Benchmark · You vs Market</span>
+            <span>Market Benchmark · You vs Market</span>
             <Badge className="border-cyan-400/35 bg-cyan-500/15 text-cyan-100">{percentileText}</Badge>
           </CardTitle>
           <p className="text-sm text-slate-400">

@@ -1,30 +1,22 @@
 import { NextResponse } from "next/server";
-import { buildNegotiationTurn } from "@/lib/mock-api";
+import { validationError } from "@/lib/api-errors";
+import { MockApiTemporaryError, buildNegotiationTurn, simulateMockApiBehavior } from "@/lib/mock-api";
+import { NegotiateRequestSchema } from "@/lib/schemas";
 
 export async function POST(request: Request) {
   try {
-    const payload = (await request.json()) as {
-      company?: "mercadolibre" | "globant" | "nubank" | "rappi";
-      role?: string;
-      user_profile?: Record<string, unknown>;
-      conversation_history?: Array<{ role: "user" | "assistant"; content: string }>;
-      user_message?: string;
-    };
-
-    if (!payload.company || !payload.role || !payload.user_message) {
-      return NextResponse.json({ detail: "Missing negotiate payload fields" }, { status: 400 });
+    const payload = await request.json();
+    const parsed = NegotiateRequestSchema.strict().safeParse(payload);
+    if (!parsed.success) {
+      return validationError(parsed.error.issues);
     }
 
-    return NextResponse.json(
-      buildNegotiationTurn({
-        company: payload.company,
-        role: payload.role,
-        user_profile: payload.user_profile || {},
-        conversation_history: payload.conversation_history || [],
-        user_message: payload.user_message,
-      }),
-    );
-  } catch {
+    await simulateMockApiBehavior("negotiate");
+    return NextResponse.json(buildNegotiationTurn(parsed.data));
+  } catch (error) {
+    if (error instanceof MockApiTemporaryError) {
+      return NextResponse.json({ detail: "Mock API temporary failure" }, { status: 503 });
+    }
     return NextResponse.json({ detail: "Invalid negotiate payload" }, { status: 400 });
   }
 }

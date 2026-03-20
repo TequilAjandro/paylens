@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Github, Loader2 } from "lucide-react";
 import { analyzeGitHub } from "@/lib/api";
 import type { GitHubProfileOutput } from "@/lib/types";
+import AsyncState from "@/components/ui/async-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,19 +14,28 @@ interface GitHubInputProps {
   onProfileReady: (profile: GitHubProfileOutput) => void;
 }
 
-const GITHUB_PROFILE_REGEX = /^https:\/\/github\.com\/[a-zA-Z0-9_-]+\/?$/;
+const GITHUB_PROFILE_URL_REGEX = /^https:\/\/github\.com\/[a-zA-Z0-9_-]+\/?$/;
+const GITHUB_USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
 
 export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<"idle" | "calling" | "thinking" | "loaded">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [touched, setTouched] = useState(false);
 
-  const isValidUrl = useMemo(() => GITHUB_PROFILE_REGEX.test(url), [url]);
+  const cleanedInput = useMemo(() => url.trim(), [url]);
+  const isValidInput = useMemo(
+    () => GITHUB_PROFILE_URL_REGEX.test(cleanedInput) || GITHUB_USERNAME_REGEX.test(cleanedInput),
+    [cleanedInput],
+  );
+  const showInlineError = touched && cleanedInput.length > 0 && !isValidInput;
 
   const handleSubmit = async () => {
-    if (!isValidUrl) {
-      setError("Enter a valid GitHub profile URL (e.g., https://github.com/username)");
+    setTouched(true);
+
+    if (!isValidInput) {
+      setError("Enter a valid GitHub profile URL or username");
       return;
     }
 
@@ -36,12 +46,18 @@ export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
     const thinkingTimer = setTimeout(() => setStatus("thinking"), 450);
 
     try {
-      const profile = await analyzeGitHub(url.replace(/\/$/, ""));
+      const profile = await analyzeGitHub(cleanedInput.replace(/\/$/, ""));
       setStatus("loaded");
       onProfileReady(profile);
-    } catch {
-      setError("Failed to analyze GitHub profile. Please try again.");
-      setStatus("idle");
+    } catch (requestError) {
+      const message = requestError instanceof Error ? requestError.message : "";
+      const contractError = /API error 422/i.test(message);
+      setError(
+        contractError
+          ? "Input format is invalid for the API contract. Use a GitHub URL or username."
+          : "Failed to analyze GitHub profile. Please try again.",
+      );
+      setStatus("error");
     } finally {
       clearTimeout(thinkingTimer);
       setIsLoading(false);
@@ -65,13 +81,20 @@ export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
           <Input
             placeholder="https://github.com/username"
             value={url}
-            onChange={(event) => setUrl(event.target.value)}
-            className="h-11 border-slate-600 bg-slate-900/90 text-white placeholder:text-slate-500 focus-visible:border-emerald-400/70 focus-visible:ring-emerald-500/30"
+            onChange={(event) => {
+              setUrl(event.target.value);
+              if (!touched) return;
+              setError(null);
+            }}
+            onBlur={() => setTouched(true)}
+            className={`h-11 bg-slate-900/90 text-white placeholder:text-slate-500 focus-visible:border-emerald-400/70 focus-visible:ring-emerald-500/30 ${
+              showInlineError ? "border-rose-500/70" : "border-slate-600"
+            }`}
             disabled={isLoading}
           />
           <Button
             onClick={handleSubmit}
-            disabled={isLoading || !url}
+            disabled={isLoading || !cleanedInput || !isValidInput}
             className="emerald-edge h-11 min-w-[156px] bg-emerald-600 text-white hover:bg-emerald-500"
           >
             {isLoading ? (
@@ -84,16 +107,31 @@ export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
             )}
           </Button>
         </div>
+        <p className="text-xs text-slate-400">
+          Example: <span className="text-slate-300">https://github.com/octocat</span> or{" "}
+          <span className="text-slate-300">octocat</span>
+        </p>
+
+        {showInlineError ? (
+          <p className="text-sm text-rose-300">Use a full GitHub profile URL or a username only.</p>
+        ) : null}
 
         {error ? <p className="text-sm text-red-400">{error}</p> : null}
+
+        <AsyncState
+          state={status}
+          labels={{
+            calling: "Calling GitHub profile endpoint...",
+            thinking: "AI is thinking through your repository signal...",
+            loaded: "Profile analyzed successfully",
+            error: "GitHub profile analysis failed",
+          }}
+        />
 
         {isLoading ? (
           <div className="space-y-3 rounded-lg border border-slate-700/80 bg-slate-900/70 p-3 pt-4">
             <Skeleton className="h-4 w-3/4 bg-slate-800" />
             <Skeleton className="h-4 w-1/2 bg-slate-800" />
-            <p className="text-sm text-slate-400">
-              {status === "calling" ? "Calling GitHub profile endpoint..." : "AI is thinking through your repository signal..."}
-            </p>
           </div>
         ) : null}
       </CardContent>

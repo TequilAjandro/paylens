@@ -14,7 +14,7 @@ type EntryTab = "github" | "manual";
 
 const ENTRY_COPY = {
   titlePrefix: "PayLens",
-  titleAccent: "Fair Mirror",
+  titleAccent: "Market Mirror",
   subtitle: "Know your true market value with market-grounded signals from 49,000 developer profiles.",
   chips: [
     {

@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Check, Lightbulb } from "lucide-react";
 import type { WhatIfResponse } from "@/lib/types";
 import { getWhatIf } from "@/lib/api";
+import AsyncState from "@/components/ui/async-state";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface WhatIfSimulatorProps {
@@ -36,6 +37,7 @@ export default function WhatIfSimulator({
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [result, setResult] = useState<WhatIfResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<"idle" | "calling" | "thinking" | "loaded" | "error">("idle");
 
   const handleToggle = async (skill: string) => {
     const nextSelection = selectedSkills.includes(skill)
@@ -46,10 +48,13 @@ export default function WhatIfSimulator({
 
     if (nextSelection.length === 0) {
       setResult(null);
+      setStatus("idle");
       return;
     }
 
     setIsLoading(true);
+    setStatus("calling");
+    const thinkingTimer = setTimeout(() => setStatus("thinking"), 350);
     try {
       const response = await getWhatIf({
         current_skills: currentSkills,
@@ -59,9 +64,12 @@ export default function WhatIfSimulator({
         location,
       });
       setResult(response);
+      setStatus("loaded");
     } catch {
       setResult(MOCK_WHAT_IF);
+      setStatus("error");
     } finally {
+      clearTimeout(thinkingTimer);
       setIsLoading(false);
     }
   };
@@ -134,9 +142,16 @@ export default function WhatIfSimulator({
           </motion.p>
         ) : null}
 
-        {isLoading ? (
-          <p className="text-center text-sm text-slate-400 animate-pulse">Recalculating...</p>
-        ) : null}
+        <AsyncState
+          state={status}
+          labels={{
+            calling: "Calling what-if endpoint...",
+            thinking: "Recalculating with selected skills...",
+            loaded: "What-if scenario updated",
+            error: "Using fallback simulation data",
+          }}
+          className={isLoading ? "animate-pulse" : ""}
+        />
       </CardContent>
     </Card>
   );

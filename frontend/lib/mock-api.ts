@@ -34,6 +34,34 @@ const COMPANY_BASE_OFFER = {
   rappi: 39000,
 };
 
+export class MockApiTemporaryError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "MockApiTemporaryError";
+  }
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+export async function simulateMockApiBehavior(endpoint: string) {
+  const minLatency = Math.max(0, Number(process.env.MOCK_API_MIN_LATENCY_MS ?? 180));
+  const maxLatency = Math.max(minLatency, Number(process.env.MOCK_API_MAX_LATENCY_MS ?? 620));
+  const failureRate = clamp(Number(process.env.MOCK_API_FAILURE_RATE ?? 0), 0, 0.25);
+  const forcedFailures = (process.env.MOCK_API_FAIL_ENDPOINTS || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  const latency = Math.floor(Math.random() * (maxLatency - minLatency + 1)) + minLatency;
+  await new Promise((resolve) => setTimeout(resolve, latency));
+
+  if (forcedFailures.includes(endpoint) || (failureRate > 0 && Math.random() < failureRate)) {
+    throw new MockApiTemporaryError(`Simulated failure for ${endpoint}`);
+  }
+}
+
 function normalizeSkill(value: string): string {
   return value.trim().toLowerCase();
 }

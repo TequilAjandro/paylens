@@ -9,7 +9,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PayLens -- The Fair Mirror",
+  title: "PayLens -- Market Signal Intelligence",
   description: "Know your true market value. Powered by real data.",
 };
 

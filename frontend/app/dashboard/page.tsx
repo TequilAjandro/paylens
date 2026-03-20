@@ -14,6 +14,7 @@ import WhatIfSimulator from "@/components/dashboard/WhatIfSimulator";
 import SkillHeatmap from "@/components/dashboard/Heatmap";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import AsyncState from "@/components/ui/async-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Copy, Sparkles, Trophy } from "lucide-react";
 
@@ -63,6 +64,7 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadingStage, setLoadingStage] = useState<"calling" | "thinking" | "loaded">("calling");
   const [error, setError] = useState<string | null>(null);
+  const [showDetailsMobile, setShowDetailsMobile] = useState(false);
 
   useEffect(() => {
     const loadDiagnosis = async () => {
@@ -132,7 +134,7 @@ export default function DashboardPage() {
       <div className="pointer-events-none absolute -right-20 top-20 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
 
       <div className="relative z-10 mx-auto max-w-6xl space-y-8">
-        <AnimatedSection delay={0}>
+        <AnimatedSection index={0}>
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Market Diagnosis</p>
             <h1 className="text-3xl font-bold text-white sm:text-4xl">
@@ -150,13 +152,13 @@ export default function DashboardPage() {
 
         {isLoading || !diagnosis ? (
           <div className="space-y-5">
-            <p className="text-sm text-slate-300">
-              {loadingStage === "calling"
-                ? "Calling diagnosis API..."
-                : loadingStage === "thinking"
-                  ? "AI is thinking through your market profile..."
-                  : "Loaded"}
-            </p>
+            <AsyncState
+              state={loadingStage}
+              labels={{
+                calling: "Calling diagnosis API...",
+                thinking: "AI is thinking through your market profile...",
+              }}
+            />
             <Skeleton className="h-10 w-72 rounded-xl bg-slate-800/80" />
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               <Skeleton className="h-[220px] rounded-xl bg-slate-800/80" />
@@ -176,11 +178,36 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="space-y-5">
-            <AnimatedSection delay={0.3}>
+            <AnimatedSection index={1}>
+              <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                <SummaryStat
+                  label="Annual Upside"
+                  value={`$${diagnosis.salary_diagnosis.gap_annual.toLocaleString()}`}
+                  tone="emerald"
+                />
+                <SummaryStat
+                  label="Market Position"
+                  value={`Top ${diagnosis.peer_comparison.overall_percentile}%`}
+                  tone="cyan"
+                />
+                <SummaryStat
+                  label="Potential Roles"
+                  value={diagnosis.salary_diagnosis.potential_job_count.toLocaleString()}
+                  tone="blue"
+                />
+                <SummaryStat
+                  label="Best Next Skill"
+                  value={diagnosis.salary_diagnosis.key_missing_skill}
+                  tone="amber"
+                />
+              </section>
+            </AnimatedSection>
+
+            <AnimatedSection index={2}>
               <SalaryDiagnosis diagnosis={diagnosis} />
             </AnimatedSection>
 
-            <AnimatedSection delay={1.5}>
+            <AnimatedSection index={3}>
               <ScoreGauge
                 score={diagnosis.market_score.overall}
                 breakdown={diagnosis.market_score.breakdown}
@@ -188,85 +215,98 @@ export default function DashboardPage() {
               />
             </AnimatedSection>
 
-            <AnimatedSection delay={2.5}>
-              <SkillRadarChart peerComparison={diagnosis.peer_comparison} />
-            </AnimatedSection>
+            <div className="md:hidden">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowDetailsMobile((value) => !value)}
+                className="w-full border-slate-600/80 bg-slate-900/55 text-slate-100 hover:bg-slate-800/70"
+              >
+                {showDetailsMobile ? "Hide deeper analysis" : "Show deeper analysis"}
+              </Button>
+            </div>
 
-            <AnimatedSection delay={3.5}>
-              <OpportunityCards opportunities={diagnosis.opportunities} />
-            </AnimatedSection>
+            <div className={`${showDetailsMobile ? "space-y-5" : "hidden"} md:space-y-5 md:block`}>
+              <AnimatedSection index={4}>
+                <SkillRadarChart peerComparison={diagnosis.peer_comparison} />
+              </AnimatedSection>
 
-            <AnimatedSection delay={4.5}>
-              <WhatIfSimulator
-                currentSkills={profile.skills}
-                seniority={profile.seniority}
-                location={profile.location}
-                suggestedSkills={suggestedSkills}
-              />
-            </AnimatedSection>
+              <AnimatedSection index={5}>
+                <OpportunityCards opportunities={diagnosis.opportunities} />
+              </AnimatedSection>
 
-            <AnimatedSection delay={5.0}>
-              <SkillHeatmap entries={diagnosis.demand_heatmap} />
-            </AnimatedSection>
+              <AnimatedSection index={6}>
+                <WhatIfSimulator
+                  currentSkills={profile.skills}
+                  seniority={profile.seniority}
+                  location={profile.location}
+                  suggestedSkills={suggestedSkills}
+                />
+              </AnimatedSection>
 
-            <AnimatedSection delay={5.5}>
-              <Card className="relative overflow-hidden rounded-2xl border-emerald-400/30 bg-gradient-to-br from-emerald-950/50 via-slate-900/85 to-cyan-950/35 shadow-[0_24px_70px_rgba(16,185,129,0.22)]">
-                <div className="pointer-events-none absolute -right-10 -top-16 h-40 w-40 rounded-full bg-emerald-400/15 blur-3xl" />
-                <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center gap-2 text-white">
-                    <Sparkles className="h-5 w-5 text-emerald-300" />
-                    Market Summary
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex flex-wrap gap-2">
-                    <span className="rounded-md border border-emerald-400/40 bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-100">
-                      ${diagnosis.salary_diagnosis.gap_annual.toLocaleString()} annual upside
-                    </span>
-                    <span className="rounded-md border border-cyan-400/40 bg-cyan-500/15 px-2.5 py-1 text-xs font-semibold text-cyan-100">
-                      Top {diagnosis.peer_comparison.overall_percentile}%
-                    </span>
-                    <span className="rounded-md border border-blue-400/40 bg-blue-500/15 px-2.5 py-1 text-xs font-semibold text-blue-100">
-                      {diagnosis.salary_diagnosis.potential_job_count} roles unlocked
-                    </span>
-                  </div>
-                  <p className="leading-relaxed text-slate-100/95">{diagnosis.market_summary}</p>
-                </CardContent>
-              </Card>
-            </AnimatedSection>
+              <AnimatedSection index={7}>
+                <SkillHeatmap entries={diagnosis.demand_heatmap} />
+              </AnimatedSection>
 
-            <AnimatedSection delay={6.0}>
-              <Card className="relative overflow-hidden rounded-2xl border-blue-400/30 bg-gradient-to-br from-blue-950/60 via-[#0a1730] to-slate-950 shadow-[0_24px_75px_rgba(59,130,246,0.2)]">
-                <div className="pointer-events-none absolute -left-12 bottom-0 h-44 w-44 rounded-full bg-blue-400/15 blur-3xl" />
-                <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center justify-between gap-2 text-white">
-                    <span className="flex items-center gap-2">
-                      <Trophy className="h-5 w-5 text-blue-200" />
-                      Your Value Statement
-                    </span>
-                    <span className="rounded-md border border-blue-300/35 bg-blue-500/15 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-blue-100">
-                      Final Output
-                    </span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <p className="border-l-2 border-blue-300/60 pl-4 text-[15px] italic leading-relaxed text-blue-50">
-                    &quot;{diagnosis.value_narrative}&quot;
-                  </p>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => void handleCopyNarrative()}
-                    className="w-full border-blue-300/40 bg-blue-500/10 text-blue-50 hover:bg-blue-500/20 sm:w-auto"
-                  >
-                    <Copy className="mr-2 h-4 w-4" />
-                    Copy to clipboard
-                  </Button>
-                </CardContent>
-              </Card>
-            </AnimatedSection>
+              <AnimatedSection index={8}>
+                <Card className="relative overflow-hidden rounded-2xl border-emerald-400/30 bg-gradient-to-br from-emerald-950/50 via-slate-900/85 to-cyan-950/35 shadow-[0_24px_70px_rgba(16,185,129,0.22)]">
+                  <div className="pointer-events-none absolute -right-10 -top-16 h-40 w-40 rounded-full bg-emerald-400/15 blur-3xl" />
+                  <CardHeader className="pb-2">
+                    <CardTitle className="flex items-center gap-2 text-white">
+                      <Sparkles className="h-5 w-5 text-emerald-300" />
+                      Market Summary
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex flex-wrap gap-2">
+                      <span className="rounded-md border border-emerald-400/40 bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-100">
+                        ${diagnosis.salary_diagnosis.gap_annual.toLocaleString()} annual upside
+                      </span>
+                      <span className="rounded-md border border-cyan-400/40 bg-cyan-500/15 px-2.5 py-1 text-xs font-semibold text-cyan-100">
+                        Top {diagnosis.peer_comparison.overall_percentile}%
+                      </span>
+                      <span className="rounded-md border border-blue-400/40 bg-blue-500/15 px-2.5 py-1 text-xs font-semibold text-blue-100">
+                        {diagnosis.salary_diagnosis.potential_job_count} roles unlocked
+                      </span>
+                    </div>
+                    <p className="leading-relaxed text-slate-100/95">{diagnosis.market_summary}</p>
+                  </CardContent>
+                </Card>
+              </AnimatedSection>
 
-            <AnimatedSection delay={6.5}>
+              <AnimatedSection index={9}>
+                <Card className="relative overflow-hidden rounded-2xl border-blue-400/30 bg-gradient-to-br from-blue-950/60 via-[#0a1730] to-slate-950 shadow-[0_24px_75px_rgba(59,130,246,0.2)]">
+                  <div className="pointer-events-none absolute -left-12 bottom-0 h-44 w-44 rounded-full bg-blue-400/15 blur-3xl" />
+                  <CardHeader className="pb-2">
+                    <CardTitle className="flex items-center justify-between gap-2 text-white">
+                      <span className="flex items-center gap-2">
+                        <Trophy className="h-5 w-5 text-blue-200" />
+                        Your Value Statement
+                      </span>
+                      <span className="rounded-md border border-blue-300/35 bg-blue-500/15 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-blue-100">
+                        Final Output
+                      </span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="border-l-2 border-blue-300/60 pl-4 text-[15px] italic leading-relaxed text-blue-50">
+                      &quot;{diagnosis.value_narrative}&quot;
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => void handleCopyNarrative()}
+                      className="w-full border-blue-300/40 bg-blue-500/10 text-blue-50 hover:bg-blue-500/20 sm:w-auto"
+                    >
+                      <Copy className="mr-2 h-4 w-4" />
+                      Copy to clipboard
+                    </Button>
+                  </CardContent>
+                </Card>
+              </AnimatedSection>
+            </div>
+
+            <AnimatedSection index={10}>
               <div className="flex justify-center pt-2">
                 <Button
                   type="button"
@@ -281,5 +321,31 @@ export default function DashboardPage() {
         )}
       </div>
     </main>
+  );
+}
+
+function SummaryStat({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone: "emerald" | "cyan" | "blue" | "amber";
+}) {
+  const toneClass: Record<"emerald" | "cyan" | "blue" | "amber", string> = {
+    emerald: "border-emerald-400/35 bg-emerald-500/10 text-emerald-100",
+    cyan: "border-cyan-400/35 bg-cyan-500/10 text-cyan-100",
+    blue: "border-blue-400/35 bg-blue-500/10 text-blue-100",
+    amber: "border-amber-400/35 bg-amber-500/10 text-amber-100",
+  };
+
+  return (
+    <Card className={`rounded-xl border ${toneClass[tone]}`}>
+      <CardContent className="space-y-1 p-3 sm:p-4">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-300">{label}</p>
+        <p className="text-sm font-semibold sm:text-base">{value}</p>
+      </CardContent>
+    </Card>
   );
 }

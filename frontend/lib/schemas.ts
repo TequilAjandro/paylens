@@ -14,7 +14,21 @@ export const ManualProfileSchema = z.object({
 });
 
 export const GitHubProfileInputSchema = z.object({
-  github_url: z.string().url(),
+  github_url: z.string().url().optional(),
+  github_username: z.string().min(1).optional(),
+});
+
+export const GitHubProfileRequestSchema = GitHubProfileInputSchema.refine(
+  (value) => Boolean(value.github_url || value.github_username),
+  {
+    message: "github_username or github_url is required",
+    path: ["github_username"],
+  },
+);
+
+export const ConversationMessageSchema = z.object({
+  role: z.enum(["user", "assistant"]),
+  content: z.string().min(1),
 });
 
 export const GitHubProfileOutputSchema = z.object({
@@ -102,8 +116,11 @@ export const DiagnosisResponseSchema = z.object({
 });
 
 export const WhatIfRequestSchema = z.object({
-  user_profile: ManualProfileSchema,
-  target_skill: z.string(),
+  current_skills: z.array(z.string()).max(30),
+  hypothetical_add: z.array(z.string()).max(10),
+  hypothetical_remove: z.array(z.string()).max(10),
+  seniority: SeniorityEnum,
+  location: z.string().min(2).max(50),
 });
 
 export const WhatIfResponseSchema = z.object({
@@ -120,17 +137,10 @@ export const WhatIfResponseSchema = z.object({
 
 export const NegotiateRequestSchema = z.object({
   company: CompanyEnum,
-  role_title: z.string(),
-  current_salary: z.number(),
-  desired_salary: z.number(),
-  user_argument: z.string(),
-  conversation_history: z.array(
-    z.object({
-      role: z.enum(["user", "assistant"]),
-      content: z.string(),
-    }),
-  ),
-  profile_summary: z.string(),
+  role: z.string().min(2).max(120),
+  user_profile: z.record(z.string(), z.unknown()),
+  conversation_history: z.array(ConversationMessageSchema).max(30),
+  user_message: z.string().min(1).max(2000),
 });
 
 export const NegotiateResponseSchema = z.object({
@@ -171,4 +181,13 @@ export const NegotiationReportSchema = z.object({
       impact_usd: z.number(),
     }),
   ),
+});
+
+export const NegotiationReportRequestSchema = z.object({
+  company: CompanyEnum.optional(),
+  role: z.string().min(2).max(120).optional(),
+  user_profile: z.record(z.string(), z.unknown()).optional(),
+  full_conversation: z.array(ConversationMessageSchema).optional(),
+  final_offer: z.number().positive(),
+  initial_offer: z.number().positive(),
 });

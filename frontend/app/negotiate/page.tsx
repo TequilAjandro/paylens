@@ -7,6 +7,7 @@ import NegotiationReport from "@/components/negotiate/NegotiationReport";
 import { getNegotiationReport } from "@/lib/api";
 import type { ManualProfile, NegotiationReport as NegotiationReportType } from "@/lib/types";
 import { DEMO_PROFILE } from "@/data/demo-data";
+import AsyncState from "@/components/ui/async-state";
 
 type ChatMessage = {
   role: "user" | "assistant";
@@ -58,6 +59,7 @@ function toNegotiationProfile(profile: unknown): ManualProfile {
 export default function NegotiatePage() {
   const [selectedCompany, setSelectedCompany] = useState<NegotiationCompany | null>(null);
   const [report, setReport] = useState<NegotiationReportType | null>(null);
+  const [reportStatus, setReportStatus] = useState<"idle" | "calling" | "thinking" | "loaded" | "error">("idle");
 
   const userProfile = useMemo(() => {
     if (typeof window === "undefined") return DEMO_PROFILE;
@@ -74,6 +76,9 @@ export default function NegotiatePage() {
   const handleNegotiationComplete = async (conversation: ChatMessage[], finalOffer: number, initialOffer: number) => {
     if (!selectedCompany) return;
 
+    setReportStatus("calling");
+    const thinkingTimer = setTimeout(() => setReportStatus("thinking"), 420);
+
     try {
       const response = await getNegotiationReport({
         company: selectedCompany.id,
@@ -84,6 +89,7 @@ export default function NegotiatePage() {
         initial_offer: initialOffer,
       });
       setReport(response);
+      setReportStatus("loaded");
     } catch {
       const base = ROLE_BASELINE_SALARY[selectedCompany.id];
       const resolvedInitial = initialOffer || base;
@@ -109,6 +115,9 @@ export default function NegotiatePage() {
           { skill: "Observability", impact_usd: 5000 },
         ],
       });
+      setReportStatus("error");
+    } finally {
+      clearTimeout(thinkingTimer);
     }
   };
 
@@ -121,12 +130,27 @@ export default function NegotiatePage() {
   }
 
   return (
-    <NegotiationChat
-      companyId={selectedCompany.id}
-      companyName={selectedCompany.name}
-      roleTitle={selectedCompany.role}
-      userProfile={userProfile}
-      onComplete={handleNegotiationComplete}
-    />
+    <>
+      {reportStatus !== "idle" && reportStatus !== "loaded" ? (
+        <div className="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-4">
+          <div className="rounded-lg border border-slate-600/80 bg-slate-950/80 px-3 py-2 backdrop-blur-sm">
+            <AsyncState
+              state={reportStatus}
+              labels={{
+                calling: "Calling report endpoint...",
+                thinking: "Generating negotiation report...",
+              }}
+            />
+          </div>
+        </div>
+      ) : null}
+      <NegotiationChat
+        companyId={selectedCompany.id}
+        companyName={selectedCompany.name}
+        roleTitle={selectedCompany.role}
+        userProfile={userProfile}
+        onComplete={handleNegotiationComplete}
+      />
+    </>
   );
 }

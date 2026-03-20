@@ -19,24 +19,36 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
 const API_TIMEOUT_MS = 12_000;
 
 async function apiCall<T>(endpoint: string, body: unknown, parse: (input: unknown) => T): Promise<T> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+  const baseCandidates = Array.from(new Set([API_BASE, ""]));
+  let lastError: unknown;
 
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-    signal: controller.signal,
-  });
-  clearTimeout(timeout);
+  for (const base of baseCandidates) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`API error ${response.status}: ${errorText}`);
+    try {
+      const response = await fetch(`${base}${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API error ${response.status}: ${errorText}`);
+      }
+
+      const payload = await response.json();
+      return parse(payload);
+    } catch (error) {
+      lastError = error;
+    } finally {
+      clearTimeout(timeout);
+    }
   }
 
-  const payload = await response.json();
-  return parse(payload);
+  throw lastError ?? new Error("Unable to reach API");
 }
 
 export type ManualProfileResponse = ManualProfile & {
@@ -53,13 +65,14 @@ export type NegotiateRequest = {
 
 export function analyzeGitHub(githubUrl: string) {
   const cleaned = githubUrl.trim().replace(/\/$/, "");
+  const isUrl = /^https?:\/\/github\.com\//i.test(cleaned);
   const username = cleaned.replace(/^https?:\/\/github\.com\//i, "").split("/")[0];
 
   return apiCall<GitHubProfileOutput>(
     "/api/profile/github",
     {
       github_username: username || cleaned,
-      github_url: cleaned,
+      ...(isUrl ? { github_url: cleaned } : {}),
     },
     (payload) => GitHubProfileOutputSchema.parse(payload),
   );
@@ -101,10 +114,22 @@ export async function checkHealth(): Promise<{
   gemini: boolean;
   groq: boolean;
 }> {
-  const response = await fetch(`${API_BASE}/health`);
-  return response.json() as Promise<{
-    status: string;
-    gemini: boolean;
-    groq: boolean;
-  }>;
+  const baseCandidates = Array.from(new Set([API_BASE, ""]));
+  let lastError: unknown;
+
+  for (const base of baseCandidates) {
+    try {
+      const response = await fetch(`${base}/health`);
+      if (!response.ok) throw new Error(`Health check failed: ${response.status}`);
+      return response.json() as Promise<{
+        status: string;
+        gemini: boolean;
+        groq: boolean;
+      }>;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  throw lastError ?? new Error("Unable to reach health endpoint");
 }

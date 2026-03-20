@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Loader2, X } from "lucide-react";
+import { CheckCircle2, Loader2, X } from "lucide-react";
 import type { ManualProfile } from "@/lib/types";
 import { submitManualProfile } from "@/lib/api";
+import AsyncState from "@/components/ui/async-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -68,6 +69,7 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<"idle" | "calling" | "thinking" | "loaded">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
   const filteredSkills = useMemo(
     () =>
@@ -89,7 +91,13 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
     setSkills((prev) => prev.filter((item) => item !== skill));
   };
 
+  const skillsReady = skills.length > 0;
+  const roleReady = currentRole.trim().length >= 2;
+  const minimumReady = skillsReady && roleReady;
+
   const handleSubmit = async () => {
+    setAttemptedSubmit(true);
+
     if (skills.length === 0) {
       setError("Select at least one skill");
       return;
@@ -115,9 +123,15 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
       });
       setStatus("loaded");
       onProfileReady(profile);
-    } catch {
-      setError("Failed to submit profile. Please try again.");
-      setStatus("idle");
+    } catch (requestError) {
+      const message = requestError instanceof Error ? requestError.message : "";
+      const contractError = /API error 422/i.test(message);
+      setError(
+        contractError
+          ? "Some fields are invalid for the API contract. Check required values."
+          : "Failed to submit profile. Please try again.",
+      );
+      setStatus("error");
     } finally {
       clearTimeout(thinkingTimer);
       setIsLoading(false);
@@ -127,10 +141,28 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
   return (
     <Card className="glass-panel rounded-xl border-slate-700/80">
       <CardContent className="space-y-6 p-6 sm:p-7">
+        <div className="rounded-lg border border-slate-700/70 bg-slate-900/55 p-3">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Minimum Required</p>
+          <div className="mt-2 space-y-1 text-sm">
+            <p className={skillsReady ? "text-emerald-200" : "text-slate-400"}>
+              {skillsReady ? <CheckCircle2 className="mr-1 inline h-3.5 w-3.5" /> : null}
+              At least one skill selected
+            </p>
+            <p className={roleReady ? "text-emerald-200" : "text-slate-400"}>
+              {roleReady ? <CheckCircle2 className="mr-1 inline h-3.5 w-3.5" /> : null}
+              Current role (2+ characters)
+            </p>
+          </div>
+        </div>
+
         <div className="space-y-2">
           <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Skills</label>
 
-          <div className="flex min-h-[34px] flex-wrap gap-1.5 rounded-lg border border-slate-700/70 bg-slate-900/60 p-2">
+          <div
+            className={`flex min-h-[34px] flex-wrap gap-1.5 rounded-lg bg-slate-900/60 p-2 ${
+              attemptedSubmit && !skillsReady ? "border border-rose-500/60" : "border border-slate-700/70"
+            }`}
+          >
             {skills.map((skill) => (
               <Badge
                 key={skill}
@@ -231,8 +263,13 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
             <Input
               placeholder="Backend Developer"
               value={currentRole}
-              onChange={(event) => setCurrentRole(event.target.value)}
-              className="h-11 border-slate-600 bg-slate-900/90 text-white placeholder:text-slate-500"
+              onChange={(event) => {
+                setCurrentRole(event.target.value);
+                if (error) setError(null);
+              }}
+              className={`h-11 bg-slate-900/90 text-white placeholder:text-slate-500 ${
+                attemptedSubmit && !roleReady ? "border-rose-500/70" : "border-slate-600"
+              }`}
               disabled={isLoading}
             />
           </div>
@@ -240,11 +277,17 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
 
         {error ? <p className="text-sm text-red-400">{error}</p> : null}
 
-        <Button
-          onClick={handleSubmit}
-          disabled={isLoading}
-          className="emerald-edge h-11 w-full bg-emerald-600 text-white hover:bg-emerald-500"
-        >
+        <AsyncState
+          state={status}
+          labels={{
+            calling: "Calling profile API...",
+            thinking: "Validating profile and preparing diagnosis context...",
+            loaded: "Profile submitted successfully",
+            error: "Profile submission failed",
+          }}
+        />
+
+        <Button onClick={handleSubmit} disabled={isLoading || !minimumReady} className="emerald-edge h-11 w-full bg-emerald-600 text-white hover:bg-emerald-500">
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
