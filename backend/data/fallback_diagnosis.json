@@ -1,0 +1,50 @@
+{
+  "salary_diagnosis": {
+    "current_range": {"min": 38000, "max": 45000, "currency": "USD"},
+    "potential_range": {"min": 62000, "max": 78000, "currency": "USD"},
+    "gap_annual": 24000,
+    "gap_3year": 72000,
+    "current_job_count": 127,
+    "potential_job_count": 347,
+    "job_count_increase_pct": 173,
+    "key_missing_skill": "Kubernetes",
+    "secondary_missing_skills": ["CI/CD", "AWS"]
+  },
+  "market_score": {
+    "overall": 73,
+    "breakdown": {"skill_demand": 78, "skill_breadth": 65, "market_fit": 76, "growth_potential": 72}
+  },
+  "skills_analysis": [
+    {"skill_name": "Python", "current_level": "advanced", "market_demand": "stable", "percentile_rank": 72, "salary_impact_usd": 8500, "trend_direction": "stable", "trend_growth_pct": 5},
+    {"skill_name": "React", "current_level": "intermediate", "market_demand": "stable", "percentile_rank": 55, "salary_impact_usd": 6200, "trend_direction": "stable", "trend_growth_pct": 8},
+    {"skill_name": "SQL", "current_level": "intermediate", "market_demand": "stable", "percentile_rank": 48, "salary_impact_usd": 4800, "trend_direction": "stable", "trend_growth_pct": 3},
+    {"skill_name": "Docker", "current_level": "beginner", "market_demand": "rising", "percentile_rank": 35, "salary_impact_usd": 7100, "trend_direction": "rising", "trend_growth_pct": 25}
+  ],
+  "peer_comparison": {
+    "axes": ["Frontend", "Backend", "DevOps", "Data", "AI/ML", "Soft Skills"],
+    "user_values": [3, 8, 4, 6, 2, 7],
+    "peer_avg_values": [6, 7, 6, 5, 4, 6],
+    "seniority_group": "mid-level",
+    "region": "Mexico",
+    "overall_percentile": 34,
+    "percentile_label": "Top 34% of mid-level LATAM developers"    
+  },
+  "opportunities": [
+    {"skill": "Kubernetes", "unlock_count": 47, "salary_increase_pct": 30, "salary_increase_usd": 12000, "demand_trend": "rising", "trend_growth_pct": 140, "difficulty": "medium", "time_to_learn": "2-3 months"},
+    {"skill": "AWS", "unlock_count": 38, "salary_increase_pct": 25, "salary_increase_usd": 10000, "demand_trend": "rising", "trend_growth_pct": 18, "difficulty": "medium", "time_to_learn": "3-4 months"},
+    {"skill": "TypeScript", "unlock_count": 29, "salary_increase_pct": 15, "salary_increase_usd": 6000, "demand_trend": "rising", "trend_growth_pct": 35, "difficulty": "low", "time_to_learn": "1-2 months"}
+  ],
+  "demand_heatmap": [
+    {"skill": "Kubernetes", "trend": "rising", "growth_pct": 140, "color": "green"},
+    {"skill": "TypeScript", "trend": "rising", "growth_pct": 35, "color": "green"},
+    {"skill": "CI/CD", "trend": "rising", "growth_pct": 30, "color": "green"},
+    {"skill": "Docker", "trend": "rising", "growth_pct": 25, "color": "green"},
+    {"skill": "Python", "trend": "stable", "growth_pct": 5, "color": "yellow"},
+    {"skill": "React", "trend": "stable", "growth_pct": 8, "color": "yellow"},
+    {"skill": "SQL", "trend": "stable", "growth_pct": 3, "color": "yellow"},
+    {"skill": "Angular", "trend": "declining", "growth_pct": -8, "color": "red"},
+    {"skill": "jQuery", "trend": "declining", "growth_pct": -15, "color": "red"}
+  ],
+  "market_summary": "Carlos, your Python expertise places you in the top 28% of backend developers in Mexico, but your lack of cloud infrastructure skills (Kubernetes, AWS) is costing you approximately $24,000 per year. The LATAM market is shifting rapidly toward cloud-native roles, and your current skill set matches 127 positions while adding just one strategic skill would unlock 347.",
+  "value_narrative": "As a mid-level backend engineer with 3 years of experience, I specialize in Python APIs and data processing, consistently delivering reliable systems. My expertise in FastAPI and SQL positions me to contribute immediately to backend services, and I am actively expanding into cloud infrastructure to drive even greater impact."
+}
