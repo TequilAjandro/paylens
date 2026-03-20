@@ -1,0 +1,102 @@
+[
+  {
+    "company_id": "mercadolibre",
+    "company_name": "MercadoLibre",
+    "description": "Latin America's largest e-commerce and fintech platform. 200K+ requests/sec, microservices at massive scale.",
+    "headquarters": "Buenos Aires, Argentina",
+    "latam_offices": ["Buenos Aires", "Sao Paulo", "CDMX", "Bogota", "Santiago"],
+    "engineering_size": "5000+",
+    "tech_stack": ["Java", "Go", "Kotlin", "Kubernetes", "AWS", "Kafka", "React"],
+    "culture_values": ["Scale", "Technical excellence", "Move fast", "Data-driven"],
+    "negotiation_style": "Demanding but fair. Values production-scale experience. Docker local != Kubernetes production.",
+    "roles": [
+      {
+        "title": "Senior Backend Engineer",
+        "salary_range_usd": {"min": 55000, "max": 85000},
+        "required_skills": ["Java or Go or Python", "Kubernetes", "Microservices", "AWS"],
+        "nice_to_have": ["Kafka", "System Design", "Monitoring/Observability"]
+      },
+      {
+        "title": "DevOps Engineer",
+        "salary_range_usd": {"min": 60000, "max": 90000},
+        "required_skills": ["Kubernetes", "Terraform", "AWS", "CI/CD"],
+        "nice_to_have": ["Prometheus", "Grafana", "Service Mesh"]
+      }
+    ]
+  },
+  {
+    "company_id": "globant",
+    "company_name": "Globant",
+    "description": "Major LATAM software services company working with Fortune 500 clients. Focus on digital transformation.",
+    "headquarters": "Buenos Aires, Argentina",
+    "latam_offices": ["Buenos Aires", "CDMX", "Bogota", "Sao Paulo", "Lima", "Montevideo"],
+    "engineering_size": "25000+",
+    "tech_stack": ["React", "Node.js", "Java", "Python", "AWS", "Azure"],
+    "culture_values": ["Versatility", "Client communication", "Agile methodology", "Continuous learning"],
+    "negotiation_style": "Values versatility and communication. Client-facing experience gets premium. Certifications matter.",
+    "roles": [
+      {
+        "title": "Full Stack Developer",
+        "salary_range_usd": {"min": 35000, "max": 65000},
+        "required_skills": ["React or Angular", "Node.js or Python", "SQL", "Agile"],
+        "nice_to_have": ["TypeScript", "AWS", "Client-facing experience"]
+      },
+      {
+        "title": "Python Engineer",
+        "salary_range_usd": {"min": 38000, "max": 68000},
+        "required_skills": ["Python", "FastAPI or Django", "PostgreSQL", "Docker"],
+        "nice_to_have": ["AWS", "CI/CD", "Machine Learning basics"]
+      }
+    ]
+  },
+  {
+    "company_id": "nubank",
+    "company_name": "Nubank",
+    "description": "Latin America's largest digital bank. Extreme reliability requirements. Functional programming culture.",
+    "headquarters": "Sao Paulo, Brazil",
+    "latam_offices": ["Sao Paulo", "CDMX", "Bogota", "Buenos Aires"],
+    "engineering_size": "3000+",
+    "tech_stack": ["Clojure", "Kotlin", "Datomic", "Kafka", "AWS", "Python"],
+    "culture_values": ["Functional programming", "Data integrity", "Security-first", "Excellence"],
+    "negotiation_style": "Highest-paying LATAM company but demands excellence. Values security awareness and data modeling.",
+    "roles": [
+      {
+        "title": "Backend Engineer",
+        "salary_range_usd": {"min": 50000, "max": 90000},
+        "required_skills": ["Clojure or Kotlin or Python", "SQL", "Microservices", "Testing"],
+        "nice_to_have": ["Functional programming", "Fintech domain", "Security/Compliance"]
+      },
+      {
+        "title": "Data Engineer",
+        "salary_range_usd": {"min": 55000, "max": 95000},
+        "required_skills": ["Python", "SQL", "Spark or Kafka", "Data Modeling"],
+        "nice_to_have": ["Clojure", "Datomic", "ML pipelines"]
+      }
+    ]
+  },
+  {
+    "company_id": "rappi",
+    "company_name": "Rappi",
+    "description": "Latin America's leading super-app. Delivery, payments, financial services. Millions of daily transactions.",
+    "headquarters": "Bogota, Colombia",
+    "latam_offices": ["Bogota", "CDMX", "Sao Paulo", "Santiago", "Lima", "Buenos Aires"],
+    "engineering_size": "2000+",
+    "tech_stack": ["Kotlin", "Python", "React Native", "Node.js", "AWS", "Kubernetes"],
+    "culture_values": ["Speed of execution", "Startup mentality", "Full-stack versatility", "Move fast, break things"],
+    "negotiation_style": "Values speed and versatility over deep specialization. Mobile and real-time experience gets premium.",
+    "roles": [
+      {
+        "title": "Full Stack Developer",
+        "salary_range_usd": {"min": 32000, "max": 60000},
+        "required_skills": ["React or React Native", "Node.js or Python", "SQL", "Docker"],
+        "nice_to_have": ["Kotlin", "Real-time systems", "Mobile dev"]
+      },
+      {
+        "title": "Backend Engineer",
+        "salary_range_usd": {"min": 38000, "max": 70000},
+        "required_skills": ["Python or Kotlin", "Microservices", "PostgreSQL", "Docker"],
+        "nice_to_have": ["Kubernetes", "Kafka", "AWS", "Real-time processing"]
+      }
+    ]
+  }
+]
