@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { getDiagnosis } from "@/lib/api";
 import type { DiagnosisResponse, GitHubProfileOutput, ManualProfile } from "@/lib/types";
 import { DEMO_DIAGNOSIS, DEMO_PROFILE } from "@/data/demo-data";
+import { useDemoMode } from "@/lib/use-demo-mode";
 import AnimatedSection from "@/components/dashboard/AnimatedSection";
 import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
 import SalaryDiagnosis from "@/components/dashboard/SalaryDiagnosis";
@@ -82,7 +83,17 @@ export default function DashboardPage() {
   const [showDetailsMobile, setShowDetailsMobile] = useState(false);
   const { currency, setCurrency } = useCurrency();
 
+  const isDemo = useDemoMode();
+
   useEffect(() => {
+    if (isDemo) {
+      setProfile(DEMO_PROFILE);
+      setDiagnosis(DEMO_DIAGNOSIS);
+      setLoadingStage("loaded");
+      setIsLoading(false);
+      return;
+    }
+
     const loadDiagnosis = async () => {
       setIsLoading(true);
       setLoadingStage("calling");
@@ -123,7 +134,7 @@ export default function DashboardPage() {
     };
 
     void loadDiagnosis();
-  }, []);
+  }, [isDemo]);
 
   const suggestedSkills = useMemo(() => {
     if (!diagnosis) return DEFAULT_SUGGESTED_SKILLS;
@@ -282,6 +293,7 @@ export default function DashboardPage() {
                     location={profile.location}
                     suggestedSkills={suggestedSkills}
                     currency={currency}
+                    isDemo={isDemo}
                   />
                 </section>
               </AnimatedSection>
@@ -365,7 +377,7 @@ export default function DashboardPage() {
               <div className="flex justify-center pt-2">
                 <Button
                   type="button"
-                  onClick={() => router.push("/negotiate")}
+                  onClick={() => router.push(`/negotiate${isDemo ? "?demo=true" : ""}`)}
                   className="rounded-xl border border-rose-300/40 bg-rose-600 px-6 py-6 text-base font-semibold text-white shadow-[0_18px_45px_rgba(225,29,72,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-rose-500"
                 >
                   Practice Salary Negotiation

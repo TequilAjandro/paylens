@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fira_Code, Fira_Sans } from "next/font/google";
 import "./globals.css";
+import DemoBadge from "@/components/ui/demo-badge";
 
 const firaSans = Fira_Sans({
   subsets: ["latin"],
@@ -26,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${firaSans.variable} ${firaCode.variable} font-sans`}>
+        <DemoBadge />
         {children}
       </body>
     </html>

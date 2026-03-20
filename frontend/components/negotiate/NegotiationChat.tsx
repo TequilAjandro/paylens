@@ -28,6 +28,7 @@ interface NegotiationChatProps {
   onCurrencyChange: (currency: DisplayCurrency) => void;
   reportStatus: "idle" | "calling" | "thinking" | "loaded" | "error";
   onComplete: (conversation: ChatMessage[], finalOffer: number, initialOffer: number) => void;
+  isDemo?: boolean;
 }
 
 type NegotiateApiResponse = {
@@ -64,6 +65,7 @@ export default function NegotiationChat({
   onCurrencyChange,
   reportStatus,
   onComplete,
+  isDemo = false,
 }: NegotiationChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -86,6 +88,19 @@ export default function NegotiationChat({
       setRequestPhase("calling");
       setError(null);
       const thinkingTimer = setTimeout(() => setRequestPhase("thinking"), 420);
+
+      if (isDemo) {
+        clearTimeout(thinkingTimer);
+        const fallbackOffer = OPENING_OFFERS[companyId];
+        setMessages([{ role: "assistant", content: FALLBACK_OPENERS[companyId] }]);
+        setCurrentOffer(fallbackOffer);
+        setInitialOffer(fallbackOffer);
+        setTurnNumber(1);
+        setError("Demo mode — using simulated negotiation responses.");
+        setRequestPhase("idle");
+        setLoading(false);
+        return;
+      }
 
       try {
         const response = (await negotiate({
@@ -139,6 +154,27 @@ export default function NegotiationChat({
     setError(null);
     setInput("");
     const thinkingTimer = setTimeout(() => setRequestPhase("thinking"), 420);
+
+    if (isDemo) {
+      clearTimeout(thinkingTimer);
+      const base = OPENING_OFFERS[companyId];
+      const offerBump = Math.round(Math.max(500, base * 0.02));
+      const candidate = Math.min(base + offerBump * (turnNumber + 1), base + 6000);
+      const fallbackReply =
+        "I can move slightly based on your argument, but I need stronger evidence tied to measurable outcomes and scope.";
+      const merged = [...nextMessages, { role: "assistant" as const, content: fallbackReply }];
+      setMessages(merged);
+      setCurrentOffer(candidate);
+      setTurnNumber((value) => value + 1);
+      if (initialOffer === 0) setInitialOffer(base);
+      if (turnNumber + 1 >= 5) {
+        setIsComplete(true);
+      }
+      setError("Demo mode — using simulated negotiation responses.");
+      setRequestPhase("idle");
+      setLoading(false);
+      return;
+    }
 
     try {
       const response = (await negotiate({

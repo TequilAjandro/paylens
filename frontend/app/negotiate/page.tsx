@@ -8,6 +8,7 @@ import { getNegotiationReport } from "@/lib/api";
 import type { ManualProfile, NegotiationReport as NegotiationReportType } from "@/lib/types";
 import { DEMO_PROFILE } from "@/data/demo-data";
 import { useCurrency } from "@/lib/use-currency";
+import { useDemoMode } from "@/lib/use-demo-mode";
 
 type ChatMessage = {
   role: "user" | "assistant";
@@ -61,6 +62,7 @@ export default function NegotiatePage() {
   const [report, setReport] = useState<NegotiationReportType | null>(null);
   const [reportStatus, setReportStatus] = useState<"idle" | "calling" | "thinking" | "loaded" | "error">("idle");
   const { currency, setCurrency } = useCurrency();
+  const isDemo = useDemoMode();
 
   const userProfile = useMemo(() => {
     if (typeof window === "undefined") return DEMO_PROFILE;
@@ -76,6 +78,34 @@ export default function NegotiatePage() {
 
   const handleNegotiationComplete = async (conversation: ChatMessage[], finalOffer: number, initialOffer: number) => {
     if (!selectedCompany) return;
+
+    if (isDemo) {
+      const base = ROLE_BASELINE_SALARY[selectedCompany.id];
+      const resolvedInitial = initialOffer || base;
+      const resolvedFinal = finalOffer || base + 2500;
+      const negotiatedIncrease = Math.max(0, resolvedFinal - resolvedInitial);
+      setReport({
+        final_offer: resolvedFinal,
+        initial_offer: resolvedInitial,
+        negotiated_increase: negotiatedIncrease,
+        what_worked: [
+          { argument: "Quantified reliability impact and incident reduction", impact_usd: 2500 },
+          { argument: "Ownership of cross-team delivery execution", impact_usd: 1800 },
+        ],
+        what_didnt_work: [
+          { argument: "Generic market-rate comparison", reason: "Lacked role-specific benchmark evidence." },
+        ],
+        current_ceiling: resolvedFinal + 3000,
+        potential_ceiling: resolvedFinal + 24000,
+        skills_to_close_gap: [
+          { skill: "Kubernetes", impact_usd: 12000 },
+          { skill: "CI/CD", impact_usd: 7000 },
+          { skill: "Observability", impact_usd: 5000 },
+        ],
+      });
+      setReportStatus("error");
+      return;
+    }
 
     setReportStatus("calling");
     const thinkingTimer = setTimeout(() => setReportStatus("thinking"), 420);
@@ -140,6 +170,7 @@ export default function NegotiatePage() {
       onCurrencyChange={setCurrency}
       reportStatus={reportStatus}
       onComplete={handleNegotiationComplete}
+      isDemo={isDemo}
     />
   );
 }
