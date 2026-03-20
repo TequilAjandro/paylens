@@ -1,10 +1,6 @@
 ## ------------------------------- Builder Stage ------------------------------ ##
 FROM python:3.12-bookworm AS builder
 
-RUN apt-get update && apt-get install --no-install-recommends -y \
-        build-essential && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
 # Install uv
 ADD https://astral.sh/uv/install.sh /uv-installer.sh
 RUN chmod +x /uv-installer.sh && sh /uv-installer.sh && rm /uv-installer.sh
