@@ -9,3 +9,19 @@ ENV/
 
 # Project specific
 backend/hackathon/
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+.next/
+
+# Python
+*.pyc
+.pytest_cache/
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
