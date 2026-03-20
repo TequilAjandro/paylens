@@ -36,27 +36,36 @@ The project has been developed in several key stages:
 
 ### Prerequisites
 - Python 3.12+
-- Node.js 18+
+- Node.js 18+ / Bun
 - `uv` (Python package manager)
+
+### Environment variables
+
+**Backend** (`backend/.env`):
+```
+GEMINI_API_KEY=<your-gemini-key>        # Required — get from https://aistudio.google.com/apikey
+GITHUB_TOKEN=<your-github-pat>          # Optional — increases GitHub API rate limit from 60 to 5,000 req/hr
+```
+
+**Frontend** (`frontend/.env.local`):
+```
+NEXT_PUBLIC_API_URL=http://localhost:8000  # Required — points frontend to real backend (without this, frontend uses mock data)
+```
 
 ### Backend Setup
 ```bash
 cd backend
-# Install dependencies
-uv pip install -r requirements.txt
-# Set up environment variables
-cp .env.example .env
-# Start the server
+cp .env.example .env   # then fill in your keys
+uv sync
 uv run uvicorn main:app --reload
 ```
 
 ### Frontend Setup
 ```bash
 cd frontend
-# Install dependencies
-npm install
-# Start development server
-npm run dev
+echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
+bun install
+bun dev
 ```
 
 ## 🐳 Docker

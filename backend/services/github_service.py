@@ -54,6 +54,42 @@ TOPIC_SKILL_MAP = {
 }
 
 
+ROLE_INFERENCE_MAP = {
+    "Frontend": ["React", "Angular", "Vue", "Next.js", "Tailwind"],
+    "Backend": ["FastAPI", "Django", "Spring", "Express", "Node.js"],
+    "DevOps": ["Docker", "Kubernetes", "Terraform", "AWS", "GCP", "Azure"],
+    "Data": ["Pandas", "Spark", "Kafka", "PostgreSQL", "MongoDB"],
+    "AI/ML": ["TensorFlow", "PyTorch", "Machine Learning", "Scikit-learn"],
+}
+
+
+def _infer_role(sorted_languages: list[tuple[str, int]], detected_skills: set[str]) -> str:
+    category_scores: dict[str, int] = {}
+    for category, skills in ROLE_INFERENCE_MAP.items():
+        category_scores[category] = sum(1 for s in skills if s in detected_skills)
+
+    top_category = max(category_scores, key=category_scores.get) if category_scores else "Backend"
+    top_score = category_scores.get(top_category, 0)
+
+    if top_score == 0:
+        if sorted_languages:
+            primary_lang = sorted_languages[0][0]
+            if primary_lang in ("JavaScript", "TypeScript"):
+                return "Frontend Developer"
+            elif primary_lang in ("Python", "Java", "Go", "Rust", "PHP", "Ruby", "C#"):
+                return "Backend Developer"
+        return "Software Engineer"
+
+    role_names = {
+        "Frontend": "Frontend Developer",
+        "Backend": "Backend Developer",
+        "DevOps": "DevOps Engineer",
+        "Data": "Data Engineer",
+        "AI/ML": "ML Engineer",
+    }
+    return role_names.get(top_category, "Software Engineer")
+
+
 async def fetch_github_profile(username: str) -> dict:
     """Fetch user profile, repos, and languages from GitHub API.   
     Returns structured data or raises an exception on failure."""  
@@ -174,7 +210,7 @@ async def fetch_github_profile(username: str) -> dict:
 
         return {
             "username": username,
-            "detected_skills": sorted(list(detected_skills)),      
+            "detected_skills": sorted(list(detected_skills)),
             "primary_languages": primary_languages,
             "estimated_seniority": estimated_seniority,
             "years_active": years_active,
@@ -182,6 +218,8 @@ async def fetch_github_profile(username: str) -> dict:
             "total_commits_last_year": user_data.get("public_repos", 0) * 15,  # rough estimate
             "notable_patterns": notable_patterns,
             "profile_summary": profile_summary,
+            "location": user_data.get("location") or "",
+            "inferred_role": _infer_role(sorted_languages, detected_skills),
         }
 
 
@@ -190,7 +228,55 @@ def get_mock_carlos_profile() -> dict:
     mock_path = DATA_DIR / "mock_github_carlos.json"
     if mock_path.exists():
         with open(mock_path, "r") as f:
-            return json.load(f)
+            raw = json.load(f)
+
+        # Transform raw GitHub API format into the processed output format
+        repos = raw.get("repos", [])
+        total_repos = len(repos)
+
+        # Build primary_languages from contribution_stats
+        langs_used = raw.get("contribution_stats", {}).get("languages_used", {})
+        total_lang_bytes = sum(langs_used.values()) or 1
+        primary_languages = []
+        for lang, bytes_count in sorted(langs_used.items(), key=lambda x: -x[1])[:10]:
+            pct = round(bytes_count / total_lang_bytes * 100, 1)
+            repos_with_lang = sum(1 for r in repos if r.get("language") == lang)
+            primary_languages.append({
+                "language": lang,
+                "percentage": pct,
+                "repos_count": max(repos_with_lang, 1),
+            })
+
+        # Build notable patterns
+        notable_patterns = []
+        top_lang = primary_languages[0]["language"] if primary_languages else "Unknown"
+        notable_patterns.append(f"Primary language: {top_lang}")
+
+        has_devops = any(
+            t in raw.get("repos", [{}])
+            for t in ["docker", "kubernetes", "aws", "gcp", "terraform", "ci-cd"]
+        )
+        if not has_devops:
+            notable_patterns.append("No cloud/DevOps infrastructure repos detected")
+        else:
+            notable_patterns.append("Has DevOps/infrastructure experience")
+
+        if total_repos > 20:
+            notable_patterns.append("Active contributor with many repositories")
+
+        return {
+            "username": raw.get("username", "carlos-dev"),
+            "detected_skills": raw.get("detected_skills", []),
+            "primary_languages": primary_languages,
+            "estimated_seniority": raw.get("estimated_seniority", "mid"),
+            "years_active": raw.get("years_active", 3),
+            "total_repos": total_repos,
+            "total_commits_last_year": raw.get("contribution_stats", {}).get("total_commits_last_year", 347),
+            "notable_patterns": notable_patterns,
+            "profile_summary": raw.get("profile_summary", ""),
+            "location": raw.get("location", "Mexico City, Mexico"),
+            "inferred_role": "Backend Developer",
+        }
 
     # Inline fallback if file doesn't exist
     return {
@@ -213,4 +299,6 @@ def get_mock_carlos_profile() -> dict:
             "Active open-source contributor",
         ],
         "profile_summary": "Mid-level backend developer with strong Python focus. API-first development style. Notable gap in cloud/DevOps infrastructure.",
+        "location": "Mexico City, Mexico",
+        "inferred_role": "Backend Developer",
     }
