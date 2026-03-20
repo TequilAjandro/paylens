@@ -1,2 +1,11 @@
-backend/.venv
-paylens-plan/
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+.env
+.env.local
+
+# Project specific
+backend/hackathon/
