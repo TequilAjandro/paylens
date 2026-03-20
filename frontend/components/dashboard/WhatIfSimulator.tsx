@@ -114,7 +114,7 @@ export default function WhatIfSimulator({
                 onClick={() => void handleToggle(skill)}
                 className={
                   active
-                    ? "inline-flex items-center gap-1 rounded-full border border-amber-300/60 bg-amber-500 px-3 py-1.5 text-sm font-medium text-slate-950 shadow-lg shadow-amber-500/25 transition-all"
+                    ? "inline-flex items-center gap-1 rounded-full border border-violet-300/65 bg-[linear-gradient(120deg,var(--pl-secondary)_0%,var(--pl-primary)_100%)] px-3 py-1.5 text-sm font-semibold text-slate-50 shadow-[0_10px_24px_rgba(0,87,240,0.3)] transition-all"
                     : "inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 transition-all hover:bg-slate-700"
                 }
               >
