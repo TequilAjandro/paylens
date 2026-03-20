@@ -78,16 +78,15 @@ async def generate_text(prompt: str, system_prompt: str = "", timeout: int = 10)
     if client is None:
         return FALLBACK_DIAGNOSIS_NARRATIVE
 
-    contents = []
-    if system_prompt:
-        contents.append({"role": "user", "parts": [system_prompt]})
-        contents.append({"role": "model", "parts": ["Understood. I will follow those instructions."]})
-    contents.append({"role": "user", "parts": [prompt]})
-
     try:
+        config = {}
+        if system_prompt:
+            config["system_instruction"] = system_prompt
+
         response = client.models.generate_content(
             model=GEMINI_MODEL,
-            contents=contents,
+            contents=prompt,
+            config=config,
         )
         text = response.text
         if text and len(text) > 20:
@@ -206,19 +205,18 @@ async def generate_negotiation_response(
     if client is None:
         return FALLBACK_NEGOTIATION_RESPONSE
 
-    # Build contents: system prompt as first exchange, then conversation history
-    contents = [
-        {"role": "user", "parts": [system_prompt]},
-        {"role": "model", "parts": ["Understood. I will act as the hiring manager."]},
-    ]
+    from google.genai.types import Content, Part
+
+    contents = []
     for msg in conversation_history:
         role = "model" if msg["role"] == "assistant" else "user"
-        contents.append({"role": role, "parts": [msg["content"]]})
+        contents.append(Content(role=role, parts=[Part(text=msg["content"])]))
 
     try:
         response = client.models.generate_content(
             model=GEMINI_MODEL,
             contents=contents,
+            config={"system_instruction": system_prompt},
         )
         text = response.text
         if text and len(text) > 5:
