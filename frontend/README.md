@@ -18,6 +18,15 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000). Requires backend running on `:8000`.
 
+## ⚡ Task Runner
+
+From the repo root — requires [Task](https://taskfile.dev):
+
+```bash
+task dev:front   # this service only
+task tsc         # TypeScript check
+```
+
 ## 🐳 Docker
 
 Build and run from the **repo root**:

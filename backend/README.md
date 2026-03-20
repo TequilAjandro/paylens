@@ -63,6 +63,15 @@ uv run uvicorn main:app --reload
 
 Interactive documentation is available at `/docs`.
 
+## ⚡ Task Runner
+
+From the repo root — requires [Task](https://taskfile.dev):
+
+```bash
+task dev:back   # this service only
+task health     # curl /health
+```
+
 ## 🐳 Docker
 
 Build and run from the **repo root**:
