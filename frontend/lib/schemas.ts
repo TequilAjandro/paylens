@@ -47,6 +47,8 @@ export const GitHubProfileOutputSchema = z.object({
   total_commits_last_year: z.number(),
   notable_patterns: z.array(z.string()),
   profile_summary: z.string(),
+  location: z.string().default(""),
+  inferred_role: z.string().default("Software Engineer"),
 });
 
 const SalaryRangeSchema = z.object({

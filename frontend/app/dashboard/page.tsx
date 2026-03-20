@@ -40,6 +40,37 @@ function isGitHubProfile(profile: unknown): profile is GitHubProfileOutput {
   return !!profile && typeof profile === "object" && "username" in profile;
 }
 
+const LOCATION_MAP: Record<string, string> = {
+  "mexico": "Mexico", "méxico": "Mexico", "cdmx": "Mexico", "mexico city": "Mexico",
+  "ciudad de mexico": "Mexico", "guadalajara": "Mexico", "monterrey": "Mexico",
+  "colombia": "Colombia", "bogota": "Colombia", "bogotá": "Colombia",
+  "medellin": "Colombia", "medellín": "Colombia",
+  "argentina": "Argentina", "buenos aires": "Argentina",
+  "brazil": "Brazil", "brasil": "Brazil", "são paulo": "Brazil", "sao paulo": "Brazil",
+  "chile": "Chile", "santiago": "Chile",
+  "peru": "Peru", "lima": "Peru",
+  "united states": "United States", "usa": "United States", "us": "United States",
+  "san francisco": "United States", "new york": "United States", "seattle": "United States",
+  "austin": "United States", "portland": "United States", "los angeles": "United States",
+  "chicago": "United States", "boston": "United States", "denver": "United States",
+  "canada": "Canada", "toronto": "Canada", "vancouver": "Canada", "montreal": "Canada",
+  "united kingdom": "United Kingdom", "uk": "United Kingdom", "london": "United Kingdom",
+  "germany": "Germany", "berlin": "Germany", "munich": "Germany", "münchen": "Germany",
+  "spain": "Spain", "españa": "Spain", "madrid": "Spain", "barcelona": "Spain",
+  "france": "France", "paris": "France",
+  "india": "India", "bangalore": "India", "mumbai": "India", "hyderabad": "India",
+  "australia": "Australia", "sydney": "Australia", "melbourne": "Australia",
+};
+
+function normalizeLocation(raw: string | undefined | null): string {
+  if (!raw || raw.trim().length === 0) return "Mexico";
+  const lower = raw.toLowerCase().trim();
+  for (const [pattern, country] of Object.entries(LOCATION_MAP)) {
+    if (lower.includes(pattern)) return country;
+  }
+  return raw.trim();
+}
+
 function toManualProfile(profile: unknown): ManualProfile | null {
   if (!profile || typeof profile !== "object") return null;
 
@@ -47,9 +78,9 @@ function toManualProfile(profile: unknown): ManualProfile | null {
     return {
       skills: profile.detected_skills?.slice(0, 20) || [],
       seniority: profile.estimated_seniority || "mid",
-      location: "Mexico",
+      location: normalizeLocation(profile.location),
       years_experience: profile.years_active ?? 3,
-      current_role: "Software Engineer",
+      current_role: profile.inferred_role || "Software Engineer",
     };
   }
 
