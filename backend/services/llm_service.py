@@ -6,6 +6,7 @@ Never raises — always returns a string.
 """
 
 import os
+import json
 import logging
 from google import genai
 
@@ -226,3 +227,121 @@ async def generate_negotiation_response(
         logger.warning(f"Gemini negotiation failed: {e}")
 
     return FALLBACK_NEGOTIATION_RESPONSE
+
+
+# --- Learning Resources ---
+
+FALLBACK_LEARNING_PLANS = [
+    {
+        "skill": "Kubernetes",
+        "company_course": {
+            "name": "Learning Kubernetes",
+            "platform": os.getenv("COMPANY_LEARNING_PLATFORM", "LinkedIn Learning"),
+            "is_company_benefit": True,
+        },
+        "courses": [{"name": "Kubernetes for Developers", "platform": "KodeKloud", "price": "$30"}],
+        "certifications": [{"name": "CKA", "provider": "CNCF", "price": "$395", "duration": "2hrs"}],
+        "free_resources": [{"name": "Official Docs", "type": "docs", "url_hint": "kubernetes.io/docs"}],
+        "timeline": "2-3 months",
+        "first_step": "Start with the official Kubernetes tutorial — deploy your first pod",
+    }
+]
+
+FALLBACK_ROADMAP = {
+    "total_duration": "6 months",
+    "phases": [
+        {
+            "months": "1-2",
+            "skill": "Kubernetes",
+            "why": "Highest salary impact and you already have Docker",
+            "milestone": "Deploy an app on K8s",
+        },
+        {
+            "months": "3-4",
+            "skill": "AWS",
+            "why": "Complements K8s — most jobs require both",
+            "milestone": "Pass AWS Cloud Practitioner cert",
+        },
+        {
+            "months": "5-6",
+            "skill": "TypeScript",
+            "why": "Closes frontend gap",
+            "milestone": "Convert one project to TypeScript",
+        },
+    ],
+    "summary": "This roadmap targets a $20K salary increase by closing cloud-native and frontend gaps.",
+}
+
+
+async def generate_learning_plans(
+    current_skills: list[str],
+    opportunities: list[dict],
+    seniority: str,
+) -> list[dict]:
+    """Generate per-skill learning recommendations with company platform priority."""
+    from prompts.diagnosis import LEARNING_RESOURCES_PROMPT
+
+    company_platform = os.getenv("COMPANY_LEARNING_PLATFORM", "LinkedIn Learning")
+
+    context = (
+        f"Current skills: {', '.join(current_skills)}\n"
+        f"Seniority: {seniority}\n"
+        f"Company learning platform (MUST be first recommendation): {company_platform}\n\n"
+        f"Top skill gaps to learn:\n"
+    )
+    for opp in opportunities[:3]:
+        context += f"- {opp['skill']}: +{opp['salary_increase_pct']}% salary, {opp['difficulty']} difficulty, {opp['time_to_learn']}\n"
+
+    context += "\nGenerate learning recommendations JSON array for each skill gap."
+
+    try:
+        result = await generate_text(context, LEARNING_RESOURCES_PROMPT, timeout=15)
+        if result and len(result) > 20:
+            cleaned = result.strip()
+            if cleaned.startswith("```"):
+                cleaned = cleaned.split("\n", 1)[-1].rsplit("```", 1)[0]
+            plans = json.loads(cleaned)
+            if isinstance(plans, list) and len(plans) > 0:
+                for plan in plans:
+                    if "company_course" in plan and plan["company_course"]:
+                        plan["company_course"]["is_company_benefit"] = True
+                        plan["company_course"]["platform"] = company_platform
+                return plans
+    except Exception:
+        pass
+
+    return FALLBACK_LEARNING_PLANS
+
+
+async def generate_learning_roadmap(
+    current_skills: list[str],
+    opportunities: list[dict],
+    seniority: str,
+    years_experience: int,
+) -> dict:
+    """Generate a phased 6-month learning roadmap."""
+    from prompts.diagnosis import LEARNING_ROADMAP_PROMPT
+
+    context = (
+        f"Current skills: {', '.join(current_skills)}\n"
+        f"Seniority: {seniority}, {years_experience} years experience\n\n"
+        f"Top skill gaps (ordered by salary impact):\n"
+    )
+    for opp in opportunities[:3]:
+        context += f"- {opp['skill']}: +{opp['salary_increase_pct']}% salary\n"
+
+    context += "\nGenerate a 6-month learning roadmap JSON."
+
+    try:
+        result = await generate_text(context, LEARNING_ROADMAP_PROMPT, timeout=15)
+        if result and len(result) > 20:
+            cleaned = result.strip()
+            if cleaned.startswith("```"):
+                cleaned = cleaned.split("\n", 1)[-1].rsplit("```", 1)[0]
+            roadmap = json.loads(cleaned)
+            if isinstance(roadmap, dict) and "phases" in roadmap:
+                return roadmap
+    except Exception:
+        pass
+
+    return FALLBACK_ROADMAP
