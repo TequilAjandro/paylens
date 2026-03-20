@@ -15,6 +15,7 @@ import {
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
 import InfoTooltip from "@/components/ui/info-tooltip";
 
 interface PeerComparison {
@@ -151,8 +152,10 @@ export default function SkillRadarChart({ peerComparison }: RadarChartProps) {
                   className="rounded-lg border border-slate-700/70 bg-slate-900/55 p-3 text-center"
                 >
                   <p className="text-xs text-slate-300">{item.subject}</p>
-                  <p className="font-mono text-lg font-bold text-white">{item.user}/10</p>
-                  <p className={`text-xs ${diff >= 0 ? "text-emerald-300" : "text-rose-300"}`}>
+                  <p className="font-mono text-lg font-bold text-white">
+                    <AnimatedCounter value={item.user} duration={1} suffix="/10" />
+                  </p>
+                  <p className={`text-xs ${diff >= 0 ? "text-amber-300" : "text-rose-300"}`}>
                     {diff >= 0 ? `+${diff}` : diff} vs peers
                   </p>
                 </div>

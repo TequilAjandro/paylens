@@ -57,19 +57,19 @@ export default function SalaryDiagnosis({ diagnosis }: SalaryDiagnosisProps) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
         >
-          <Card className="glass-panel h-full rounded-xl border-emerald-500/45 shadow-[0_16px_40px_rgba(16,185,129,0.15)]">
+          <Card className="glass-panel h-full rounded-xl border-amber-500/45 shadow-[0_16px_40px_rgba(217,119,6,0.15)]">
             <CardContent className="space-y-2.5 p-5">
-              <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+              <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">
                 You + 1 Strategic Skill
                 <InfoTooltip text="Projected range after adding your highest-impact missing skill." />
               </p>
               <p className="text-sm text-slate-300">
                 If you also mastered{" "}
-                <span className="font-semibold text-emerald-300">{sd.key_missing_skill}</span>
+                <span className="font-semibold text-amber-300">{sd.key_missing_skill}</span>
                 {sd.secondary_missing_skills.length > 0 ? (
                   <>
                     {" + "}
-                    <span className="font-semibold text-emerald-300">
+                    <span className="font-semibold text-amber-300">
                       {sd.secondary_missing_skills[0]}
                     </span>
                   </>
@@ -77,16 +77,16 @@ export default function SalaryDiagnosis({ diagnosis }: SalaryDiagnosisProps) {
                 .
               </p>
               <div className="pt-2">
-                <div className="text-2xl font-bold text-emerald-300 sm:text-3xl">
+                <div className="text-2xl font-bold text-amber-300 sm:text-3xl">
                   <AnimatedCounter value={sd.potential_range.min} prefix="$" delay={1.5} />
-                  <span className="px-2 text-emerald-200/70">-</span>
+                  <span className="px-2 text-amber-200/70">-</span>
                   <AnimatedCounter value={sd.potential_range.max} prefix="$" delay={1.5} />
                 </div>
                 <p className="mt-1 text-sm text-slate-300">USD / year</p>
               </div>
               <p className="text-sm text-slate-300">
                 {sd.potential_job_count.toLocaleString()} positions
-                <Badge className="ml-2 border-emerald-400/35 bg-emerald-500/20 text-emerald-200">
+                <Badge className="ml-2 border-amber-400/35 bg-amber-500/20 text-amber-200">
                   +{sd.job_count_increase_pct}%
                 </Badge>
               </p>

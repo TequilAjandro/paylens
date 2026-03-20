@@ -32,8 +32,8 @@ export default function AsyncState({ state, labels, className }: AsyncStateProps
     icon = <Loader2 className="h-3.5 w-3.5 animate-spin" />;
     toneClass = "text-slate-300";
   } else if (state === "loaded") {
-    icon = <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" />;
-    toneClass = "text-emerald-200";
+    icon = <CheckCircle2 className="h-3.5 w-3.5 text-amber-300" />;
+    toneClass = "text-amber-200";
   } else if (state === "error") {
     icon = <AlertCircle className="h-3.5 w-3.5 text-rose-300" />;
     toneClass = "text-rose-200";

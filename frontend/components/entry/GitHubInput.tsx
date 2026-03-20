@@ -100,7 +100,7 @@ export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
           <Button
             onClick={handleSubmit}
             disabled={isLoading || !cleanedInput || !isValidInput}
-            className="emerald-edge pl-cta-btn h-11 min-w-[156px]"
+            className="amber-edge pl-cta-btn h-11 min-w-[156px]"
           >
             {isLoading ? (
               <>
@@ -122,7 +122,7 @@ export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
             id="github-input-error"
             role="alert"
             aria-live="polite"
-            className={`text-sm ${showInlineError ? "text-rose-300" : "text-red-400"}`}
+            className={`text-sm ${showInlineError ? "text-rose-300" : "text-rose-300"}`}
           >
             {displayError}
           </p>

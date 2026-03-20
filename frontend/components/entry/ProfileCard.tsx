@@ -26,7 +26,7 @@ export default function ProfileCard({ profile, onContinue }: ProfileCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
     >
-      <Card className="glass-panel emerald-edge rounded-xl border-amber-400/45">
+      <Card className="glass-panel amber-edge rounded-xl border-amber-400/45">
         <CardContent className="space-y-5 p-6 sm:p-7">
           <p className="font-mono text-xs uppercase tracking-[0.25em] text-amber-200/90">
             Profile Ready
@@ -89,7 +89,7 @@ export default function ProfileCard({ profile, onContinue }: ProfileCardProps) {
 
           <Button
             onClick={onContinue}
-            className="emerald-edge pl-cta-btn h-11 w-full"
+            className="amber-edge pl-cta-btn h-11 w-full"
           >
             Continue to Diagnosis
             <ArrowRight className="ml-2 h-4 w-4" />
