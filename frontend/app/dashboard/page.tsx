@@ -7,7 +7,21 @@ import SalaryDiagnosis from "@/components/dashboard/SalaryDiagnosis";
 import ScoreGauge from "@/components/dashboard/ScoreGauge";
 import SkillRadarChart from "@/components/dashboard/RadarChart";
 import OpportunityCards from "@/components/dashboard/OpportunityCards";
+import WhatIfSimulator from "@/components/dashboard/WhatIfSimulator";
+import SkillHeatmap from "@/components/dashboard/Heatmap";
 import { Skeleton } from "@/components/ui/skeleton";
+
+const DEFAULT_CURRENT_SKILLS = ["Python", "FastAPI", "PostgreSQL", "Docker", "React"];
+const SUGGESTED_SKILLS = [
+  "Kubernetes",
+  "AWS",
+  "TypeScript",
+  "CI/CD",
+  "Go",
+  "GraphQL",
+  "Terraform",
+  "Docker",
+];
 
 const MOCK_DIAGNOSIS: DiagnosisResponse = {
   salary_diagnosis: {
@@ -72,7 +86,17 @@ const MOCK_DIAGNOSIS: DiagnosisResponse = {
       time_to_learn: "1-2 months",
     },
   ],
-  demand_heatmap: [],
+  demand_heatmap: [
+    { skill: "Kubernetes", trend: "rising", growth_pct: 140, color: "green" },
+    { skill: "TypeScript", trend: "rising", growth_pct: 35, color: "green" },
+    { skill: "CI/CD", trend: "rising", growth_pct: 30, color: "green" },
+    { skill: "Docker", trend: "rising", growth_pct: 25, color: "green" },
+    { skill: "Python", trend: "stable", growth_pct: 5, color: "yellow" },
+    { skill: "React", trend: "stable", growth_pct: 8, color: "yellow" },
+    { skill: "SQL", trend: "stable", growth_pct: 3, color: "yellow" },
+    { skill: "Angular", trend: "declining", growth_pct: -8, color: "red" },
+    { skill: "jQuery", trend: "declining", growth_pct: -15, color: "red" },
+  ],
   market_summary: "",
   value_narrative: "",
 };
@@ -116,6 +140,9 @@ function toManualProfile(profile: unknown): ManualProfile | null {
 
 export default function DashboardPage() {
   const [diagnosis, setDiagnosis] = useState<DiagnosisResponse | null>(null);
+  const [currentSkills, setCurrentSkills] = useState<string[]>(DEFAULT_CURRENT_SKILLS);
+  const [seniority, setSeniority] = useState<string>("mid");
+  const [location, setLocation] = useState<string>("Mexico");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -138,6 +165,10 @@ export default function DashboardPage() {
           setDiagnosis(MOCK_DIAGNOSIS);
           return;
         }
+
+        setCurrentSkills(manualProfile.skills.length > 0 ? manualProfile.skills : DEFAULT_CURRENT_SKILLS);
+        setSeniority(manualProfile.seniority);
+        setLocation(manualProfile.location);
 
         const response = await getDiagnosis(manualProfile);
         setDiagnosis(response);
@@ -181,6 +212,8 @@ export default function DashboardPage() {
             <Skeleton className="h-[300px] rounded-xl bg-slate-800/80" />
             <Skeleton className="h-[620px] rounded-xl bg-slate-800/80" />
             <Skeleton className="h-[280px] rounded-xl bg-slate-800/80" />
+            <Skeleton className="h-[260px] rounded-xl bg-slate-800/80" />
+            <Skeleton className="h-[260px] rounded-xl bg-slate-800/80" />
           </div>
         ) : (
           <div className="space-y-5">
@@ -192,6 +225,13 @@ export default function DashboardPage() {
             />
             <SkillRadarChart peerComparison={diagnosis.peer_comparison} />
             <OpportunityCards opportunities={diagnosis.opportunities} />
+            <WhatIfSimulator
+              currentSkills={currentSkills}
+              seniority={seniority}
+              location={location}
+              suggestedSkills={SUGGESTED_SKILLS}
+            />
+            <SkillHeatmap entries={diagnosis.demand_heatmap} />
           </div>
         )}
       </div>
