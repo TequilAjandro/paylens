@@ -8,6 +8,11 @@ import type { ManualProfile } from "@/lib/types";
 import AsyncState from "@/components/ui/async-state";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import CurrencyToggle from "@/components/ui/currency-toggle";
+import {
+  formatCurrencyFromUsd,
+  type DisplayCurrency,
+} from "@/lib/currency";
 
 type ChatMessage = {
   role: "user" | "assistant";
@@ -19,6 +24,8 @@ interface NegotiationChatProps {
   companyName: string;
   roleTitle: string;
   userProfile: ManualProfile;
+  currency: DisplayCurrency;
+  onCurrencyChange: (currency: DisplayCurrency) => void;
   reportStatus: "idle" | "calling" | "thinking" | "loaded" | "error";
   onComplete: (conversation: ChatMessage[], finalOffer: number, initialOffer: number) => void;
 }
@@ -53,6 +60,8 @@ export default function NegotiationChat({
   companyName,
   roleTitle,
   userProfile,
+  currency,
+  onCurrencyChange,
   reportStatus,
   onComplete,
 }: NegotiationChatProps) {
@@ -225,9 +234,16 @@ export default function NegotiationChat({
                 ) : null}
               </div>
             </div>
-            <div className="rounded-lg border border-amber-400/35 bg-amber-500/10 px-3 py-2">
-              <p className="text-xs uppercase tracking-[0.16em] text-amber-200">Current Offer</p>
-              <p className="font-mono text-xl font-bold text-amber-300">${currentOffer.toLocaleString()}</p>
+            <div className="space-y-2">
+              <div className="flex justify-end">
+                <CurrencyToggle currency={currency} onChange={onCurrencyChange} />
+              </div>
+              <div className="rounded-lg border border-amber-400/35 bg-amber-500/10 px-3 py-2">
+                <p className="text-xs uppercase tracking-[0.16em] text-amber-200">Current Offer</p>
+                <p className="font-mono text-xl font-bold text-amber-300">
+                  {formatCurrencyFromUsd(currentOffer, currency)}
+                </p>
+              </div>
             </div>
           </div>
         </Card>

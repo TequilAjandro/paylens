@@ -8,12 +8,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import type { NegotiationReport as NegotiationReportType } from "@/lib/types";
+import CurrencyToggle from "@/components/ui/currency-toggle";
+import {
+  formatCurrencyFromUsd,
+  type DisplayCurrency,
+} from "@/lib/currency";
 
 interface NegotiationReportProps {
   report: NegotiationReportType;
+  currency: DisplayCurrency;
+  onCurrencyChange: (currency: DisplayCurrency) => void;
 }
 
-export default function NegotiationReport({ report }: NegotiationReportProps) {
+export default function NegotiationReport({ report, currency, onCurrencyChange }: NegotiationReportProps) {
   const router = useRouter();
   const ceilingProgress = Math.min(
     100,
@@ -26,17 +33,20 @@ export default function NegotiationReport({ report }: NegotiationReportProps) {
       <div className="pointer-events-none absolute -right-24 top-20 h-80 w-80 rounded-full bg-amber-500/10 blur-3xl" />
 
       <div className="relative mx-auto max-w-4xl space-y-5">
+        <div className="flex justify-end">
+          <CurrencyToggle currency={currency} onChange={onCurrencyChange} />
+        </div>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <Card className="rounded-2xl border-amber-400/35 bg-gradient-to-br from-amber-950/50 to-slate-900/90 shadow-[0_20px_60px_rgba(217,119,6,0.2)]">
             <CardContent className="space-y-2 p-6 text-center">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-200">Negotiation Result</p>
               <p className="font-mono text-4xl font-bold text-amber-300 sm:text-5xl">
-                ${report.final_offer.toLocaleString()}
+                {formatCurrencyFromUsd(report.final_offer, currency)}
               </p>
               <p className="text-sm text-slate-300">
-                Started at ${report.initial_offer.toLocaleString()} and negotiated{" "}
+                Started at {formatCurrencyFromUsd(report.initial_offer, currency)} and negotiated{" "}
                 <Badge className="border-amber-400/35 bg-amber-500/20 text-amber-100">
-                  +${report.negotiated_increase.toLocaleString()}
+                  +{formatCurrencyFromUsd(report.negotiated_increase, currency)}
                 </Badge>
               </p>
             </CardContent>
@@ -59,7 +69,7 @@ export default function NegotiationReport({ report }: NegotiationReportProps) {
                 >
                   <span className="text-sm text-slate-200">{item.argument}</span>
                   <Badge className="border-amber-400/35 bg-amber-500/20 text-amber-100">
-                    +${item.impact_usd.toLocaleString()}
+                    +{formatCurrencyFromUsd(item.impact_usd, currency)}
                   </Badge>
                 </div>
               ))}
@@ -98,12 +108,14 @@ export default function NegotiationReport({ report }: NegotiationReportProps) {
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-slate-300">Current ceiling</span>
-                  <span className="font-mono text-white">${report.current_ceiling.toLocaleString()}</span>
+                  <span className="font-mono text-white">{formatCurrencyFromUsd(report.current_ceiling, currency)}</span>
                 </div>
                 <Progress value={ceilingProgress} className="h-2 bg-slate-800" />
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-slate-300">Potential ceiling</span>
-                  <span className="font-mono text-amber-300">${report.potential_ceiling.toLocaleString()}</span>
+                  <span className="font-mono text-amber-300">
+                    {formatCurrencyFromUsd(report.potential_ceiling, currency)}
+                  </span>
                 </div>
               </div>
 
@@ -115,7 +127,9 @@ export default function NegotiationReport({ report }: NegotiationReportProps) {
                       <ArrowRight className="h-3.5 w-3.5 text-amber-300" />
                       {item.skill}
                     </span>
-                    <span className="font-mono text-amber-200">+${item.impact_usd.toLocaleString()}/yr</span>
+                    <span className="font-mono text-amber-200">
+                      +{formatCurrencyFromUsd(item.impact_usd, currency)}/yr
+                    </span>
                   </div>
                 ))}
               </div>

@@ -9,12 +9,14 @@ import AsyncState from "@/components/ui/async-state";
 import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import InfoTooltip from "@/components/ui/info-tooltip";
+import { convertFromUsd, currencyPrefix, type DisplayCurrency } from "@/lib/currency";
 
 interface WhatIfSimulatorProps {
   currentSkills: string[];
   seniority: string;
   location: string;
   suggestedSkills: string[];
+  currency: DisplayCurrency;
 }
 
 const MOCK_WHAT_IF: WhatIfResponse = {
@@ -35,6 +37,7 @@ export default function WhatIfSimulator({
   seniority,
   location,
   suggestedSkills,
+  currency,
 }: WhatIfSimulatorProps) {
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [result, setResult] = useState<WhatIfResponse | null>(null);
@@ -124,8 +127,8 @@ export default function WhatIfSimulator({
               <ResultCard label="New Score" value={result.new_score} change={result.score_change} />
               <ResultCard
                 label="Salary Change"
-                value={result.salary_change_usd}
-                prefix="+$"
+                value={convertFromUsd(result.salary_change_usd, currency)}
+                prefix={`+${currencyPrefix(currency)}`}
                 change=""
               />
               <ResultCard

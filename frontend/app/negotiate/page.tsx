@@ -7,6 +7,7 @@ import NegotiationReport from "@/components/negotiate/NegotiationReport";
 import { getNegotiationReport } from "@/lib/api";
 import type { ManualProfile, NegotiationReport as NegotiationReportType } from "@/lib/types";
 import { DEMO_PROFILE } from "@/data/demo-data";
+import { useCurrency } from "@/lib/use-currency";
 
 type ChatMessage = {
   role: "user" | "assistant";
@@ -59,6 +60,7 @@ export default function NegotiatePage() {
   const [selectedCompany, setSelectedCompany] = useState<NegotiationCompany | null>(null);
   const [report, setReport] = useState<NegotiationReportType | null>(null);
   const [reportStatus, setReportStatus] = useState<"idle" | "calling" | "thinking" | "loaded" | "error">("idle");
+  const { currency, setCurrency } = useCurrency();
 
   const userProfile = useMemo(() => {
     if (typeof window === "undefined") return DEMO_PROFILE;
@@ -121,11 +123,11 @@ export default function NegotiatePage() {
   };
 
   if (report) {
-    return <NegotiationReport report={report} />;
+    return <NegotiationReport report={report} currency={currency} onCurrencyChange={setCurrency} />;
   }
 
   if (!selectedCompany) {
-    return <CompanySelector onSelect={setSelectedCompany} />;
+    return <CompanySelector onSelect={setSelectedCompany} currency={currency} onCurrencyChange={setCurrency} />;
   }
 
   return (
@@ -134,6 +136,8 @@ export default function NegotiatePage() {
       companyName={selectedCompany.name}
       roleTitle={selectedCompany.role}
       userProfile={userProfile}
+      currency={currency}
+      onCurrencyChange={setCurrency}
       reportStatus={reportStatus}
       onComplete={handleNegotiationComplete}
     />

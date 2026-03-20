@@ -6,21 +6,22 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
 import InfoTooltip from "@/components/ui/info-tooltip";
+import {
+  convertFromUsd,
+  currencyPrefix,
+  formatCurrencyFromUsd,
+  type DisplayCurrency,
+  yearCurrencyLabel,
+} from "@/lib/currency";
 
 interface SalaryDiagnosisProps {
   diagnosis: Pick<DiagnosisResponse, "salary_diagnosis">;
+  currency: DisplayCurrency;
 }
 
-function formatUSD(amount: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
-export default function SalaryDiagnosis({ diagnosis }: SalaryDiagnosisProps) {
+export default function SalaryDiagnosis({ diagnosis, currency }: SalaryDiagnosisProps) {
   const sd = diagnosis.salary_diagnosis;
+  const moneyPrefix = currencyPrefix(currency);
 
   return (
     <section className="space-y-6">
@@ -39,11 +40,19 @@ export default function SalaryDiagnosis({ diagnosis }: SalaryDiagnosisProps) {
               <p className="text-sm text-slate-300">Based on your current skills and profile.</p>
               <div className="pt-2">
                 <div className="text-2xl font-bold text-white sm:text-3xl">
-                  <AnimatedCounter value={sd.current_range.min} prefix="$" delay={0.8} />
+                  <AnimatedCounter
+                    value={convertFromUsd(sd.current_range.min, currency)}
+                    prefix={moneyPrefix}
+                    delay={0.8}
+                  />
                   <span className="px-2 text-slate-300">-</span>
-                  <AnimatedCounter value={sd.current_range.max} prefix="$" delay={0.8} />
+                  <AnimatedCounter
+                    value={convertFromUsd(sd.current_range.max, currency)}
+                    prefix={moneyPrefix}
+                    delay={0.8}
+                  />
                 </div>
-                <p className="mt-1 text-sm text-slate-300">USD / year</p>
+                <p className="mt-1 text-sm text-slate-300">{yearCurrencyLabel(currency)}</p>
               </div>
               <p className="text-sm text-slate-300">
                 {sd.current_job_count.toLocaleString()} matching positions
@@ -78,11 +87,19 @@ export default function SalaryDiagnosis({ diagnosis }: SalaryDiagnosisProps) {
               </p>
               <div className="pt-2">
                 <div className="text-2xl font-bold text-amber-300 sm:text-3xl">
-                  <AnimatedCounter value={sd.potential_range.min} prefix="$" delay={1.5} />
+                  <AnimatedCounter
+                    value={convertFromUsd(sd.potential_range.min, currency)}
+                    prefix={moneyPrefix}
+                    delay={1.5}
+                  />
                   <span className="px-2 text-amber-200/70">-</span>
-                  <AnimatedCounter value={sd.potential_range.max} prefix="$" delay={1.5} />
+                  <AnimatedCounter
+                    value={convertFromUsd(sd.potential_range.max, currency)}
+                    prefix={moneyPrefix}
+                    delay={1.5}
+                  />
                 </div>
-                <p className="mt-1 text-sm text-slate-300">USD / year</p>
+                <p className="mt-1 text-sm text-slate-300">{yearCurrencyLabel(currency)}</p>
               </div>
               <p className="text-sm text-slate-300">
                 {sd.potential_job_count.toLocaleString()} positions
@@ -119,11 +136,17 @@ export default function SalaryDiagnosis({ diagnosis }: SalaryDiagnosisProps) {
               transition={{ duration: 0.35, delay: 1.7 }}
             >
               <div className="text-4xl font-extrabold text-rose-300">
-                <AnimatedCounter value={sd.gap_annual} prefix="$" delay={2} />
+                <AnimatedCounter
+                  value={convertFromUsd(sd.gap_annual, currency)}
+                  prefix={moneyPrefix}
+                  delay={2}
+                />
               </div>
             </motion.div>
-            <p className="text-sm text-rose-300">USD / year</p>
-            <p className="text-xs text-rose-200/80">In 3 years: {formatUSD(sd.gap_3year)}</p>
+            <p className="text-sm text-rose-300">{yearCurrencyLabel(currency)}</p>
+            <p className="text-xs text-rose-200/80">
+              In 3 years: {formatCurrencyFromUsd(sd.gap_3year, currency)}
+            </p>
           </CardContent>
         </Card>
       </motion.div>

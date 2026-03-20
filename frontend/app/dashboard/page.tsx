@@ -18,6 +18,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AsyncState from "@/components/ui/async-state";
 import InfoTooltip from "@/components/ui/info-tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
+import CurrencyToggle from "@/components/ui/currency-toggle";
+import { convertFromUsd, currencyPrefix } from "@/lib/currency";
+import { useCurrency } from "@/lib/use-currency";
 import { Copy, Sparkles, Trophy } from "lucide-react";
 
 const DEFAULT_SUGGESTED_SKILLS = ["TypeScript", "AWS", "CI/CD", "Go", "GraphQL", "Terraform"];
@@ -77,6 +80,7 @@ export default function DashboardPage() {
   const [loadingStage, setLoadingStage] = useState<"calling" | "thinking" | "loaded">("calling");
   const [error, setError] = useState<string | null>(null);
   const [showDetailsMobile, setShowDetailsMobile] = useState(false);
+  const { currency, setCurrency } = useCurrency();
 
   useEffect(() => {
     const loadDiagnosis = async () => {
@@ -148,15 +152,23 @@ export default function DashboardPage() {
       <div className="relative z-10 mx-auto max-w-7xl">
         <div className="min-w-0 space-y-8 lg:pr-[16rem]">
         <AnimatedSection index={0} className="scroll-mt-24" >
-          <div id="overview" className="space-y-1">
-            <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-slate-300">
-              Market Diagnosis
-              <InfoTooltip text="AI-generated market view of your salary position, role availability, and skill leverage." />
-            </p>
-            <h1 className="text-3xl font-bold text-white sm:text-4xl">
-              Your Market <span className="pl-title-accent">Diagnosis</span>
-            </h1>
-            <p className="text-sm text-slate-300">Based on 49,000 developers across LATAM market signals.</p>
+          <div id="overview" className="space-y-2">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="space-y-1">
+                <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-slate-300">
+                  Market Diagnosis
+                  <InfoTooltip text="AI-generated market view of your salary position, role availability, and skill leverage." />
+                </p>
+                <h1 className="text-3xl font-bold text-white sm:text-4xl">
+                  Your Market <span className="pl-title-accent">Diagnosis</span>
+                </h1>
+                <p className="text-sm text-slate-300">Based on 49,000 developers across LATAM market signals.</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">Currency</span>
+                <CurrencyToggle currency={currency} onChange={setCurrency} />
+              </div>
+            </div>
           </div>
         </AnimatedSection>
 
@@ -198,8 +210,8 @@ export default function DashboardPage() {
               <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
                 <SummaryStat
                   label="Annual Upside"
-                  valueNumber={diagnosis.salary_diagnosis.gap_annual}
-                  prefix="$"
+                  valueNumber={convertFromUsd(diagnosis.salary_diagnosis.gap_annual, currency)}
+                  prefix={currencyPrefix(currency)}
                   tone="emerald"
                 />
                 <SummaryStat
@@ -224,7 +236,7 @@ export default function DashboardPage() {
 
             <AnimatedSection index={2}>
               <section id="salary" className="scroll-mt-24">
-                <SalaryDiagnosis diagnosis={diagnosis} />
+                <SalaryDiagnosis diagnosis={diagnosis} currency={currency} />
               </section>
             </AnimatedSection>
 
@@ -258,7 +270,7 @@ export default function DashboardPage() {
 
               <AnimatedSection index={5}>
                 <section id="opportunities" className="scroll-mt-24">
-                  <OpportunityCards opportunities={diagnosis.opportunities} />
+                  <OpportunityCards opportunities={diagnosis.opportunities} currency={currency} />
                 </section>
               </AnimatedSection>
 
@@ -269,6 +281,7 @@ export default function DashboardPage() {
                     seniority={profile.seniority}
                     location={profile.location}
                     suggestedSkills={suggestedSkills}
+                    currency={currency}
                   />
                 </section>
               </AnimatedSection>
@@ -294,7 +307,12 @@ export default function DashboardPage() {
                   <CardContent className="space-y-4">
                     <div className="flex flex-wrap gap-2">
                       <span className="pl-chip-success rounded-md px-2.5 py-1 text-xs font-semibold">
-                        <AnimatedCounter value={diagnosis.salary_diagnosis.gap_annual} prefix="$" duration={1.2} /> annual upside
+                        <AnimatedCounter
+                          value={convertFromUsd(diagnosis.salary_diagnosis.gap_annual, currency)}
+                          prefix={currencyPrefix(currency)}
+                          duration={1.2}
+                        />{" "}
+                        annual upside
                       </span>
                       <span className="pl-chip-insight rounded-md px-2.5 py-1 text-xs font-semibold">
                         Top {diagnosis.peer_comparison.overall_percentile}%
