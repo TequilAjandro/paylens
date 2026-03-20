@@ -12,11 +12,14 @@ Next.js 14 application for the PayLens salary benchmark platform.
 ## Dev (local)
 
 ```bash
+echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
 bun install
 bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000). Requires backend running on `:8000`.
+
+**Important:** Without `.env.local`, the frontend uses built-in mock API routes instead of the real backend.
 
 ### Demo mode (no backend needed)
 
