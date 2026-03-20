@@ -141,8 +141,8 @@ export default function DashboardPage() {
   return (
     <main className="pl-bg-main relative min-h-screen overflow-x-hidden p-4 sm:p-6">
       <div className="paylens-grid pointer-events-none absolute inset-0" />
-      <div className="pointer-events-none absolute -left-20 top-24 h-72 w-72 rounded-full bg-emerald-500/15 blur-3xl" />
-      <div className="pointer-events-none absolute -right-20 top-20 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
+      <div className="pointer-events-none absolute -left-20 top-24 h-72 w-72 rounded-full bg-amber-500/15 blur-3xl" />
+      <div className="pointer-events-none absolute -right-20 top-20 h-80 w-80 rounded-full bg-violet-500/10 blur-3xl" />
 
       <div className="relative z-10 mx-auto max-w-7xl">
         <div className="min-w-0 space-y-8 lg:pr-[16rem]">
@@ -153,7 +153,7 @@ export default function DashboardPage() {
               <InfoTooltip text="AI-generated market view of your salary position, role availability, and skill leverage." />
             </p>
             <h1 className="text-3xl font-bold text-white sm:text-4xl">
-              Your Market <span className="text-emerald-300">Diagnosis</span>
+              Your Market <span className="pl-title-accent">Diagnosis</span>
             </h1>
             <p className="text-sm text-slate-300">Based on 49,000 developers across LATAM market signals.</p>
           </div>
@@ -276,11 +276,11 @@ export default function DashboardPage() {
               </AnimatedSection>
 
               <AnimatedSection index={8}>
-                <Card id="summary" className="relative overflow-hidden rounded-2xl border-emerald-400/30 bg-gradient-to-br from-emerald-950/50 via-slate-900/85 to-cyan-950/35 shadow-[0_24px_70px_rgba(16,185,129,0.22)] scroll-mt-24">
-                  <div className="pointer-events-none absolute -right-10 -top-16 h-40 w-40 rounded-full bg-emerald-400/15 blur-3xl" />
+                <Card id="summary" className="relative overflow-hidden rounded-2xl border-amber-400/30 bg-gradient-to-br from-amber-950/35 via-slate-900/85 to-violet-950/35 shadow-[0_24px_70px_rgba(217,119,6,0.2)] scroll-mt-24">
+                  <div className="pointer-events-none absolute -right-10 -top-16 h-40 w-40 rounded-full bg-amber-400/15 blur-3xl" />
                   <CardHeader className="pb-2">
                     <CardTitle className="flex items-center gap-2 text-white">
-                      <Sparkles className="h-5 w-5 text-emerald-300" />
+                      <Sparkles className="h-5 w-5 text-amber-300" />
                       <span className="inline-flex items-center gap-1.5">
                         Market Summary
                         <InfoTooltip text="Concise interpretation of your current standing and primary upside opportunity." />
@@ -295,7 +295,7 @@ export default function DashboardPage() {
                       <span className="pl-chip-insight rounded-md px-2.5 py-1 text-xs font-semibold">
                         Top {diagnosis.peer_comparison.overall_percentile}%
                       </span>
-                      <span className="rounded-md border border-blue-400/40 bg-blue-500/15 px-2.5 py-1 text-xs font-semibold text-blue-100">
+                      <span className="rounded-md border border-violet-400/40 bg-violet-500/15 px-2.5 py-1 text-xs font-semibold text-violet-100">
                         {diagnosis.salary_diagnosis.potential_job_count} roles unlocked
                       </span>
                     </div>
@@ -305,31 +305,31 @@ export default function DashboardPage() {
               </AnimatedSection>
 
               <AnimatedSection index={9}>
-                <Card className="relative overflow-hidden rounded-2xl border-blue-400/30 bg-gradient-to-br from-blue-950/60 via-[#0a1730] to-slate-950 shadow-[0_24px_75px_rgba(59,130,246,0.2)]">
-                  <div className="pointer-events-none absolute -left-12 bottom-0 h-44 w-44 rounded-full bg-blue-400/15 blur-3xl" />
+                <Card className="relative overflow-hidden rounded-2xl border-violet-400/30 bg-gradient-to-br from-violet-950/60 via-[#171332] to-slate-950 shadow-[0_24px_75px_rgba(139,92,246,0.22)]">
+                  <div className="pointer-events-none absolute -left-12 bottom-0 h-44 w-44 rounded-full bg-violet-400/15 blur-3xl" />
                   <CardHeader className="pb-2">
                     <CardTitle className="flex items-center justify-between gap-2 text-white">
                       <span className="flex items-center gap-2">
-                        <Trophy className="h-5 w-5 text-blue-200" />
+                        <Trophy className="h-5 w-5 text-violet-200" />
                         <span className="inline-flex items-center gap-1.5">
                           Your Value Statement
                           <InfoTooltip text="Reusable negotiation narrative based on your strongest market signals." />
                         </span>
                       </span>
-                      <span className="rounded-md border border-blue-300/35 bg-blue-500/15 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-blue-100">
+                      <span className="rounded-md border border-violet-300/35 bg-violet-500/15 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-violet-100">
                         Final Output
                       </span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <p className="border-l-2 border-blue-300/60 pl-4 text-[15px] italic leading-relaxed text-blue-50">
+                    <p className="border-l-2 border-violet-300/60 pl-4 text-[15px] italic leading-relaxed text-violet-50">
                       &quot;{diagnosis.value_narrative}&quot;
                     </p>
                     <Button
                       type="button"
                       variant="outline"
                       onClick={() => void handleCopyNarrative()}
-                      className="w-full border-blue-300/40 bg-blue-500/10 text-blue-50 hover:bg-blue-500/20 sm:w-auto"
+                      className="w-full border-violet-300/40 bg-violet-500/10 text-violet-50 hover:bg-violet-500/20 sm:w-auto"
                     >
                       <Copy className="mr-2 h-4 w-4" />
                       Copy to clipboard
@@ -344,7 +344,7 @@ export default function DashboardPage() {
                 <Button
                   type="button"
                   onClick={() => router.push("/negotiate")}
-                  className="rounded-xl bg-emerald-600 px-6 py-6 text-base font-semibold text-white shadow-[0_18px_45px_rgba(16,185,129,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-emerald-500"
+                  className="rounded-xl border border-rose-300/40 bg-rose-600 px-6 py-6 text-base font-semibold text-white shadow-[0_18px_45px_rgba(225,29,72,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-rose-500"
                 >
                   Practice Salary Negotiation
                 </Button>
@@ -394,9 +394,9 @@ function SummaryStat({
   };
 
   const toneClass: Record<"emerald" | "cyan" | "blue" | "amber", string> = {
-    emerald: "border-emerald-400/35 bg-emerald-500/10 text-emerald-100",
-    cyan: "border-cyan-400/35 bg-cyan-500/10 text-cyan-100",
-    blue: "border-blue-400/35 bg-blue-500/10 text-blue-100",
+    emerald: "border-amber-400/35 bg-amber-500/10 text-amber-100",
+    cyan: "border-violet-400/35 bg-violet-500/10 text-violet-100",
+    blue: "border-violet-400/35 bg-violet-500/10 text-violet-100",
     amber: "border-amber-400/35 bg-amber-500/10 text-amber-100",
   };
 

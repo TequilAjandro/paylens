@@ -206,7 +206,7 @@ export default function NegotiationChat({
       <div className="paylens-grid pointer-events-none absolute inset-0" />
 
       <div className="relative mx-auto flex h-[calc(100vh-2rem)] max-w-4xl flex-col gap-4 sm:h-[calc(100vh-3rem)]">
-        <Card className="rounded-xl border-emerald-400/35 bg-slate-900/75 px-4 py-3 sm:px-5">
+        <Card className="rounded-xl border-amber-400/35 bg-slate-900/75 px-4 py-3 sm:px-5">
           <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">Negotiation Session</p>
@@ -219,7 +219,7 @@ export default function NegotiationChat({
                   {modeLabel}
                 </span>
                 {reportStatus === "calling" || reportStatus === "thinking" ? (
-                  <span className="rounded-md border border-cyan-400/35 bg-cyan-500/10 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-cyan-100">
+                  <span className="rounded-md border border-violet-400/35 bg-violet-500/10 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-violet-100">
                     {reportStatus === "calling" ? "Report: Calling API" : "Report: Generating"}
                   </span>
                 ) : null}
@@ -251,7 +251,7 @@ export default function NegotiationChat({
                   <div
                     className={`max-w-[84%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                       message.role === "user"
-                        ? "border border-blue-400/35 bg-blue-600/95 text-white"
+                        ? "border border-rose-400/35 bg-rose-600/95 text-white"
                         : "border border-slate-700 bg-slate-800/95 text-slate-200"
                     }`}
                   >
@@ -286,7 +286,7 @@ export default function NegotiationChat({
               <Button
                 type="button"
                 onClick={() => onComplete(messages, currentOffer, initialOffer || currentOffer)}
-                className="w-full rounded-xl bg-emerald-600 py-6 text-base font-semibold text-white hover:bg-emerald-500"
+                className="w-full rounded-xl pl-cta-btn py-6 text-base font-semibold"
               >
                 View Negotiation Report
               </Button>
@@ -296,13 +296,13 @@ export default function NegotiationChat({
                   value={input}
                   onChange={(event) => setInput(event.target.value)}
                   placeholder="Make your argument..."
-                  className="flex-1 rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-blue-400/55 focus:outline-none"
+                  className="flex-1 rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-rose-400/55 focus:outline-none"
                   disabled={loading}
                 />
                 <Button
                   type="submit"
                   disabled={loading || !input.trim()}
-                  className="h-[46px] rounded-xl bg-blue-600 px-4 text-white hover:bg-blue-500 disabled:opacity-50"
+                  className="h-[46px] rounded-xl pl-cta-btn px-4 text-white disabled:opacity-50"
                 >
                   <Send className="h-4 w-4" />
                 </Button>

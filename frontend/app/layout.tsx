@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body className={`${firaSans.variable} ${firaCode.variable} font-sans`}>
         {children}
       </body>

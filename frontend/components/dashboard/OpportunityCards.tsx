@@ -19,7 +19,7 @@ function TrendIcon({ trend }: { trend: Opportunity["demand_trend"] }) {
     return <TrendingUp className="h-4 w-4 text-emerald-300" />;
   }
   if (trend === "declining") {
-    return <TrendingDown className="h-4 w-4 text-red-300" />;
+    return <TrendingDown className="h-4 w-4 text-rose-300" />;
   }
   return <Minus className="h-4 w-4 text-yellow-300" />;
 }
@@ -28,7 +28,7 @@ function DifficultyBadge({ difficulty }: { difficulty: Opportunity["difficulty"]
   const colorClasses: Record<Opportunity["difficulty"], string> = {
     low: "border-emerald-400/35 bg-emerald-500/20 text-emerald-200",
     medium: "border-yellow-400/35 bg-yellow-500/20 text-yellow-200",
-    high: "border-red-400/35 bg-red-500/20 text-red-200",
+    high: "border-rose-400/35 bg-rose-500/20 text-rose-100",
   };
 
   const labels: Record<Opportunity["difficulty"], string> = {
@@ -61,7 +61,7 @@ export default function OpportunityCards({ opportunities }: OpportunityCardsProp
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.2, duration: 0.5, ease: "easeOut" }}
           >
-            <Card className="glass-panel h-full rounded-xl border-slate-700/80 transition-colors hover:border-emerald-400/45">
+            <Card className="glass-panel h-full rounded-xl border-slate-700/80 transition-colors hover:border-amber-400/45">
               <CardContent className="space-y-4 p-5">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold text-white">{opportunity.skill}</h3>

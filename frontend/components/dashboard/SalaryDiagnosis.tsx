@@ -107,9 +107,9 @@ export default function SalaryDiagnosis({ diagnosis }: SalaryDiagnosisProps) {
         }}
         className="mx-auto max-w-md"
       >
-        <Card className="rounded-xl border-red-500/55 bg-gradient-to-br from-red-950/70 to-[#2b0f17] shadow-[0_18px_42px_rgba(239,68,68,0.25)]">
+        <Card className="rounded-xl border-rose-500/55 bg-gradient-to-br from-rose-950/70 to-[#2b0f17] shadow-[0_18px_42px_rgba(244,63,94,0.25)]">
           <CardContent className="space-y-2 p-5 text-center">
-            <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-red-300">
+            <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-rose-300">
               Left on the Table
               <InfoTooltip text="Estimated annual compensation gap between your current and potential range." />
             </p>
@@ -118,12 +118,12 @@ export default function SalaryDiagnosis({ diagnosis }: SalaryDiagnosisProps) {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.35, delay: 1.7 }}
             >
-              <div className="text-4xl font-extrabold text-red-300">
+              <div className="text-4xl font-extrabold text-rose-300">
                 <AnimatedCounter value={sd.gap_annual} prefix="$" delay={2} />
               </div>
             </motion.div>
-            <p className="text-sm text-red-300">USD / year</p>
-            <p className="text-xs text-red-200/80">In 3 years: {formatUSD(sd.gap_3year)}</p>
+            <p className="text-sm text-rose-300">USD / year</p>
+            <p className="text-xs text-rose-200/80">In 3 years: {formatUSD(sd.gap_3year)}</p>
           </CardContent>
         </Card>
       </motion.div>

@@ -146,11 +146,11 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
         <div className="rounded-lg border border-slate-700/70 bg-slate-900/55 p-3">
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-300">Minimum Required</p>
           <div className="mt-2 space-y-1 text-sm">
-            <p className={skillsReady ? "text-emerald-200" : "text-slate-300"}>
+            <p className={skillsReady ? "text-amber-200" : "text-slate-300"}>
               {skillsReady ? <CheckCircle2 className="mr-1 inline h-3.5 w-3.5" /> : null}
               At least one skill selected
             </p>
-            <p className={roleReady ? "text-emerald-200" : "text-slate-300"}>
+            <p className={roleReady ? "text-amber-200" : "text-slate-300"}>
               {roleReady ? <CheckCircle2 className="mr-1 inline h-3.5 w-3.5" /> : null}
               Current role (2+ characters)
             </p>
@@ -171,7 +171,7 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
             {skills.map((skill) => (
               <Badge
                 key={skill}
-                className="cursor-pointer border-emerald-400/35 bg-emerald-500/20 text-emerald-200 hover:border-red-500/40 hover:bg-red-500/20 hover:text-red-300"
+                className="cursor-pointer border-violet-400/35 bg-violet-500/20 text-violet-100 hover:border-rose-500/45 hover:bg-rose-500/18 hover:text-rose-100"
                 onClick={() => removeSkill(skill)}
               >
                 {skill}
@@ -185,7 +185,7 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
               placeholder="Search skills..."
               value={skillSearch}
               onChange={(event) => setSkillSearch(event.target.value)}
-              className="h-11 border-slate-600 bg-slate-900/90 text-white placeholder:text-slate-500 focus-visible:border-emerald-400/70 focus-visible:ring-emerald-500/30"
+              className="h-11 border-slate-600 bg-slate-900/90 text-white placeholder:text-slate-500 focus-visible:border-amber-400/70 focus-visible:ring-amber-500/30"
               disabled={isLoading}
             />
             {skillSearch && filteredSkills.length > 0 ? (
@@ -217,7 +217,7 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
                 onClick={() => setSeniority(level)}
                 className={
                   seniority === level
-                    ? "rounded-full border border-emerald-300/60 bg-emerald-500 px-3.5 py-1.5 text-sm font-medium text-white shadow-[0_0_0_1px_rgba(16,185,129,0.45)]"
+                    ? "rounded-full border border-amber-300/60 bg-amber-500 px-3.5 py-1.5 text-sm font-medium text-slate-950 shadow-[0_0_0_1px_rgba(245,158,11,0.45)]"
                     : "rounded-full border border-slate-700 bg-slate-900 px-3.5 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-800"
                 }
               >
@@ -234,7 +234,7 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
           <select
             value={location}
             onChange={(event) => setLocation(event.target.value as (typeof LOCATION_OPTIONS)[number])}
-            className="h-11 w-full rounded-lg border border-slate-600 bg-slate-900/90 px-3 py-2 text-sm text-white focus:border-emerald-500/60 focus:outline-none"
+            className="h-11 w-full rounded-lg border border-slate-600 bg-slate-900/90 px-3 py-2 text-sm text-white focus:border-amber-500/60 focus:outline-none"
             disabled={isLoading}
           >
             {LOCATION_OPTIONS.map((item) => (
@@ -299,7 +299,7 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
           }}
         />
 
-        <Button onClick={handleSubmit} disabled={isLoading || !minimumReady} className="emerald-edge h-11 w-full bg-emerald-600 text-white hover:bg-emerald-500">
+        <Button onClick={handleSubmit} disabled={isLoading || !minimumReady} className="emerald-edge pl-cta-btn h-11 w-full">
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

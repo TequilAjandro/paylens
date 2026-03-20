@@ -99,7 +99,7 @@ export default function WhatIfSimulator({
                 onClick={() => void handleToggle(skill)}
                 className={
                   active
-                    ? "inline-flex items-center gap-1 rounded-full border border-emerald-300/60 bg-emerald-500 px-3 py-1.5 text-sm font-medium text-white shadow-lg shadow-emerald-500/25 transition-all"
+                    ? "inline-flex items-center gap-1 rounded-full border border-amber-300/60 bg-amber-500 px-3 py-1.5 text-sm font-medium text-slate-950 shadow-lg shadow-amber-500/25 transition-all"
                     : "inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 transition-all hover:bg-slate-700"
                 }
               >
@@ -140,7 +140,7 @@ export default function WhatIfSimulator({
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="rounded-lg border border-emerald-500/35 bg-emerald-950/30 p-3 text-sm text-emerald-200"
+            className="rounded-lg border border-violet-500/35 bg-violet-950/30 p-3 text-sm text-violet-100"
           >
             {result.insight}
           </motion.p>
@@ -174,7 +174,7 @@ function ResultCard({
     <div className="rounded-lg border border-slate-700/70 bg-slate-900/60 p-3 text-center">
       <p className="text-xs text-slate-300">{label}</p>
       <p className="font-mono text-xl font-bold text-white">{value}</p>
-      {change ? <p className="text-xs text-emerald-300">{change}</p> : null}
+      {change ? <p className="text-xs text-amber-300">{change}</p> : null}
     </div>
   );
 }

@@ -8,38 +8,78 @@
   }
 
   :root {
-    --background: 222 71% 4%;
+    --background: 220 39% 11%;
     --foreground: 210 40% 98%;
-    --card: 222 49% 11%;
+    --card: 219 36% 14%;
     --card-foreground: 210 40% 98%;
-    --popover: 222 71% 4%;
+    --popover: 220 39% 11%;
     --popover-foreground: 210 40% 98%;
-    --primary: 222 47% 11%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 215 28% 17%;
+    --primary: 1 79% 53%;
+    --primary-foreground: 355 100% 97%;
+    --secondary: 220 25% 19%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 215 28% 17%;
-    --muted-foreground: 214 20% 78%;
-    --accent: 142 70% 45%;
+    --muted: 220 25% 19%;
+    --muted-foreground: 215 20% 78%;
+    --accent: 39 94% 56%;
     --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 346 84% 44%;
     --destructive-foreground: 210 40% 98%;
-    --border: 215 28% 25%;
-    --input: 215 28% 17%;
-    --ring: 142 70% 45%;
+    --border: 220 23% 28%;
+    --input: 220 25% 19%;
+    --ring: 1 79% 53%;
     --radius: 0.5rem;
 
-    /* PayLens semantic tokens (Option A: Financial Dark Precision) */
-    --pl-bg: #020617;
-    --pl-primary: #0f172a;
-    --pl-secondary: #1e293b;
-    --pl-text: #f8fafc;
-    --pl-text-muted: #cbd5e1;
-    --pl-accent-success: #22c55e;
-    --pl-accent-insight: #38bdf8;
-    --pl-accent-action: #22c55e;
+    /* PayLens semantic tokens (Fintech/Crypto + red CTA) */
+    --pl-bg: #0b1220;
+    --pl-bg-elevated: #111827;
+    --pl-surface: #17233a;
+    --pl-primary: #f59e0b;
+    --pl-secondary: #fbbf24;
+    --pl-text: #f1f5f9;
+    --pl-text-muted: #c3cfdf;
+    --pl-accent-success: #34d399;
+    --pl-accent-insight: #8b5cf6;
+    --pl-accent-action: #dc2626;
     --pl-accent-warning: #f59e0b;
-    --pl-accent-risk: #f43f5e;
+    --pl-accent-risk: #fb7185;
+    --pl-accent-info: #38bdf8;
+  }
+
+  html.light,
+  html[data-theme="light"] {
+    --background: 42 43% 96%;
+    --foreground: 220 39% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 39% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 39% 14%;
+    --primary: 1 79% 47%;
+    --primary-foreground: 355 100% 97%;
+    --secondary: 40 38% 92%;
+    --secondary-foreground: 220 39% 14%;
+    --muted: 40 38% 92%;
+    --muted-foreground: 222 16% 40%;
+    --accent: 39 94% 45%;
+    --accent-foreground: 220 39% 14%;
+    --destructive: 346 84% 44%;
+    --destructive-foreground: 355 100% 97%;
+    --border: 39 24% 84%;
+    --input: 40 38% 92%;
+    --ring: 1 79% 47%;
+
+    --pl-bg: #f8f5ef;
+    --pl-bg-elevated: #ffffff;
+    --pl-surface: #f2ebe0;
+    --pl-primary: #d97706;
+    --pl-secondary: #f59e0b;
+    --pl-text: #1f2937;
+    --pl-text-muted: #4b5563;
+    --pl-accent-success: #047857;
+    --pl-accent-insight: #6d28d9;
+    --pl-accent-action: #dc2626;
+    --pl-accent-warning: #b45309;
+    --pl-accent-risk: #be123c;
+    --pl-accent-info: #0369a1;
   }
 
   * {
@@ -49,8 +89,8 @@
   body {
     @apply bg-background font-sans text-foreground antialiased;
     background-image:
-      radial-gradient(circle at top, color-mix(in oklab, var(--pl-accent-success) 22%, transparent), transparent 30%),
-      linear-gradient(135deg, var(--pl-bg) 0%, var(--pl-primary) 45%, #111e34 100%);
+      radial-gradient(circle at top, color-mix(in oklab, var(--pl-primary) 18%, transparent), transparent 32%),
+      linear-gradient(135deg, var(--pl-bg) 0%, var(--pl-bg-elevated) 45%, #281739 100%);
     min-height: 100vh;
   }
 
@@ -77,11 +117,11 @@
   .glass-panel {
     background: linear-gradient(
       145deg,
-      color-mix(in oklab, var(--pl-primary) 76%, transparent) 0%,
-      color-mix(in oklab, var(--pl-primary) 64%, transparent) 48%,
-      color-mix(in oklab, var(--pl-bg) 82%, transparent) 100%
+      color-mix(in oklab, var(--pl-surface) 88%, transparent) 0%,
+      color-mix(in oklab, var(--pl-surface) 74%, transparent) 48%,
+      color-mix(in oklab, var(--pl-bg) 86%, transparent) 100%
     );
-    border: 1px solid color-mix(in oklab, var(--pl-text-muted) 26%, transparent);
+    border: 1px solid color-mix(in oklab, var(--pl-primary) 24%, transparent);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.05),
       0 18px 54px rgba(2, 6, 23, 0.55);
@@ -90,30 +130,65 @@
 
   .emerald-edge {
     box-shadow:
-      0 0 0 1px color-mix(in oklab, var(--pl-accent-success) 38%, transparent),
-      0 12px 36px rgba(6, 78, 59, 0.45);
+      0 0 0 1px color-mix(in oklab, var(--pl-accent-action) 42%, transparent),
+      0 14px 36px rgba(136, 19, 55, 0.42);
   }
 
   .pl-bg-main {
     background-image:
-      radial-gradient(circle at top left, color-mix(in oklab, var(--pl-accent-success) 18%, transparent), transparent 33%),
+      radial-gradient(circle at top left, color-mix(in oklab, var(--pl-primary) 16%, transparent), transparent 34%),
       radial-gradient(circle at bottom right, color-mix(in oklab, var(--pl-accent-insight) 18%, transparent), transparent 36%),
-      linear-gradient(135deg, var(--pl-bg) 0%, var(--pl-primary) 50%, #111e34 100%);
+      linear-gradient(135deg, var(--pl-bg) 0%, var(--pl-bg-elevated) 50%, #281739 100%);
   }
 
   .pl-text-muted {
     color: var(--pl-text-muted);
   }
 
+  .pl-text-main {
+    color: var(--pl-text);
+  }
+
+  .pl-title-accent {
+    color: color-mix(in oklab, var(--pl-primary) 84%, white);
+  }
+
   .pl-chip-success {
     border: 1px solid color-mix(in oklab, var(--pl-accent-success) 40%, transparent);
     background: color-mix(in oklab, var(--pl-accent-success) 16%, transparent);
-    color: #dcfce7;
+    color: color-mix(in oklab, var(--pl-accent-success) 30%, white);
   }
 
   .pl-chip-insight {
     border: 1px solid color-mix(in oklab, var(--pl-accent-insight) 40%, transparent);
     background: color-mix(in oklab, var(--pl-accent-insight) 16%, transparent);
-    color: #e0f2fe;
+    color: color-mix(in oklab, var(--pl-accent-insight) 36%, white);
+  }
+
+  .pl-chip-warning {
+    border: 1px solid color-mix(in oklab, var(--pl-accent-warning) 40%, transparent);
+    background: color-mix(in oklab, var(--pl-accent-warning) 16%, transparent);
+    color: color-mix(in oklab, var(--pl-accent-warning) 26%, white);
+  }
+
+  .pl-chip-risk {
+    border: 1px solid color-mix(in oklab, var(--pl-accent-risk) 42%, transparent);
+    background: color-mix(in oklab, var(--pl-accent-risk) 16%, transparent);
+    color: color-mix(in oklab, var(--pl-accent-risk) 36%, white);
+  }
+
+  .pl-chip-info {
+    border: 1px solid color-mix(in oklab, var(--pl-accent-info) 42%, transparent);
+    background: color-mix(in oklab, var(--pl-accent-info) 14%, transparent);
+    color: color-mix(in oklab, var(--pl-accent-info) 36%, white);
+  }
+
+  .pl-cta-btn {
+    background: var(--pl-accent-action);
+    color: #fff1f2;
+  }
+
+  .pl-cta-btn:hover {
+    background: color-mix(in oklab, var(--pl-accent-action) 88%, white);
   }
 }

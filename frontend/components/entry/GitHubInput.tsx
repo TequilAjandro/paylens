@@ -71,7 +71,7 @@ export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
       <CardContent className="space-y-4 p-6 sm:p-7">
         <div className="flex items-center gap-2 text-white">
           <span className="flex h-8 w-8 items-center justify-center rounded-md bg-slate-800/90 ring-1 ring-slate-600">
-            <Github className="h-4 w-4 text-emerald-300" />
+            <Github className="h-4 w-4 text-amber-300" />
           </span>
           <div>
             <p className="font-semibold">Paste your GitHub profile URL</p>
@@ -90,7 +90,7 @@ export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
               setError(null);
             }}
             onBlur={() => setTouched(true)}
-            className={`h-11 bg-slate-900/90 text-white placeholder:text-slate-500 focus-visible:border-emerald-400/70 focus-visible:ring-emerald-500/30 ${
+            className={`h-11 bg-slate-900/90 text-white placeholder:text-slate-500 focus-visible:border-amber-400/70 focus-visible:ring-amber-500/30 ${
               showInlineError ? "border-rose-500/70" : "border-slate-600"
             }`}
             aria-invalid={hasError}
@@ -100,7 +100,7 @@ export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
           <Button
             onClick={handleSubmit}
             disabled={isLoading || !cleanedInput || !isValidInput}
-            className="emerald-edge h-11 min-w-[156px] bg-emerald-600 text-white hover:bg-emerald-500"
+            className="emerald-edge pl-cta-btn h-11 min-w-[156px]"
           >
             {isLoading ? (
               <>

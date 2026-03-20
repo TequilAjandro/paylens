@@ -22,8 +22,8 @@ const BREAKDOWN_LABELS: Record<string, string> = {
 
 function getScoreColor(score: number): string {
   if (score >= 70) return "#34d399";
-  if (score >= 40) return "#facc15";
-  return "#f87171";
+  if (score >= 40) return "#f59e0b";
+  return "#fb7185";
 }
 
 export default function ScoreGauge({ score, breakdown, percentileLabel }: ScoreGaugeProps) {
@@ -44,7 +44,7 @@ export default function ScoreGauge({ score, breakdown, percentileLabel }: ScoreG
       <Card className="glass-panel rounded-xl border-slate-700/80">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-white">
-            <Target className="h-5 w-5 text-cyan-300" />
+            <Target className="h-5 w-5 text-violet-300" />
             <span className="inline-flex items-center gap-1.5">
               Market Readiness Score
               <InfoTooltip text="Composite score (0-100) combining demand, breadth, fit, and growth potential." />
@@ -58,7 +58,7 @@ export default function ScoreGauge({ score, breakdown, percentileLabel }: ScoreG
               <path
                 d="M 20 100 A 80 80 0 0 1 180 100"
                 fill="none"
-                stroke="#334155"
+                stroke="#475569"
                 strokeWidth="12"
                 strokeLinecap="round"
               />
@@ -103,7 +103,11 @@ export default function ScoreGauge({ score, breakdown, percentileLabel }: ScoreG
                     </span>
                     <span className="font-mono font-medium text-white">{barValue}</span>
                   </div>
-                  <Progress value={barValue} className="h-2 bg-slate-700/70" indicatorClassName="bg-emerald-400" />
+                  <Progress
+                    value={barValue}
+                    className="h-2 bg-slate-600/40"
+                    indicatorClassName="bg-gradient-to-r from-rose-500 via-red-500 to-amber-400"
+                  />
                 </motion.div>
               );
             })}

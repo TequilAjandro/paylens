@@ -85,7 +85,7 @@ export default function InfoTooltip({ text }: InfoTooltipProps) {
           if (!isOpen) updatePosition();
           setIsOpen((value) => !value);
         }}
-        className="inline-flex h-4 w-4 items-center justify-center rounded-full text-slate-300/90 outline-none transition-colors hover:text-cyan-200 focus-visible:ring-2 focus-visible:ring-cyan-400/50"
+        className="inline-flex h-4 w-4 items-center justify-center rounded-full text-slate-300/90 outline-none transition-colors hover:text-amber-200 focus-visible:ring-2 focus-visible:ring-amber-400/50"
       >
         <CircleHelp className="h-3.5 w-3.5" />
       </button>

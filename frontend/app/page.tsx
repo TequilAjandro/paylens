@@ -48,8 +48,8 @@ export default function EntryPage() {
   return (
     <main className="pl-bg-main relative flex min-h-screen items-center justify-center overflow-hidden p-4 sm:p-6">
       <div className="paylens-grid pointer-events-none absolute inset-0" />
-      <div className="pointer-events-none absolute -left-24 top-8 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl" />
-      <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-cyan-500/20 blur-3xl" />
+      <div className="pointer-events-none absolute -left-24 top-8 h-72 w-72 rounded-full bg-violet-500/18 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-amber-500/16 blur-3xl" />
 
       <motion.div
         initial={{ opacity: 0, y: 24 }}
@@ -59,7 +59,7 @@ export default function EntryPage() {
       >
         <div className="mb-7 space-y-3 text-center">
           <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl">
-            {ENTRY_COPY.title}
+            <span className="pl-title-accent">{ENTRY_COPY.title}</span>
           </h1>
           <p className="mx-auto max-w-2xl text-base text-slate-200 sm:text-lg">
             {ENTRY_COPY.subtitle}
@@ -84,7 +84,7 @@ export default function EntryPage() {
           >
             <div className="relative h-12 w-full rounded-full border border-slate-600/90 bg-slate-900/80 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
               <motion.div
-                className="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full border border-emerald-400/70 bg-slate-700 shadow-[0_0_0_1px_rgba(16,185,129,0.4)]"
+                className="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full border border-amber-400/70 bg-slate-700 shadow-[0_0_0_1px_rgba(245,158,11,0.4)]"
                 initial={false}
                 animate={{ x: activeTab === "github" ? "0%" : "100%" }}
                 transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.7 }}
@@ -93,13 +93,13 @@ export default function EntryPage() {
               <TabsList className="relative z-10 grid h-full w-full grid-cols-2 bg-transparent p-0">
                 <TabsTrigger
                   value="github"
-                  className="h-10 rounded-full border border-transparent text-slate-300 aria-selected:font-semibold aria-selected:text-emerald-100 data-active:font-semibold data-active:text-emerald-100 focus-visible:ring-2 focus-visible:ring-emerald-400/40 focus-visible:ring-offset-0"
+                  className="h-10 rounded-full border border-transparent text-slate-300 aria-selected:font-semibold aria-selected:text-amber-100 data-active:font-semibold data-active:text-amber-100 focus-visible:ring-2 focus-visible:ring-amber-400/40 focus-visible:ring-offset-0"
                 >
                   GitHub Profile
                 </TabsTrigger>
                 <TabsTrigger
                   value="manual"
-                  className="h-10 rounded-full border border-transparent text-slate-300 aria-selected:font-semibold aria-selected:text-emerald-100 data-active:font-semibold data-active:text-emerald-100 focus-visible:ring-2 focus-visible:ring-emerald-400/40 focus-visible:ring-offset-0"
+                  className="h-10 rounded-full border border-transparent text-slate-300 aria-selected:font-semibold aria-selected:text-amber-100 data-active:font-semibold data-active:text-amber-100 focus-visible:ring-2 focus-visible:ring-amber-400/40 focus-visible:ring-offset-0"
                 >
                   Quick Input
                 </TabsTrigger>
