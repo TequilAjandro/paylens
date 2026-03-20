@@ -67,7 +67,7 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
   const [yearsExperience, setYearsExperience] = useState(3);
   const [currentRole, setCurrentRole] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState<"idle" | "calling" | "thinking" | "loaded">("idle");
+  const [status, setStatus] = useState<"idle" | "calling" | "thinking" | "loaded" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 

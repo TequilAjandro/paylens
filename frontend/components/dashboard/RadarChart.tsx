@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { SyntheticEvent } from "react";
 import {
   Legend,
   PolarAngleAxis,
@@ -64,11 +63,6 @@ export default function SkillRadarChart({ peerComparison }: RadarChartProps) {
   const seniorityText = peerComparison.seniority_group || "mid-level";
   const percentileText =
     peerComparison.percentile_label || `Top ${peerComparison.overall_percentile || 34}%`;
-  const suppressFocusOnPointer = (event: SyntheticEvent) => {
-    event.preventDefault();
-    const target = event.currentTarget as HTMLElement;
-    target.blur();
-  };
 
   return (
     <motion.div
@@ -94,9 +88,6 @@ export default function SkillRadarChart({ peerComparison }: RadarChartProps) {
           <ResponsiveContainer width="100%" height={400}>
             <RechartsRadarChart
               accessibilityLayer={false}
-              rootTabIndex={-1}
-              onMouseDownCapture={suppressFocusOnPointer}
-              onTouchStartCapture={suppressFocusOnPointer}
               cx="50%"
               cy="50%"
               outerRadius="80%"

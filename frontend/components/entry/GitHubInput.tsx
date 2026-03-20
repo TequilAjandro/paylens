@@ -20,7 +20,7 @@ const GITHUB_USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
 export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState<"idle" | "calling" | "thinking" | "loaded">("idle");
+  const [status, setStatus] = useState<"idle" | "calling" | "thinking" | "loaded" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
 

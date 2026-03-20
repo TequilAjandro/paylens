@@ -59,6 +59,29 @@ npm install
 npm run dev
 ```
 
+## 🐳 Docker
+
+### Prerequisites
+- Docker with Compose plugin
+- `backend/.env` with at minimum `GEMINI_API_KEY=<your-key>`
+
+### Production
+```bash
+docker compose build
+docker compose up -d
+```
+
+| Service  | URL                          |
+|----------|------------------------------|
+| Frontend | http://localhost:3000        |
+| Backend  | http://localhost:8000        |
+| Health   | http://localhost:8000/health |
+
+### Development (hot reload)
+```bash
+docker compose -f docker-compose.dev.yml up
+```
+
 ## 📖 Documentation
 
 - Detailed API documentation can be found in the [Backend README](./backend/README.md).

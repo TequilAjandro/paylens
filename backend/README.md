@@ -62,3 +62,19 @@ uv run uvicorn main:app --reload
 ```
 
 Interactive documentation is available at `/docs`.
+
+## 🐳 Docker
+
+Build and run from the **repo root**:
+
+```bash
+docker compose build
+docker compose up -d
+```
+
+The backend is available at `http://localhost:8000`. Health check: `http://localhost:8000/health`.
+
+For hot-reload dev mode:
+```bash
+docker compose -f docker-compose.dev.yml up
+```
