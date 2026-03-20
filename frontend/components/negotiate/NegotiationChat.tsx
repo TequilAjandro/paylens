@@ -9,6 +9,7 @@ import AsyncState from "@/components/ui/async-state";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import CurrencyToggle from "@/components/ui/currency-toggle";
+import BrandLockup from "@/components/ui/brand-lockup";
 import {
   formatCurrencyFromUsd,
   type DisplayCurrency,
@@ -132,7 +133,7 @@ export default function NegotiationChat({
     };
 
     void startNegotiation();
-  }, [companyId, roleTitle, userProfile]);
+  }, [companyId, isDemo, roleTitle, userProfile]);
 
   useEffect(() => {
     if (!scrollerRef.current) return;
@@ -254,6 +255,7 @@ export default function NegotiationChat({
         <Card className="rounded-xl border-amber-400/35 bg-slate-900/75 px-4 py-3 sm:px-5">
           <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
             <div>
+              <BrandLockup variant="icon" className="mb-2 w-fit rounded-lg" />
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">Negotiation Session</p>
               <h1 className="text-lg font-bold text-white sm:text-xl">
                 Negotiating with {companyName}

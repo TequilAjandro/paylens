@@ -20,6 +20,7 @@ import AsyncState from "@/components/ui/async-state";
 import InfoTooltip from "@/components/ui/info-tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import CurrencyToggle from "@/components/ui/currency-toggle";
+import BrandLockup from "@/components/ui/brand-lockup";
 import { convertFromUsd, currencyPrefix } from "@/lib/currency";
 import { useCurrency } from "@/lib/use-currency";
 import { Copy, Sparkles, Trophy } from "lucide-react";
@@ -194,22 +195,23 @@ export default function DashboardPage() {
       <div className="relative z-10 mx-auto max-w-7xl">
         <div className="min-w-0 space-y-8 lg:pr-[16rem]">
         <AnimatedSection index={0} className="scroll-mt-24" >
-          <div id="overview" className="space-y-2">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-              <div className="space-y-1">
-                <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-slate-300">
-                  Market Diagnosis
-                  <InfoTooltip text="AI-generated market view of your salary position, role availability, and skill leverage." />
-                </p>
-                <h1 className="text-3xl font-bold text-white sm:text-4xl">
-                  Your Market <span className="pl-title-accent">Diagnosis</span>
-                </h1>
-                <p className="text-sm text-slate-300">Based on 49,000 developers across LATAM market signals.</p>
-              </div>
+          <div id="overview" className="space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <BrandLockup className="w-fit rounded-2xl" />
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">Currency</span>
                 <CurrencyToggle currency={currency} onChange={setCurrency} />
               </div>
+            </div>
+            <div className="space-y-1">
+              <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-slate-300">
+                Market Diagnosis
+                <InfoTooltip text="AI-generated market view of your salary position, role availability, and skill leverage." />
+              </p>
+              <h1 className="text-3xl font-bold text-white sm:text-4xl">
+                Your Market <span className="pl-title-accent">Diagnosis</span>
+              </h1>
+              <p className="text-sm text-slate-300">Based on 49,000 developers across LATAM market signals.</p>
             </div>
           </div>
         </AnimatedSection>
@@ -404,17 +406,15 @@ export default function DashboardPage() {
               </AnimatedSection>
             </div>
 
-            <AnimatedSection index={10}>
-              <div className="flex justify-center pt-2">
-                <Button
-                  type="button"
-                  onClick={() => router.push(`/negotiate${isDemo ? "?demo=true" : ""}`)}
-                  className="rounded-xl border border-rose-300/40 bg-rose-600 px-6 py-6 text-base font-semibold text-white shadow-[0_18px_45px_rgba(225,29,72,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-rose-500"
-                >
-                  Practice Salary Negotiation
-                </Button>
-              </div>
-            </AnimatedSection>
+            <div className="flex justify-center pt-2">
+              <Button
+                type="button"
+                onClick={() => router.push(`/negotiate${isDemo ? "?demo=true" : ""}`)}
+                className="amber-edge pl-cta-btn rounded-xl border border-amber-300/45 px-6 py-6 text-base font-semibold text-white shadow-[0_18px_45px_rgba(0,87,240,0.28)] transition-all duration-300 hover:-translate-y-0.5"
+              >
+                Practice Salary Negotiation
+              </Button>
+            </div>
           </div>
         )}
         </div>

@@ -8,78 +8,41 @@
   }
 
   :root {
-    --background: 220 39% 11%;
-    --foreground: 210 40% 98%;
-    --card: 219 36% 14%;
-    --card-foreground: 210 40% 98%;
-    --popover: 220 39% 11%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 1 79% 53%;
-    --primary-foreground: 355 100% 97%;
-    --secondary: 220 25% 19%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 220 25% 19%;
-    --muted-foreground: 215 20% 78%;
-    --accent: 39 94% 56%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 346 84% 44%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 220 23% 28%;
-    --input: 220 25% 19%;
-    --ring: 1 79% 53%;
+    --background: 212 53% 13%;
+    --foreground: 204 48% 94%;
+    --card: 212 56% 14%;
+    --card-foreground: 204 48% 94%;
+    --popover: 212 53% 13%;
+    --popover-foreground: 204 48% 94%;
+    --primary: 173 95% 33%;
+    --primary-foreground: 204 48% 94%;
+    --secondary: 218 100% 47%;
+    --secondary-foreground: 204 48% 94%;
+    --muted: 209 44% 20%;
+    --muted-foreground: 206 33% 78%;
+    --accent: 38 97% 71%;
+    --accent-foreground: 208 34% 30%;
+    --destructive: 38 97% 71%;
+    --destructive-foreground: 208 34% 30%;
+    --border: 209 35% 32%;
+    --input: 209 44% 20%;
+    --ring: 173 95% 33%;
     --radius: 0.5rem;
 
-    /* PayLens semantic tokens (Fintech/Crypto + red CTA) */
-    --pl-bg: #0b1220;
-    --pl-bg-elevated: #111827;
-    --pl-surface: #17233a;
-    --pl-primary: #f59e0b;
-    --pl-secondary: #fbbf24;
-    --pl-text: #f1f5f9;
-    --pl-text-muted: #c3cfdf;
-    --pl-accent-success: #f59e0b;
-    --pl-accent-insight: #8b5cf6;
-    --pl-accent-action: #dc2626;
-    --pl-accent-warning: #f59e0b;
-    --pl-accent-risk: #fb7185;
-    --pl-accent-info: #a78bfa;
-  }
-
-  html.light,
-  html[data-theme="light"] {
-    --background: 42 43% 96%;
-    --foreground: 220 39% 14%;
-    --card: 0 0% 100%;
-    --card-foreground: 220 39% 14%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 39% 14%;
-    --primary: 1 79% 47%;
-    --primary-foreground: 355 100% 97%;
-    --secondary: 40 38% 92%;
-    --secondary-foreground: 220 39% 14%;
-    --muted: 40 38% 92%;
-    --muted-foreground: 222 16% 40%;
-    --accent: 39 94% 45%;
-    --accent-foreground: 220 39% 14%;
-    --destructive: 346 84% 44%;
-    --destructive-foreground: 355 100% 97%;
-    --border: 39 24% 84%;
-    --input: 40 38% 92%;
-    --ring: 1 79% 47%;
-
-    --pl-bg: #f8f5ef;
-    --pl-bg-elevated: #ffffff;
-    --pl-surface: #f2ebe0;
-    --pl-primary: #d97706;
-    --pl-secondary: #f59e0b;
-    --pl-text: #1f2937;
-    --pl-text-muted: #4b5563;
-    --pl-accent-success: #b45309;
-    --pl-accent-insight: #6d28d9;
-    --pl-accent-action: #dc2626;
-    --pl-accent-warning: #b45309;
-    --pl-accent-risk: #be123c;
-    --pl-accent-info: #7c3aed;
+    /* miCoach dark semantic tokens (based on guideline palette) */
+    --pl-bg: #081624;
+    --pl-bg-elevated: #0f1f31;
+    --pl-surface: #16314b;
+    --pl-primary: #04a28f;
+    --pl-secondary: #0057f0;
+    --pl-text: #e8f1f7;
+    --pl-text-muted: #b7c7d8;
+    --pl-accent-success: #04a28f;
+    --pl-accent-insight: #0057f0;
+    --pl-accent-action: #04a28f;
+    --pl-accent-warning: #fdc86e;
+    --pl-accent-risk: #fdc86e;
+    --pl-accent-info: #334f68;
   }
 
   * {
@@ -88,9 +51,10 @@
 
   body {
     @apply bg-background font-sans text-foreground antialiased;
+    font-family: "Avenir Next", Avenir, var(--font-sans), "Segoe UI", sans-serif;
     background-image:
-      radial-gradient(circle at top, color-mix(in oklab, var(--pl-primary) 18%, transparent), transparent 32%),
-      linear-gradient(135deg, var(--pl-bg) 0%, var(--pl-bg-elevated) 45%, #281739 100%);
+      radial-gradient(circle at top, color-mix(in oklab, var(--pl-primary) 20%, transparent), transparent 34%),
+      linear-gradient(135deg, var(--pl-bg) 0%, var(--pl-bg-elevated) 50%, #102338 100%);
     min-height: 100vh;
   }
 
@@ -100,7 +64,7 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-mono);
+    font-family: "Avenir Next", Avenir, var(--font-sans), "Segoe UI", sans-serif;
     letter-spacing: -0.01em;
   }
 }
@@ -108,8 +72,8 @@
 @layer utilities {
   .paylens-grid {
     background-image:
-      linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+      linear-gradient(rgba(51, 79, 104, 0.24) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(51, 79, 104, 0.24) 1px, transparent 1px);
     background-size: 32px 32px;
     mask-image: radial-gradient(circle at center, black 42%, transparent 90%);
   }
@@ -130,15 +94,15 @@
 
   .amber-edge {
     box-shadow:
-      0 0 0 1px color-mix(in oklab, var(--pl-accent-action) 42%, transparent),
-      0 14px 36px rgba(136, 19, 55, 0.42);
+      0 0 0 1px color-mix(in oklab, var(--pl-secondary) 42%, transparent),
+      0 14px 36px rgba(0, 87, 240, 0.25);
   }
 
   .pl-bg-main {
     background-image:
-      radial-gradient(circle at top left, color-mix(in oklab, var(--pl-primary) 16%, transparent), transparent 34%),
-      radial-gradient(circle at bottom right, color-mix(in oklab, var(--pl-accent-insight) 18%, transparent), transparent 36%),
-      linear-gradient(135deg, var(--pl-bg) 0%, var(--pl-bg-elevated) 50%, #281739 100%);
+      radial-gradient(circle at top left, color-mix(in oklab, var(--pl-primary) 18%, transparent), transparent 34%),
+      radial-gradient(circle at bottom right, color-mix(in oklab, var(--pl-secondary) 17%, transparent), transparent 36%),
+      linear-gradient(135deg, var(--pl-bg) 0%, var(--pl-bg-elevated) 52%, #102338 100%);
   }
 
   .pl-text-muted {
@@ -150,7 +114,10 @@
   }
 
   .pl-title-accent {
-    color: color-mix(in oklab, var(--pl-primary) 84%, white);
+    background: linear-gradient(110deg, var(--pl-primary) 0%, var(--pl-secondary) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
   .pl-chip-success {
@@ -180,15 +147,28 @@
   .pl-chip-info {
     border: 1px solid color-mix(in oklab, var(--pl-accent-info) 42%, transparent);
     background: color-mix(in oklab, var(--pl-accent-info) 14%, transparent);
-    color: color-mix(in oklab, var(--pl-accent-info) 36%, white);
+    color: color-mix(in oklab, var(--pl-accent-info) 68%, white);
   }
 
   .pl-cta-btn {
-    background: var(--pl-accent-action);
-    color: #fff1f2;
+    background: linear-gradient(120deg, var(--pl-secondary) 0%, var(--pl-primary) 100%);
+    color: #ecf7ff;
   }
 
   .pl-cta-btn:hover {
-    background: color-mix(in oklab, var(--pl-accent-action) 88%, white);
+    background: linear-gradient(
+      120deg,
+      color-mix(in oklab, var(--pl-secondary) 88%, white) 0%,
+      color-mix(in oklab, var(--pl-primary) 88%, white) 100%
+    );
+  }
+
+  .pl-logo-surface {
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(245, 249, 253, 0.97);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.58),
+      0 10px 28px rgba(7, 23, 39, 0.28);
+    backdrop-filter: blur(6px);
   }
 }

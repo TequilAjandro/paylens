@@ -1,12 +1,18 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function DemoBadge() {
-  const searchParams = useSearchParams();
-  if (searchParams.get("demo") !== "true") return null;
+  const [isDemo, setIsDemo] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setIsDemo(params.get("demo") === "true");
+  }, []);
+
+  if (!isDemo) return null;
   return (
-    <div className="fixed top-4 right-4 z-50 rounded-full bg-violet-500/20 px-3 py-1 text-xs text-violet-200 border border-violet-400/30">
+    <div className="fixed top-4 right-4 z-50 rounded-full border border-amber-400/30 bg-amber-500/20 px-3 py-1 text-xs text-amber-100">
       Demo Mode
     </div>
   );

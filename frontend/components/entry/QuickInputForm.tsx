@@ -165,8 +165,6 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
               skillsInvalid ? "border border-rose-500/60" : "border border-slate-700/70"
             }`}
             role="group"
-            aria-invalid={skillsInvalid}
-            aria-describedby={skillsInvalid ? "quick-input-error" : undefined}
           >
             {skills.map((skill) => (
               <Badge

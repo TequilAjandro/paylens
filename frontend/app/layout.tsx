@@ -1,22 +1,21 @@
 import type { Metadata } from "next";
-import { Fira_Code, Fira_Sans } from "next/font/google";
+import localFont from "next/font/local";
+import { Suspense } from "react";
 import "./globals.css";
 import DemoBadge from "@/components/ui/demo-badge";
 
-const firaSans = Fira_Sans({
-  subsets: ["latin"],
+const sansFallback = localFont({
+  src: "./fonts/GeistVF.woff",
   variable: "--font-sans",
-  weight: ["400", "500", "600", "700"],
 });
-const firaCode = Fira_Code({
-  subsets: ["latin"],
+const monoFallback = localFont({
+  src: "./fonts/GeistMonoVF.woff",
   variable: "--font-mono",
-  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "PayLens",
-  description: "Know your true market value. Powered by real data.",
+  title: "miCoach Market Lens",
+  description: "Know your market value with miCoach-aligned insights.",
 };
 
 export default function RootLayout({
@@ -26,8 +25,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${firaSans.variable} ${firaCode.variable} font-sans`}>
-        <DemoBadge />
+      <body className={`${sansFallback.variable} ${monoFallback.variable} font-sans`}>
+        <Suspense fallback={null}>
+          <DemoBadge />
+        </Suspense>
         {children}
       </body>
     </html>

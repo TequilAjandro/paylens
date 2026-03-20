@@ -5,6 +5,7 @@ import { Building2, Globe2, Landmark, Rocket } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import CurrencyToggle from "@/components/ui/currency-toggle";
+import BrandLockup from "@/components/ui/brand-lockup";
 import {
   formatCurrencyFromUsd,
   type DisplayCurrency,
@@ -74,6 +75,9 @@ export default function CompanySelector({ onSelect, currency, onCurrencyChange }
 
       <div className="relative mx-auto max-w-5xl space-y-8">
         <div className="space-y-3 text-center">
+          <div className="flex justify-center">
+            <BrandLockup className="rounded-2xl" />
+          </div>
           <h1 className="text-3xl font-bold text-white sm:text-4xl">Practice Salary Negotiation</h1>
           <p className="mx-auto max-w-2xl text-slate-300">
             Choose a company and run a realistic compensation conversation with an AI hiring manager.

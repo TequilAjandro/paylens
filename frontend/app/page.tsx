@@ -7,6 +7,7 @@ import type { GitHubProfileOutput, ManualProfile } from "@/lib/types";
 import GitHubInput from "@/components/entry/GitHubInput";
 import ProfileCard from "@/components/entry/ProfileCard";
 import QuickInputForm from "@/components/entry/QuickInputForm";
+import BrandLockup from "@/components/ui/brand-lockup";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DEMO_PROFILE } from "@/data/demo-data";
 import { useDemoMode } from "@/lib/use-demo-mode";
@@ -15,7 +16,7 @@ type EntryProfile = GitHubProfileOutput | (ManualProfile & { profile_ready?: boo
 type EntryTab = "github" | "manual";
 
 const ENTRY_COPY = {
-  title: "PayLens",
+  title: "Market Lens",
   subtitle: "Know your true market value with market-grounded signals from 49,000 developer profiles.",
   chips: [
     {
@@ -28,7 +29,7 @@ const ENTRY_COPY = {
     },
     {
       label: "Instant salary positioning preview",
-      className: "rounded-full border border-amber-400/45 bg-amber-500/15 text-amber-100",
+      className: "pl-chip-warning",
     },
   ],
 };
@@ -75,7 +76,10 @@ export default function EntryPage() {
         className="glass-panel relative z-10 w-full max-w-3xl rounded-2xl p-5 sm:p-8"
       >
         <div className="mb-7 space-y-3 text-center">
-          <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl">
+          <div className="flex justify-center">
+            <BrandLockup className="rounded-2xl" />
+          </div>
+          <h1 className="text-3xl font-bold leading-tight text-white sm:text-4xl">
             <span className="pl-title-accent">{ENTRY_COPY.title}</span>
           </h1>
           <p className="mx-auto max-w-2xl text-base text-slate-200 sm:text-lg">
