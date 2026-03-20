@@ -61,6 +61,7 @@ export default function NegotiationChat({
   const [turnNumber, setTurnNumber] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [requestPhase, setRequestPhase] = useState<"idle" | "calling" | "thinking">("idle");
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const bootstrappedRef = useRef(false);
 
@@ -70,7 +71,9 @@ export default function NegotiationChat({
 
     const startNegotiation = async () => {
       setLoading(true);
+      setRequestPhase("calling");
       setError(null);
+      const thinkingTimer = setTimeout(() => setRequestPhase("thinking"), 420);
 
       try {
         const response = (await negotiate({
@@ -95,6 +98,8 @@ export default function NegotiationChat({
         setTurnNumber(1);
         setError("Live negotiation is temporarily unavailable. Running in local simulation mode.");
       } finally {
+        clearTimeout(thinkingTimer);
+        setRequestPhase("idle");
         setLoading(false);
       }
     };
@@ -118,8 +123,10 @@ export default function NegotiationChat({
     }
 
     setLoading(true);
+    setRequestPhase("calling");
     setError(null);
     setInput("");
+    const thinkingTimer = setTimeout(() => setRequestPhase("thinking"), 420);
 
     try {
       const response = (await negotiate({
@@ -174,6 +181,8 @@ export default function NegotiationChat({
 
       setError("Live negotiation is temporarily unavailable. Running in local simulation mode.");
     } finally {
+      clearTimeout(thinkingTimer);
+      setRequestPhase("idle");
       setLoading(false);
     }
   }
@@ -237,10 +246,11 @@ export default function NegotiationChat({
             {loading ? (
               <div className="flex justify-start">
                 <div className="rounded-2xl border border-slate-700 bg-slate-800/95 px-4 py-3 text-sm text-slate-300">
-                  <span className="inline-flex items-center gap-1.5">
+                  <span className="inline-flex items-center gap-2">
                     <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:-0.22s]" />
                     <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:-0.1s]" />
                     <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400" />
+                    <span>{requestPhase === "calling" ? "Calling model..." : "AI thinking..."}</span>
                   </span>
                 </div>
               </div>

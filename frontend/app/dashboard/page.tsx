@@ -61,12 +61,15 @@ export default function DashboardPage() {
   const [profile, setProfile] = useState<ManualProfile>(DEMO_PROFILE);
   const [diagnosis, setDiagnosis] = useState<DiagnosisResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingStage, setLoadingStage] = useState<"calling" | "thinking" | "loaded">("calling");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadDiagnosis = async () => {
       setIsLoading(true);
+      setLoadingStage("calling");
       setError(null);
+      const thinkingTimer = setTimeout(() => setLoadingStage("thinking"), 420);
 
       try {
         const rawProfile = sessionStorage.getItem("userProfile");
@@ -89,11 +92,14 @@ export default function DashboardPage() {
         const response = await getDiagnosis(manualProfile);
         setDiagnosis(response);
         sessionStorage.setItem("diagnosisResult", JSON.stringify(response));
+        setLoadingStage("loaded");
       } catch {
         setProfile(DEMO_PROFILE);
         setDiagnosis(DEMO_DIAGNOSIS);
         setError("Live diagnosis is temporarily unavailable. Showing demo market data.");
+        setLoadingStage("loaded");
       } finally {
+        clearTimeout(thinkingTimer);
         setIsLoading(false);
       }
     };
@@ -144,6 +150,13 @@ export default function DashboardPage() {
 
         {isLoading || !diagnosis ? (
           <div className="space-y-5">
+            <p className="text-sm text-slate-300">
+              {loadingStage === "calling"
+                ? "Calling diagnosis API..."
+                : loadingStage === "thinking"
+                  ? "AI is thinking through your market profile..."
+                  : "Loaded"}
+            </p>
             <Skeleton className="h-10 w-72 rounded-xl bg-slate-800/80" />
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               <Skeleton className="h-[220px] rounded-xl bg-slate-800/80" />

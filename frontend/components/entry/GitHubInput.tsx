@@ -18,6 +18,7 @@ const GITHUB_PROFILE_REGEX = /^https:\/\/github\.com\/[a-zA-Z0-9_-]+\/?$/;
 export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<"idle" | "calling" | "thinking" | "loaded">("idle");
   const [error, setError] = useState<string | null>(null);
 
   const isValidUrl = useMemo(() => GITHUB_PROFILE_REGEX.test(url), [url]);
@@ -30,13 +31,19 @@ export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
 
     setError(null);
     setIsLoading(true);
+    setStatus("calling");
+
+    const thinkingTimer = setTimeout(() => setStatus("thinking"), 450);
 
     try {
       const profile = await analyzeGitHub(url.replace(/\/$/, ""));
+      setStatus("loaded");
       onProfileReady(profile);
     } catch {
       setError("Failed to analyze GitHub profile. Please try again.");
+      setStatus("idle");
     } finally {
+      clearTimeout(thinkingTimer);
       setIsLoading(false);
     }
   };
@@ -70,7 +77,7 @@ export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analyzing...
+                {status === "calling" ? "Calling API..." : "Thinking..."}
               </>
             ) : (
               "Analyze Profile"
@@ -84,7 +91,9 @@ export default function GitHubInput({ onProfileReady }: GitHubInputProps) {
           <div className="space-y-3 rounded-lg border border-slate-700/80 bg-slate-900/70 p-3 pt-4">
             <Skeleton className="h-4 w-3/4 bg-slate-800" />
             <Skeleton className="h-4 w-1/2 bg-slate-800" />
-            <p className="text-sm text-slate-400">Analyzing repositories...</p>
+            <p className="text-sm text-slate-400">
+              {status === "calling" ? "Calling GitHub profile endpoint..." : "AI is thinking through your repository signal..."}
+            </p>
           </div>
         ) : null}
       </CardContent>

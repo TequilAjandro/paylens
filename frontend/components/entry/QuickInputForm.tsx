@@ -66,6 +66,7 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
   const [yearsExperience, setYearsExperience] = useState(3);
   const [currentRole, setCurrentRole] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<"idle" | "calling" | "thinking" | "loaded">("idle");
   const [error, setError] = useState<string | null>(null);
 
   const filteredSkills = useMemo(
@@ -101,6 +102,8 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
 
     setError(null);
     setIsLoading(true);
+    setStatus("calling");
+    const thinkingTimer = setTimeout(() => setStatus("thinking"), 350);
 
     try {
       const profile = await submitManualProfile({
@@ -110,10 +113,13 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
         years_experience: Math.max(0, Math.min(50, yearsExperience)),
         current_role: currentRole.trim(),
       });
+      setStatus("loaded");
       onProfileReady(profile);
     } catch {
       setError("Failed to submit profile. Please try again.");
+      setStatus("idle");
     } finally {
+      clearTimeout(thinkingTimer);
       setIsLoading(false);
     }
   };
@@ -242,7 +248,7 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing...
+              {status === "calling" ? "Calling API..." : "Thinking..."}
             </>
           ) : (
             "Get My Diagnosis"
