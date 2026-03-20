@@ -44,6 +44,14 @@ FALLBACK_OPPORTUNITIES_TEXT = (
     "positions and increase your ceiling by $20,000/year within 3-6 months of focused learning."
 )
 
+FALLBACK_VALUE_NARRATIVE = (
+    "I am a mid-level backend developer with 5 years of experience specializing in "
+    "Python, FastAPI, and PostgreSQL. My ability to build and maintain production-grade "
+    "APIs that serve thousands of users daily translates directly into reduced development "
+    "costs and faster time-to-market. My specific combination of backend depth and growing "
+    "DevOps skills places me in the top 30% of LATAM engineers for remote-ready roles."
+)
+
 FALLBACK_NEGOTIATION_RESPONSE = (
     "Thank you for sharing that. Your experience is noted, but I need to see more "
     "concrete evidence of production-scale infrastructure work. Our current offer "
@@ -152,6 +160,32 @@ async def generate_opportunities_text(
         pass
 
     return FALLBACK_OPPORTUNITIES_TEXT
+
+
+async def generate_value_narrative(
+    role: str,
+    seniority: str,
+    years_experience: int,
+    skills: list[str],
+    market_score: int,
+) -> str:
+    from prompts.diagnosis import VALUE_NARRATIVE_PROMPT
+
+    context = (
+        f"Profile: {role}, {seniority} level, {years_experience} years experience.\n"
+        f"Key skills: {', '.join(skills[:5])}\n"
+        f"Market score: {market_score}/100\n\n"
+        f"Write a 3-4 sentence value statement for this engineer."
+    )
+
+    try:
+        result = await generate_text(context, VALUE_NARRATIVE_PROMPT, timeout=10)
+        if result and len(result) > 20:
+            return result
+    except Exception:
+        pass
+
+    return FALLBACK_VALUE_NARRATIVE
 
 
 async def generate_negotiation_response(

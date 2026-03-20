@@ -15,7 +15,7 @@ async def diagnose(payload: ManualProfileInput):
     Returns salary analysis, market score, radar data, opportunities, and heatmap.
     Falls back to pre-cached Carlos data if anything fails."""     
     try:
-        return compute_diagnosis(payload)
+        return await compute_diagnosis(payload)
     except Exception:
         # Nuclear fallback: return pre-cached Carlos diagnosis     
         fallback_path = DATA_DIR / "fallback_diagnosis.json"       
