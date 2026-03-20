@@ -11,6 +11,7 @@ from models.schemas import (
     Opportunity,
     HeatmapEntry,
 )
+from services.llm_service import generate_diagnosis_narrative, generate_value_narrative
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 
@@ -289,7 +290,7 @@ def _generate_narrative(profile: ManualProfileInput) -> str:
     )
 
 
-def compute_diagnosis(profile: ManualProfileInput) -> DiagnosisResponse:
+async def compute_diagnosis(profile: ManualProfileInput) -> DiagnosisResponse:
     """Main diagnosis computation. Pure function, no LLM calls.""" 
 
     salary_bands = _load_json("salary_bands.json")
@@ -363,11 +364,33 @@ def compute_diagnosis(profile: ManualProfileInput) -> DiagnosisResponse:
     # 6. Heatmap
     demand_heatmap = _build_heatmap(skill_data)
 
-    # 7. Summary texts
-    market_summary = _generate_summary(
-        profile, market_score.overall, salary_diagnosis.gap_annual, key_missing
-    )
-    value_narrative = _generate_narrative(profile)
+    # 7. Summary texts (LLM-generated with fallback)
+    try:
+        market_summary = await generate_diagnosis_narrative(
+            profile_skills=profile.skills,
+            seniority=profile.seniority.value,
+            location=profile.location,
+            years_experience=profile.years_experience,
+            role=profile.current_role,
+            market_score=market_score.overall,
+            gap_annual=salary_diagnosis.gap_annual,
+            key_missing_skill=key_missing,
+        )
+    except Exception:
+        market_summary = _generate_summary(
+            profile, market_score.overall, salary_diagnosis.gap_annual, key_missing
+        )
+
+    try:
+        value_narrative = await generate_value_narrative(
+            role=profile.current_role,
+            seniority=profile.seniority.value,
+            years_experience=profile.years_experience,
+            skills=profile.skills,
+            market_score=market_score.overall,
+        )
+    except Exception:
+        value_narrative = _generate_narrative(profile)
 
     return DiagnosisResponse(
         salary_diagnosis=salary_diagnosis,
