@@ -14,7 +14,7 @@ const monoFallback = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "miCoach Market Lens",
+  title: "PayLens",
   description: "Know your market value with miCoach-aligned insights.",
 };
 
