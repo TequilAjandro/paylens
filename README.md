@@ -82,6 +82,20 @@ docker compose up -d
 docker compose -f docker-compose.dev.yml up
 ```
 
+## ⚡ Task Runner
+
+Requires [Task](https://taskfile.dev) (`go-task`).
+
+```bash
+task dev            # backend + frontend in parallel
+task docker:up      # production containers
+task docker:rebuild # nuke + build + up
+task health         # curl /health
+task tsc            # TypeScript check
+```
+
+Run `task --list` to see all available tasks.
+
 ## 📖 Documentation
 
 - Detailed API documentation can be found in the [Backend README](./backend/README.md).
