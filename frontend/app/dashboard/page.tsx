@@ -5,6 +5,7 @@ import type { DiagnosisResponse, GitHubProfileOutput, ManualProfile } from "@/li
 import { getDiagnosis } from "@/lib/api";
 import SalaryDiagnosis from "@/components/dashboard/SalaryDiagnosis";
 import ScoreGauge from "@/components/dashboard/ScoreGauge";
+import SkillRadarChart from "@/components/dashboard/RadarChart";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const MOCK_DIAGNOSIS: DiagnosisResponse = {
@@ -30,11 +31,11 @@ const MOCK_DIAGNOSIS: DiagnosisResponse = {
   },
   skills_analysis: [],
   peer_comparison: {
-    axes: [],
-    user_values: [],
-    peer_avg_values: [],
+    axes: ["Frontend", "Backend", "DevOps", "Data", "AI/ML", "Soft Skills"],
+    user_values: [3, 8, 4, 6, 2, 7],
+    peer_avg_values: [6, 7, 6, 5, 4, 6],
     seniority_group: "mid-level",
-    region: "LATAM",
+    region: "Mexico",
     overall_percentile: 34,
     percentile_label: "Top 34% of mid-level LATAM developers",
   },
@@ -146,6 +147,7 @@ export default function DashboardPage() {
             </div>
             <Skeleton className="mx-auto h-[180px] max-w-md rounded-xl bg-slate-800/80" />
             <Skeleton className="h-[300px] rounded-xl bg-slate-800/80" />
+            <Skeleton className="h-[620px] rounded-xl bg-slate-800/80" />
           </div>
         ) : (
           <div className="space-y-5">
@@ -155,6 +157,7 @@ export default function DashboardPage() {
               breakdown={diagnosis.market_score.breakdown}
               percentileLabel={diagnosis.peer_comparison.percentile_label}
             />
+            <SkillRadarChart peerComparison={diagnosis.peer_comparison} />
           </div>
         )}
       </div>
