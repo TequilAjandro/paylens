@@ -134,9 +134,43 @@ def _compute_market_score(user_skills: list[str], skill_data: list[dict],
     )
 
 
+def _find_peer_benchmark(benchmarks: list[dict], seniority: str, location: str) -> dict:
+    """Find the best matching peer benchmark for seniority + location.
+
+    Priority:
+    1. Exact match: same seniority + same country
+    2. Same seniority + LATAM (generic)
+    3. "mid" + same country
+    4. "mid" + LATAM
+    5. Empty fallback
+    """
+    # 1. Exact: seniority + country
+    for b in benchmarks:
+        if b["seniority"] == seniority and b["region"].lower() == location.lower():
+            return b
+
+    # 2. Same seniority + LATAM
+    for b in benchmarks:
+        if b["seniority"] == seniority and b["region"] == "LATAM":
+            return b
+
+    # 3. mid + same country
+    for b in benchmarks:
+        if b["seniority"] == "mid" and b["region"].lower() == location.lower():
+            return b
+
+    # 4. mid + LATAM
+    for b in benchmarks:
+        if b["seniority"] == "mid" and b["region"] == "LATAM":
+            return b
+
+    # 5. Fallback
+    return {"avg_values": [5, 5, 5, 5, 5, 5], "region": "LATAM", "seniority": seniority}
+
+
 def _compute_radar(user_skills: list[str], seniority: str, location: str,
                     peer_data: dict) -> PeerComparison:
-    """Compute 6-axis radar comparing user vs peer average."""     
+    """Compute 6-axis radar comparing user vs peer average."""
     # Count user skills per category -> score 0-10
     category_counts = {axis: 0 for axis in RADAR_AXES}
     for skill in user_skills:
@@ -147,14 +181,13 @@ def _compute_radar(user_skills: list[str], seniority: str, location: str,
     # Convert to 0-10 scale (each skill adds ~2.5 points, cap at 10)
     user_values = [min(10, int(category_counts[axis] * 2.5)) for axis in RADAR_AXES]
 
-    # Get peer averages
-    peer_region = peer_data.get(seniority, {}).get(location, {})   
-    if not peer_region:
-        # Fallback to Mexico mid
-        peer_region = peer_data.get("mid", {}).get("Mexico", {})   
+    # Find matching peer benchmark from the benchmarks list
+    benchmarks = peer_data.get("benchmarks", [])
+    peer_benchmark = _find_peer_benchmark(benchmarks, seniority, location)
 
-    peer_avg = peer_region.get("radar_avg", {})
-    peer_values = [peer_avg.get(axis, 5) for axis in RADAR_AXES]   
+    peer_values = peer_benchmark.get("avg_values", [5, 5, 5, 5, 5, 5])
+    matched_region = peer_benchmark.get("region", "LATAM")
+    matched_seniority = peer_benchmark.get("seniority", seniority)
 
     # Compute percentile (rough: compare overall user sum vs peer sum)
     user_sum = sum(user_values)
@@ -162,14 +195,20 @@ def _compute_radar(user_skills: list[str], seniority: str, location: str,
     ratio = user_sum / max(peer_sum, 1)
     percentile = max(5, min(95, int(100 - ratio * 50)))
 
+    # Build label with specific region
+    if matched_region == "LATAM":
+        region_label = "LATAM"
+    else:
+        region_label = matched_region
+
     return PeerComparison(
         axes=RADAR_AXES,
         user_values=user_values,
         peer_avg_values=peer_values,
-        seniority_group=f"{seniority}-level",
-        region=location,
+        seniority_group=f"{matched_seniority}-level",
+        region=matched_region,
         overall_percentile=percentile,
-        percentile_label=f"Top {percentile}% of {seniority}-level LATAM developers",
+        percentile_label=f"Top {percentile}% of {matched_seniority}-level developers in {region_label}",
     )
 
 
