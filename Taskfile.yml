@@ -73,6 +73,13 @@ tasks:
     cmds:
       - docker compose ps
 
+  demo:
+    desc: Open demo mode in browser (no backend needed)
+    cmds:
+      - task: dev:front
+    env:
+      DEMO_URL: http://localhost:3000?demo=true
+
   health:
     desc: Check backend health
     cmds:

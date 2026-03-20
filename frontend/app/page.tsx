@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import type { GitHubProfileOutput, ManualProfile } from "@/lib/types";
@@ -8,6 +8,8 @@ import GitHubInput from "@/components/entry/GitHubInput";
 import ProfileCard from "@/components/entry/ProfileCard";
 import QuickInputForm from "@/components/entry/QuickInputForm";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DEMO_PROFILE } from "@/data/demo-data";
+import { useDemoMode } from "@/lib/use-demo-mode";
 
 type EntryProfile = GitHubProfileOutput | (ManualProfile & { profile_ready?: boolean });
 type EntryTab = "github" | "manual";
@@ -33,8 +35,16 @@ const ENTRY_COPY = {
 
 export default function EntryPage() {
   const router = useRouter();
+  const isDemo = useDemoMode();
   const [profile, setProfile] = useState<EntryProfile | null>(null);
   const [activeTab, setActiveTab] = useState<EntryTab>("github");
+
+  useEffect(() => {
+    if (isDemo) {
+      sessionStorage.setItem("userProfile", JSON.stringify(DEMO_PROFILE));
+      router.push("/dashboard?demo=true");
+    }
+  }, [isDemo, router]);
 
   const handleProfileReady = (data: EntryProfile) => {
     setProfile(data);
@@ -42,7 +52,8 @@ export default function EntryPage() {
   };
 
   const handleContinue = () => {
-    router.push("/dashboard");
+    const demoParam = isDemo ? "?demo=true" : "";
+    router.push(`/dashboard${demoParam}`);
   };
 
   return (
@@ -50,6 +61,12 @@ export default function EntryPage() {
       <div className="paylens-grid pointer-events-none absolute inset-0" />
       <div className="pointer-events-none absolute -left-24 top-8 h-72 w-72 rounded-full bg-violet-500/18 blur-3xl" />
       <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-amber-500/16 blur-3xl" />
+
+      {isDemo && (
+        <div className="fixed top-4 right-4 z-50 rounded-full bg-violet-500/20 px-3 py-1 text-xs text-violet-200 border border-violet-400/30">
+          Demo Mode
+        </div>
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: 24 }}

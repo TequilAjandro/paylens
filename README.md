@@ -82,12 +82,23 @@ docker compose up -d
 docker compose -f docker-compose.dev.yml up
 ```
 
+## 🎬 Demo Mode
+
+Run the full app with pre-cached data — no backend or API keys needed:
+
+```
+http://localhost:3000?demo=true
+```
+
+Uses the demo profile (Carlos Mendoza, Backend Developer, Mexico) with pre-computed diagnosis, what-if, and negotiation data. A "Demo Mode" badge appears on all pages.
+
 ## ⚡ Task Runner
 
 Requires [Task](https://taskfile.dev) (`go-task`).
 
 ```bash
 task dev            # backend + frontend in parallel
+task demo           # frontend only + opens ?demo=true
 task docker:up      # production containers
 task docker:rebuild # nuke + build + up
 task health         # curl /health

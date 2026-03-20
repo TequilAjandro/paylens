@@ -18,6 +18,14 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000). Requires backend running on `:8000`.
 
+### Demo mode (no backend needed)
+
+```
+http://localhost:3000?demo=true
+```
+
+Skips all API calls, uses pre-cached Carlos Mendoza profile with full diagnosis, what-if, and negotiation data.
+
 ## ⚡ Task Runner
 
 From the repo root — requires [Task](https://taskfile.dev):

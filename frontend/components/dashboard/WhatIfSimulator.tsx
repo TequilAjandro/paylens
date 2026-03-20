@@ -17,6 +17,7 @@ interface WhatIfSimulatorProps {
   location: string;
   suggestedSkills: string[];
   currency: DisplayCurrency;
+  isDemo?: boolean;
 }
 
 const MOCK_WHAT_IF: WhatIfResponse = {
@@ -38,6 +39,7 @@ export default function WhatIfSimulator({
   location,
   suggestedSkills,
   currency,
+  isDemo = false,
 }: WhatIfSimulatorProps) {
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [result, setResult] = useState<WhatIfResponse | null>(null);
@@ -60,6 +62,15 @@ export default function WhatIfSimulator({
     setIsLoading(true);
     setStatus("calling");
     const thinkingTimer = setTimeout(() => setStatus("thinking"), 350);
+
+    if (isDemo) {
+      clearTimeout(thinkingTimer);
+      setResult(MOCK_WHAT_IF);
+      setStatus("loaded");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await getWhatIf({
         current_skills: currentSkills,
