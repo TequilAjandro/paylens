@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { DiagnosisResponse, GitHubProfileOutput, ManualProfile } from "@/lib/types";
 import { getDiagnosis } from "@/lib/api";
 import SalaryDiagnosis from "@/components/dashboard/SalaryDiagnosis";
+import ScoreGauge from "@/components/dashboard/ScoreGauge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const MOCK_DIAGNOSIS: DiagnosisResponse = {
@@ -35,7 +36,7 @@ const MOCK_DIAGNOSIS: DiagnosisResponse = {
     seniority_group: "mid-level",
     region: "LATAM",
     overall_percentile: 34,
-    percentile_label: "Top 34%",
+    percentile_label: "Top 34% of mid-level LATAM developers",
   },
   opportunities: [],
   demand_heatmap: [],
@@ -144,9 +145,17 @@ export default function DashboardPage() {
               <Skeleton className="h-[220px] rounded-xl bg-slate-800/80" />
             </div>
             <Skeleton className="mx-auto h-[180px] max-w-md rounded-xl bg-slate-800/80" />
+            <Skeleton className="h-[300px] rounded-xl bg-slate-800/80" />
           </div>
         ) : (
-          <SalaryDiagnosis diagnosis={diagnosis} />
+          <div className="space-y-5">
+            <SalaryDiagnosis diagnosis={diagnosis} />
+            <ScoreGauge
+              score={diagnosis.market_score.overall}
+              breakdown={diagnosis.market_score.breakdown}
+              percentileLabel={diagnosis.peer_comparison.percentile_label}
+            />
+          </div>
         )}
       </div>
     </main>
