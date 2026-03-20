@@ -105,7 +105,7 @@ export default function EntryPage() {
           >
             <div className="relative h-12 w-full rounded-full border border-slate-600/90 bg-slate-900/80 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
               <motion.div
-                className="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full border border-amber-400/70 bg-slate-700 shadow-[0_0_0_1px_rgba(245,158,11,0.4)]"
+                className="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full border border-violet-300/65 bg-violet-600/90 shadow-[0_0_0_1px_rgba(0,87,240,0.35)]"
                 initial={false}
                 animate={{ x: activeTab === "github" ? "0%" : "100%" }}
                 transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.7 }}
@@ -114,13 +114,13 @@ export default function EntryPage() {
               <TabsList className="relative z-10 grid h-full w-full grid-cols-2 bg-transparent p-0">
                 <TabsTrigger
                   value="github"
-                  className="h-10 rounded-full border border-transparent text-slate-300 aria-selected:font-semibold aria-selected:text-amber-100 data-active:font-semibold data-active:text-amber-100 focus-visible:ring-2 focus-visible:ring-amber-400/40 focus-visible:ring-offset-0"
+                  className="h-10 rounded-full border border-transparent text-slate-300 aria-selected:font-semibold aria-selected:text-violet-100 data-active:font-semibold data-active:text-violet-100 focus-visible:ring-2 focus-visible:ring-violet-400/40 focus-visible:ring-offset-0"
                 >
                   GitHub Profile
                 </TabsTrigger>
                 <TabsTrigger
                   value="manual"
-                  className="h-10 rounded-full border border-transparent text-slate-300 aria-selected:font-semibold aria-selected:text-amber-100 data-active:font-semibold data-active:text-amber-100 focus-visible:ring-2 focus-visible:ring-amber-400/40 focus-visible:ring-offset-0"
+                  className="h-10 rounded-full border border-transparent text-slate-300 aria-selected:font-semibold aria-selected:text-violet-100 data-active:font-semibold data-active:text-violet-100 focus-visible:ring-2 focus-visible:ring-violet-400/40 focus-visible:ring-offset-0"
                 >
                   Quick Input
                 </TabsTrigger>

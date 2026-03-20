@@ -22,9 +22,9 @@ const BREAKDOWN_LABELS: Record<string, string> = {
 };
 
 function getScoreColor(score: number): string {
-  if (score >= 70) return "#8b5cf6";
-  if (score >= 40) return "#f59e0b";
-  return "#fb7185";
+  if (score >= 70) return "#04A28F";
+  if (score >= 40) return "#0057F0";
+  return "#334F68";
 }
 
 export default function ScoreGauge({ score, breakdown, percentileLabel }: ScoreGaugeProps) {
@@ -123,7 +123,7 @@ export default function ScoreGauge({ score, breakdown, percentileLabel }: ScoreG
                   <Progress
                     value={animatedBarValues[key] ?? 0}
                     className="h-2 bg-slate-600/40"
-                    indicatorClassName="bg-gradient-to-r from-rose-500 via-violet-500 to-amber-400 transition-[width] duration-1000 ease-out"
+                    indicatorClassName="bg-[linear-gradient(90deg,var(--pl-secondary)_0%,var(--pl-primary)_100%)] transition-[width] duration-1000 ease-out"
                   />
                 </motion.div>
               );
