@@ -16,7 +16,7 @@ type EntryProfile = GitHubProfileOutput | (ManualProfile & { profile_ready?: boo
 type EntryTab = "github" | "manual";
 
 const ENTRY_COPY = {
-  title: "Market Lens",
+  title: "PayLens",
   subtitle: "Know your true market value with market-grounded signals from 49,000 developer profiles.",
   chips: [
     {
