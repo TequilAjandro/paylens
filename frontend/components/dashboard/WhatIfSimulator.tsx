@@ -6,6 +6,7 @@ import { Check, Lightbulb } from "lucide-react";
 import type { WhatIfResponse } from "@/lib/types";
 import { getWhatIf } from "@/lib/api";
 import AsyncState from "@/components/ui/async-state";
+import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import InfoTooltip from "@/components/ui/info-tooltip";
 
@@ -79,7 +80,7 @@ export default function WhatIfSimulator({
     <Card className="glass-panel rounded-xl border-slate-700/80">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-white">
-          <Lightbulb className="h-5 w-5 text-yellow-300" />
+          <Lightbulb className="h-5 w-5 text-amber-300" />
           <span className="inline-flex items-center gap-1.5">
             What If You Learned...?
             <InfoTooltip text="Simulates how adding selected skills could change your score, salary, and role access." />
@@ -123,13 +124,21 @@ export default function WhatIfSimulator({
               <ResultCard label="New Score" value={result.new_score} change={result.score_change} />
               <ResultCard
                 label="Salary Change"
-                value={`+$${result.salary_change_usd.toLocaleString()}`}
+                value={result.salary_change_usd}
+                prefix="+$"
                 change=""
               />
-              <ResultCard label="New Jobs" value={result.job_count_change} change="" />
+              <ResultCard
+                label="New Jobs"
+                value={Math.abs(Number.parseInt(result.job_count_change, 10)) || result.new_job_count}
+                prefix="+"
+                change=""
+              />
               <ResultCard
                 label="Percentile"
-                value={`Top ${result.new_percentile}%`}
+                value={result.new_percentile}
+                prefix="Top "
+                suffix="%"
                 change={result.percentile_change}
               />
             </motion.div>
@@ -164,16 +173,22 @@ export default function WhatIfSimulator({
 function ResultCard({
   label,
   value,
+  prefix = "",
+  suffix = "",
   change,
 }: {
   label: string;
-  value: string | number;
+  value: number;
+  prefix?: string;
+  suffix?: string;
   change: string;
 }) {
   return (
     <div className="rounded-lg border border-slate-700/70 bg-slate-900/60 p-3 text-center">
       <p className="text-xs text-slate-300">{label}</p>
-      <p className="font-mono text-xl font-bold text-white">{value}</p>
+      <p className="font-mono text-xl font-bold text-white">
+        <AnimatedCounter value={value} prefix={prefix} suffix={suffix} duration={1} />
+      </p>
       {change ? <p className="text-xs text-amber-300">{change}</p> : null}
     </div>
   );

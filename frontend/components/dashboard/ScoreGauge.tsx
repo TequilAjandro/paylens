@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Target } from "lucide-react";
 import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
@@ -21,7 +22,7 @@ const BREAKDOWN_LABELS: Record<string, string> = {
 };
 
 function getScoreColor(score: number): string {
-  if (score >= 70) return "#34d399";
+  if (score >= 70) return "#8b5cf6";
   if (score >= 40) return "#f59e0b";
   return "#fb7185";
 }
@@ -33,7 +34,23 @@ export default function ScoreGauge({ score, breakdown, percentileLabel }: ScoreG
   const strokeOffset = circumference * (1 - clampedScore / 100);
   const arcColor = getScoreColor(clampedScore);
 
-  const entries = Object.entries(breakdown).slice(0, 4);
+  const entries = useMemo(() => Object.entries(breakdown).slice(0, 4), [breakdown]);
+  const [animatedBarValues, setAnimatedBarValues] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    setAnimatedBarValues({});
+    const timers: number[] = [];
+
+    entries.forEach(([key, value], index) => {
+      const targetValue = Math.max(0, Math.min(100, value));
+      const timer = window.setTimeout(() => {
+        setAnimatedBarValues((prev) => ({ ...prev, [key]: targetValue }));
+      }, 850 + index * 120);
+      timers.push(timer);
+    });
+
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [entries]);
 
   return (
     <motion.div
@@ -104,9 +121,9 @@ export default function ScoreGauge({ score, breakdown, percentileLabel }: ScoreG
                     <span className="font-mono font-medium text-white">{barValue}</span>
                   </div>
                   <Progress
-                    value={barValue}
+                    value={animatedBarValues[key] ?? 0}
                     className="h-2 bg-slate-600/40"
-                    indicatorClassName="bg-gradient-to-r from-rose-500 via-red-500 to-amber-400"
+                    indicatorClassName="bg-gradient-to-r from-rose-500 via-violet-500 to-amber-400 transition-[width] duration-1000 ease-out"
                   />
                 </motion.div>
               );

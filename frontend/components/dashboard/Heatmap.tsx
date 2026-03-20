@@ -33,18 +33,18 @@ export default function SkillHeatmap({ entries }: HeatmapProps) {
         {rising.length > 0 ? (
           <TrendRow
             label="Rising"
-            icon={<TrendingUp className="h-4 w-4 text-emerald-300" />}
+            icon={<TrendingUp className="h-4 w-4 text-amber-300" />}
             entries={rising}
-            colorClass="border-emerald-400/35 bg-emerald-500/20 text-emerald-200"
+            colorClass="border-amber-400/35 bg-amber-500/20 text-amber-200"
           />
         ) : null}
 
         {stable.length > 0 ? (
           <TrendRow
             label="Stable"
-            icon={<Minus className="h-4 w-4 text-yellow-300" />}
+            icon={<Minus className="h-4 w-4 text-amber-300" />}
             entries={stable}
-            colorClass="border-yellow-400/35 bg-yellow-500/20 text-yellow-200"
+            colorClass="border-amber-400/35 bg-amber-500/20 text-amber-200"
           />
         ) : null}
 

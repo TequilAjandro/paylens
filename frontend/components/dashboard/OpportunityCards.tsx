@@ -16,18 +16,18 @@ interface OpportunityCardsProps {
 
 function TrendIcon({ trend }: { trend: Opportunity["demand_trend"] }) {
   if (trend === "rising") {
-    return <TrendingUp className="h-4 w-4 text-emerald-300" />;
+    return <TrendingUp className="h-4 w-4 text-amber-300" />;
   }
   if (trend === "declining") {
     return <TrendingDown className="h-4 w-4 text-rose-300" />;
   }
-  return <Minus className="h-4 w-4 text-yellow-300" />;
+  return <Minus className="h-4 w-4 text-amber-300" />;
 }
 
 function DifficultyBadge({ difficulty }: { difficulty: Opportunity["difficulty"] }) {
   const colorClasses: Record<Opportunity["difficulty"], string> = {
-    low: "border-emerald-400/35 bg-emerald-500/20 text-emerald-200",
-    medium: "border-yellow-400/35 bg-yellow-500/20 text-yellow-200",
+    low: "border-amber-400/35 bg-amber-500/20 text-amber-200",
+    medium: "border-amber-400/35 bg-amber-500/20 text-amber-200",
     high: "border-rose-400/35 bg-rose-500/20 text-rose-100",
   };
 
@@ -46,7 +46,7 @@ export default function OpportunityCards({ opportunities }: OpportunityCardsProp
   return (
     <section className="space-y-4">
       <h2 className="flex items-center gap-2 text-xl font-bold text-white">
-        <Zap className="h-5 w-5 text-yellow-300" />
+        <Zap className="h-5 w-5 text-amber-300" />
         <span className="inline-flex items-center gap-1.5">
           Your Biggest Opportunities
           <InfoTooltip text="Skills with the best combined payoff in salary uplift and role availability." />
@@ -68,14 +68,19 @@ export default function OpportunityCards({ opportunities }: OpportunityCardsProp
                   <div className="flex items-center gap-1">
                     <TrendIcon trend={opportunity.demand_trend} />
                     <span className="text-xs text-slate-300">
-                      {opportunity.trend_growth_pct > 0 ? "+" : ""}
-                      {opportunity.trend_growth_pct}%
+                      {opportunity.trend_growth_pct > 0 ? "+" : opportunity.trend_growth_pct < 0 ? "-" : ""}
+                      <AnimatedCounter
+                        value={Math.abs(opportunity.trend_growth_pct)}
+                        delay={index * 0.2 + 0.3}
+                        duration={0.9}
+                      />
+                      %
                     </span>
                   </div>
                 </div>
 
                 <div className="py-1 text-center">
-                  <p className="text-3xl font-extrabold text-emerald-300">
+                  <p className="text-3xl font-extrabold text-amber-300">
                     +
                     <AnimatedCounter value={opportunity.unlock_count} delay={index * 0.2 + 0.5} />
                   </p>
@@ -92,7 +97,12 @@ export default function OpportunityCards({ opportunities }: OpportunityCardsProp
                     />
                   </p>
                   <p className="text-xs text-slate-300">
-                    +{opportunity.salary_increase_pct}% salary increase
+                    +<AnimatedCounter
+                      value={opportunity.salary_increase_pct}
+                      delay={index * 0.2 + 0.6}
+                      duration={0.9}
+                    />
+                    % salary increase
                   </p>
                 </div>
 

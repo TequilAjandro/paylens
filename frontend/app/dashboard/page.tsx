@@ -6,6 +6,7 @@ import { getDiagnosis } from "@/lib/api";
 import type { DiagnosisResponse, GitHubProfileOutput, ManualProfile } from "@/lib/types";
 import { DEMO_DIAGNOSIS, DEMO_PROFILE } from "@/data/demo-data";
 import AnimatedSection from "@/components/dashboard/AnimatedSection";
+import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
 import SalaryDiagnosis from "@/components/dashboard/SalaryDiagnosis";
 import ScoreGauge from "@/components/dashboard/ScoreGauge";
 import SkillRadarChart from "@/components/dashboard/RadarChart";
@@ -197,22 +198,25 @@ export default function DashboardPage() {
               <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
                 <SummaryStat
                   label="Annual Upside"
-                  value={`$${diagnosis.salary_diagnosis.gap_annual.toLocaleString()}`}
+                  valueNumber={diagnosis.salary_diagnosis.gap_annual}
+                  prefix="$"
                   tone="emerald"
                 />
                 <SummaryStat
                   label="Market Position"
-                  value={`Top ${diagnosis.peer_comparison.overall_percentile}%`}
+                  valueNumber={diagnosis.peer_comparison.overall_percentile}
+                  prefix="Top "
+                  suffix="%"
                   tone="cyan"
                 />
                 <SummaryStat
                   label="Potential Roles"
-                  value={diagnosis.salary_diagnosis.potential_job_count.toLocaleString()}
+                  valueNumber={diagnosis.salary_diagnosis.potential_job_count}
                   tone="blue"
                 />
                 <SummaryStat
                   label="Best Next Skill"
-                  value={diagnosis.salary_diagnosis.key_missing_skill}
+                  valueText={diagnosis.salary_diagnosis.key_missing_skill}
                   tone="amber"
                 />
               </section>
@@ -290,13 +294,13 @@ export default function DashboardPage() {
                   <CardContent className="space-y-4">
                     <div className="flex flex-wrap gap-2">
                       <span className="pl-chip-success rounded-md px-2.5 py-1 text-xs font-semibold">
-                        ${diagnosis.salary_diagnosis.gap_annual.toLocaleString()} annual upside
+                        <AnimatedCounter value={diagnosis.salary_diagnosis.gap_annual} prefix="$" duration={1.2} /> annual upside
                       </span>
                       <span className="pl-chip-insight rounded-md px-2.5 py-1 text-xs font-semibold">
                         Top {diagnosis.peer_comparison.overall_percentile}%
                       </span>
                       <span className="rounded-md border border-violet-400/40 bg-violet-500/15 px-2.5 py-1 text-xs font-semibold text-violet-100">
-                        {diagnosis.salary_diagnosis.potential_job_count} roles unlocked
+                        <AnimatedCounter value={diagnosis.salary_diagnosis.potential_job_count} duration={1.2} /> roles unlocked
                       </span>
                     </div>
                     <p className="leading-relaxed text-slate-100/95">{diagnosis.market_summary}</p>
@@ -379,11 +383,17 @@ export default function DashboardPage() {
 
 function SummaryStat({
   label,
-  value,
+  valueText,
+  valueNumber,
+  prefix,
+  suffix,
   tone,
 }: {
   label: string;
-  value: string;
+  valueText?: string;
+  valueNumber?: number;
+  prefix?: string;
+  suffix?: string;
   tone: "emerald" | "cyan" | "blue" | "amber";
 }) {
   const hints: Record<string, string> = {
@@ -407,7 +417,13 @@ function SummaryStat({
           {label}
           <InfoTooltip text={hints[label] || "Key market metric derived from your profile and diagnosis response."} />
         </p>
-        <p className="text-sm font-semibold">{value}</p>
+        <p className="text-sm font-semibold">
+          {typeof valueNumber === "number" ? (
+            <AnimatedCounter value={valueNumber} prefix={prefix} suffix={suffix} duration={1.1} />
+          ) : (
+            valueText
+          )}
+        </p>
       </CardContent>
     </Card>
   );

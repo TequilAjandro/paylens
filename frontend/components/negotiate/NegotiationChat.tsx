@@ -199,7 +199,7 @@ export default function NegotiationChat({
   const modeLabel = error ? "Simulated mode" : "Live mode";
   const modeClass = error
     ? "border-amber-400/35 bg-amber-500/10 text-amber-100"
-    : "border-emerald-400/35 bg-emerald-500/10 text-emerald-100";
+    : "border-amber-400/35 bg-amber-500/10 text-amber-100";
 
   return (
     <main className="pl-bg-main relative min-h-screen overflow-hidden p-4 sm:p-6">
@@ -225,9 +225,9 @@ export default function NegotiationChat({
                 ) : null}
               </div>
             </div>
-            <div className="rounded-lg border border-emerald-400/35 bg-emerald-500/10 px-3 py-2">
-              <p className="text-xs uppercase tracking-[0.16em] text-emerald-200">Current Offer</p>
-              <p className="font-mono text-xl font-bold text-emerald-300">${currentOffer.toLocaleString()}</p>
+            <div className="rounded-lg border border-amber-400/35 bg-amber-500/10 px-3 py-2">
+              <p className="text-xs uppercase tracking-[0.16em] text-amber-200">Current Offer</p>
+              <p className="font-mono text-xl font-bold text-amber-300">${currentOffer.toLocaleString()}</p>
             </div>
           </div>
         </Card>

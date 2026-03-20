@@ -23,19 +23,19 @@ export default function NegotiationReport({ report }: NegotiationReportProps) {
   return (
     <main className="pl-bg-main relative min-h-screen overflow-hidden p-4 sm:p-6">
       <div className="paylens-grid pointer-events-none absolute inset-0" />
-      <div className="pointer-events-none absolute -right-24 top-20 h-80 w-80 rounded-full bg-emerald-500/10 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 top-20 h-80 w-80 rounded-full bg-amber-500/10 blur-3xl" />
 
       <div className="relative mx-auto max-w-4xl space-y-5">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <Card className="rounded-2xl border-emerald-400/35 bg-gradient-to-br from-emerald-950/50 to-slate-900/90 shadow-[0_20px_60px_rgba(16,185,129,0.2)]">
+          <Card className="rounded-2xl border-amber-400/35 bg-gradient-to-br from-amber-950/50 to-slate-900/90 shadow-[0_20px_60px_rgba(217,119,6,0.2)]">
             <CardContent className="space-y-2 p-6 text-center">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-200">Negotiation Result</p>
-              <p className="font-mono text-4xl font-bold text-emerald-300 sm:text-5xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-200">Negotiation Result</p>
+              <p className="font-mono text-4xl font-bold text-amber-300 sm:text-5xl">
                 ${report.final_offer.toLocaleString()}
               </p>
               <p className="text-sm text-slate-300">
                 Started at ${report.initial_offer.toLocaleString()} and negotiated{" "}
-                <Badge className="border-emerald-400/35 bg-emerald-500/20 text-emerald-100">
+                <Badge className="border-amber-400/35 bg-amber-500/20 text-amber-100">
                   +${report.negotiated_increase.toLocaleString()}
                 </Badge>
               </p>
@@ -47,7 +47,7 @@ export default function NegotiationReport({ report }: NegotiationReportProps) {
           <Card className="rounded-xl border-slate-700/80 bg-slate-900/70">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-white">
-                <CheckCircle2 className="h-5 w-5 text-emerald-300" />
+                <CheckCircle2 className="h-5 w-5 text-amber-300" />
                 What Worked
               </CardTitle>
             </CardHeader>
@@ -55,10 +55,10 @@ export default function NegotiationReport({ report }: NegotiationReportProps) {
               {report.what_worked.map((item) => (
                 <div
                   key={`${item.argument}-${item.impact_usd}`}
-                  className="flex items-center justify-between gap-3 rounded-lg border border-emerald-400/20 bg-emerald-500/5 px-3 py-2"
+                  className="flex items-center justify-between gap-3 rounded-lg border border-amber-400/20 bg-amber-500/5 px-3 py-2"
                 >
                   <span className="text-sm text-slate-200">{item.argument}</span>
-                  <Badge className="border-emerald-400/35 bg-emerald-500/20 text-emerald-100">
+                  <Badge className="border-amber-400/35 bg-amber-500/20 text-amber-100">
                     +${item.impact_usd.toLocaleString()}
                   </Badge>
                 </div>
@@ -103,7 +103,7 @@ export default function NegotiationReport({ report }: NegotiationReportProps) {
                 <Progress value={ceilingProgress} className="h-2 bg-slate-800" />
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-slate-300">Potential ceiling</span>
-                  <span className="font-mono text-emerald-300">${report.potential_ceiling.toLocaleString()}</span>
+                  <span className="font-mono text-amber-300">${report.potential_ceiling.toLocaleString()}</span>
                 </div>
               </div>
 
@@ -112,10 +112,10 @@ export default function NegotiationReport({ report }: NegotiationReportProps) {
                 {report.skills_to_close_gap.map((item) => (
                   <div key={`${item.skill}-${item.impact_usd}`} className="flex items-center justify-between text-sm">
                     <span className="flex items-center gap-2 text-slate-200">
-                      <ArrowRight className="h-3.5 w-3.5 text-emerald-300" />
+                      <ArrowRight className="h-3.5 w-3.5 text-amber-300" />
                       {item.skill}
                     </span>
-                    <span className="font-mono text-emerald-200">+${item.impact_usd.toLocaleString()}/yr</span>
+                    <span className="font-mono text-amber-200">+${item.impact_usd.toLocaleString()}/yr</span>
                   </div>
                 ))}
               </div>

@@ -23,7 +23,7 @@ const COMPANIES: NegotiationCompany[] = [
     description: "High-scale backend, distributed systems, latency-sensitive traffic.",
     salaryRange: "$40K - $85K",
     icon: Building2,
-    accentClass: "from-amber-500/25 to-orange-500/5 border-amber-400/35",
+    accentClass: "from-amber-500/25 to-amber-500/5 border-amber-400/35",
   },
   {
     id: "globant",
@@ -41,7 +41,7 @@ const COMPANIES: NegotiationCompany[] = [
     description: "Fintech quality bar, secure architecture, reliability at scale.",
     salaryRange: "$50K - $95K",
     icon: Landmark,
-    accentClass: "from-violet-500/25 to-fuchsia-500/5 border-violet-400/35",
+    accentClass: "from-violet-500/25 to-violet-500/5 border-violet-400/35",
   },
   {
     id: "rappi",
@@ -50,7 +50,7 @@ const COMPANIES: NegotiationCompany[] = [
     description: "Fast-paced product delivery with marketplace-scale backend flows.",
     salaryRange: "$35K - $65K",
     icon: Rocket,
-    accentClass: "from-rose-500/25 to-red-500/5 border-rose-400/35",
+    accentClass: "from-rose-500/25 to-rose-500/5 border-rose-400/35",
   },
 ];
 

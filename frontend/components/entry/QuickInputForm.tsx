@@ -284,7 +284,7 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
         </div>
 
         {error ? (
-          <p id="quick-input-error" role="alert" aria-live="polite" className="text-sm text-red-400">
+          <p id="quick-input-error" role="alert" aria-live="polite" className="text-sm text-rose-300">
             {error}
           </p>
         ) : null}
@@ -299,7 +299,7 @@ export default function QuickInputForm({ onProfileReady }: QuickInputFormProps) 
           }}
         />
 
-        <Button onClick={handleSubmit} disabled={isLoading || !minimumReady} className="emerald-edge pl-cta-btn h-11 w-full">
+        <Button onClick={handleSubmit} disabled={isLoading || !minimumReady} className="amber-edge pl-cta-btn h-11 w-full">
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
