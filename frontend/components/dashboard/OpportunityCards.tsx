@@ -7,11 +7,13 @@ import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import InfoTooltip from "@/components/ui/info-tooltip";
+import { convertFromUsd, currencyPrefix, type DisplayCurrency } from "@/lib/currency";
 
 type Opportunity = DiagnosisResponse["opportunities"][number];
 
 interface OpportunityCardsProps {
   opportunities: Opportunity[];
+  currency: DisplayCurrency;
 }
 
 function TrendIcon({ trend }: { trend: Opportunity["demand_trend"] }) {
@@ -40,8 +42,9 @@ function DifficultyBadge({ difficulty }: { difficulty: Opportunity["difficulty"]
   return <Badge className={colorClasses[difficulty]}>{labels[difficulty]}</Badge>;
 }
 
-export default function OpportunityCards({ opportunities }: OpportunityCardsProps) {
+export default function OpportunityCards({ opportunities, currency }: OpportunityCardsProps) {
   const topOpportunities = opportunities.slice(0, 3);
+  const moneyPrefix = currencyPrefix(currency);
 
   return (
     <section className="space-y-4">
@@ -91,8 +94,8 @@ export default function OpportunityCards({ opportunities }: OpportunityCardsProp
                   <p className="text-xl font-bold text-white">
                     +
                     <AnimatedCounter
-                      value={opportunity.salary_increase_usd}
-                      prefix="$"
+                      value={convertFromUsd(opportunity.salary_increase_usd, currency)}
+                      prefix={moneyPrefix}
                       delay={index * 0.2 + 0.5}
                     />
                   </p>

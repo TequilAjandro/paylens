@@ -4,13 +4,18 @@ import { motion } from "framer-motion";
 import { Building2, Globe2, Landmark, Rocket } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import CurrencyToggle from "@/components/ui/currency-toggle";
+import {
+  formatCurrencyFromUsd,
+  type DisplayCurrency,
+} from "@/lib/currency";
 
 export type NegotiationCompany = {
   id: "mercadolibre" | "globant" | "nubank" | "rappi";
   name: string;
   role: string;
   description: string;
-  salaryRange: string;
+  salaryRangeUsd: { min: number; max: number };
   icon: React.ComponentType<{ className?: string }>;
   accentClass: string;
 };
@@ -21,7 +26,7 @@ const COMPANIES: NegotiationCompany[] = [
     name: "MercadoLibre",
     role: "Senior Backend Engineer",
     description: "High-scale backend, distributed systems, latency-sensitive traffic.",
-    salaryRange: "$40K - $85K",
+    salaryRangeUsd: { min: 40000, max: 85000 },
     icon: Building2,
     accentClass: "from-amber-500/25 to-amber-500/5 border-amber-400/35",
   },
@@ -30,7 +35,7 @@ const COMPANIES: NegotiationCompany[] = [
     name: "Globant",
     role: "DevOps Engineer",
     description: "Client-facing platform reliability across global product teams.",
-    salaryRange: "$35K - $70K",
+    salaryRangeUsd: { min: 35000, max: 70000 },
     icon: Globe2,
     accentClass: "from-violet-500/25 to-violet-500/5 border-violet-400/35",
   },
@@ -39,7 +44,7 @@ const COMPANIES: NegotiationCompany[] = [
     name: "Nubank",
     role: "Python Engineer",
     description: "Fintech quality bar, secure architecture, reliability at scale.",
-    salaryRange: "$50K - $95K",
+    salaryRangeUsd: { min: 50000, max: 95000 },
     icon: Landmark,
     accentClass: "from-violet-500/25 to-violet-500/5 border-violet-400/35",
   },
@@ -48,7 +53,7 @@ const COMPANIES: NegotiationCompany[] = [
     name: "Rappi",
     role: "Full Stack Developer",
     description: "Fast-paced product delivery with marketplace-scale backend flows.",
-    salaryRange: "$35K - $65K",
+    salaryRangeUsd: { min: 35000, max: 65000 },
     icon: Rocket,
     accentClass: "from-rose-500/25 to-rose-500/5 border-rose-400/35",
   },
@@ -56,9 +61,11 @@ const COMPANIES: NegotiationCompany[] = [
 
 interface CompanySelectorProps {
   onSelect: (company: NegotiationCompany) => void;
+  currency: DisplayCurrency;
+  onCurrencyChange: (currency: DisplayCurrency) => void;
 }
 
-export default function CompanySelector({ onSelect }: CompanySelectorProps) {
+export default function CompanySelector({ onSelect, currency, onCurrencyChange }: CompanySelectorProps) {
   return (
     <main className="pl-bg-main relative min-h-screen overflow-hidden p-5 sm:p-7">
       <div className="paylens-grid pointer-events-none absolute inset-0" />
@@ -66,11 +73,15 @@ export default function CompanySelector({ onSelect }: CompanySelectorProps) {
       <div className="pointer-events-none absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-amber-500/10 blur-3xl" />
 
       <div className="relative mx-auto max-w-5xl space-y-8">
-        <div className="space-y-2 text-center">
+        <div className="space-y-3 text-center">
           <h1 className="text-3xl font-bold text-white sm:text-4xl">Practice Salary Negotiation</h1>
           <p className="mx-auto max-w-2xl text-slate-300">
             Choose a company and run a realistic compensation conversation with an AI hiring manager.
           </p>
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">Currency</span>
+            <CurrencyToggle currency={currency} onChange={onCurrencyChange} />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -101,7 +112,10 @@ export default function CompanySelector({ onSelect }: CompanySelectorProps) {
                     </div>
 
                     <p className="text-sm leading-relaxed text-slate-300">{company.description}</p>
-                    <Badge className="border-slate-500/45 bg-slate-950/45 text-slate-100">{company.salaryRange}</Badge>
+                    <Badge className="border-slate-500/45 bg-slate-950/45 text-slate-100">
+                      {formatCurrencyFromUsd(company.salaryRangeUsd.min, currency)} -{" "}
+                      {formatCurrencyFromUsd(company.salaryRangeUsd.max, currency)}
+                    </Badge>
                   </CardContent>
                 </Card>
               </motion.button>
