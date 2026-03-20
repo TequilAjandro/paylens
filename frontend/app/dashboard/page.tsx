@@ -6,6 +6,7 @@ import { getDiagnosis } from "@/lib/api";
 import SalaryDiagnosis from "@/components/dashboard/SalaryDiagnosis";
 import ScoreGauge from "@/components/dashboard/ScoreGauge";
 import SkillRadarChart from "@/components/dashboard/RadarChart";
+import OpportunityCards from "@/components/dashboard/OpportunityCards";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const MOCK_DIAGNOSIS: DiagnosisResponse = {
@@ -39,7 +40,38 @@ const MOCK_DIAGNOSIS: DiagnosisResponse = {
     overall_percentile: 34,
     percentile_label: "Top 34% of mid-level LATAM developers",
   },
-  opportunities: [],
+  opportunities: [
+    {
+      skill: "Kubernetes",
+      unlock_count: 47,
+      salary_increase_pct: 30,
+      salary_increase_usd: 12000,
+      demand_trend: "rising",
+      trend_growth_pct: 140,
+      difficulty: "medium",
+      time_to_learn: "2-3 months",
+    },
+    {
+      skill: "AWS",
+      unlock_count: 38,
+      salary_increase_pct: 25,
+      salary_increase_usd: 10000,
+      demand_trend: "rising",
+      trend_growth_pct: 18,
+      difficulty: "medium",
+      time_to_learn: "3-4 months",
+    },
+    {
+      skill: "TypeScript",
+      unlock_count: 29,
+      salary_increase_pct: 15,
+      salary_increase_usd: 6000,
+      demand_trend: "rising",
+      trend_growth_pct: 35,
+      difficulty: "low",
+      time_to_learn: "1-2 months",
+    },
+  ],
   demand_heatmap: [],
   market_summary: "",
   value_narrative: "",
@@ -148,6 +180,7 @@ export default function DashboardPage() {
             <Skeleton className="mx-auto h-[180px] max-w-md rounded-xl bg-slate-800/80" />
             <Skeleton className="h-[300px] rounded-xl bg-slate-800/80" />
             <Skeleton className="h-[620px] rounded-xl bg-slate-800/80" />
+            <Skeleton className="h-[280px] rounded-xl bg-slate-800/80" />
           </div>
         ) : (
           <div className="space-y-5">
@@ -158,6 +191,7 @@ export default function DashboardPage() {
               percentileLabel={diagnosis.peer_comparison.percentile_label}
             />
             <SkillRadarChart peerComparison={diagnosis.peer_comparison} />
+            <OpportunityCards opportunities={diagnosis.opportunities} />
           </div>
         )}
       </div>
