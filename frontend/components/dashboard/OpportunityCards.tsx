@@ -78,6 +78,10 @@ function DifficultyBadge({ difficulty }: { difficulty: Opportunity["difficulty"]
   return <Badge className={colorClasses[difficulty]}>{labels[difficulty]}</Badge>;
 }
 
+function buildSearchUrl(platform: string, name: string): string {
+  return `https://www.google.com/search?q=${encodeURIComponent(`${platform} ${name}`)}`;
+}
+
 function LearningPath({ plan }: { plan: SkillLearningPlan }) {
   return (
     <div className="space-y-3 text-sm">
@@ -86,7 +90,14 @@ function LearningPath({ plan }: { plan: SkillLearningPlan }) {
           <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-blue-300">
             🏢 Included in your company plan
           </p>
-          <p className="font-medium text-white">{plan.company_course.name}</p>
+          <a
+            href={buildSearchUrl(plan.company_course.platform, plan.company_course.name)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-violet-300 hover:text-violet-200 hover:underline"
+          >
+            {plan.company_course.name}
+          </a>
           <p className="text-xs text-slate-400">{plan.company_course.platform} · Free</p>
         </div>
       )}
@@ -97,7 +108,14 @@ function LearningPath({ plan }: { plan: SkillLearningPlan }) {
           {plan.courses.map((c, i) => (
             <div key={i} className="flex items-start justify-between gap-2">
               <div>
-                <p className="text-slate-200">{c.name}</p>
+                <a
+                  href={buildSearchUrl(c.platform, c.name)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-violet-300 hover:text-violet-200 hover:underline"
+                >
+                  {c.name}
+                </a>
                 <p className="text-xs text-slate-400">{c.platform}</p>
               </div>
               <span className="shrink-0 rounded bg-slate-700/60 px-1.5 py-0.5 text-xs text-slate-300">
@@ -114,7 +132,14 @@ function LearningPath({ plan }: { plan: SkillLearningPlan }) {
           {plan.certifications.map((cert, i) => (
             <div key={i} className="flex items-start justify-between gap-2">
               <div>
-                <p className="text-slate-200">🏆 {cert.name}</p>
+                <a
+                  href={buildSearchUrl(cert.provider, cert.name)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-violet-300 hover:text-violet-200 hover:underline"
+                >
+                  🏆 {cert.name}
+                </a>
                 <p className="text-xs text-slate-400">{cert.provider} · {cert.duration}</p>
               </div>
               <span className="shrink-0 rounded bg-slate-700/60 px-1.5 py-0.5 text-xs text-slate-300">
@@ -131,11 +156,15 @@ function LearningPath({ plan }: { plan: SkillLearningPlan }) {
           {plan.free_resources.map((r, i) => (
             <div key={i} className="flex items-center gap-1.5">
               <span className="text-xs text-emerald-400">🆓</span>
-              <span className="text-slate-200">{r.name}</span>
+              <a
+                href={r.url_hint ? `https://${r.url_hint.replace(/^https?:\/\//, "")}` : buildSearchUrl(r.type, r.name)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-emerald-300 hover:text-emerald-200 hover:underline"
+              >
+                {r.name}
+              </a>
               <span className="text-xs text-slate-500">({r.type})</span>
-              {r.url_hint && (
-                <span className="text-xs text-slate-500">— {r.url_hint}</span>
-              )}
             </div>
           ))}
         </div>
