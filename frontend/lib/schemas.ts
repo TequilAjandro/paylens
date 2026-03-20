@@ -57,6 +57,50 @@ const SalaryRangeSchema = z.object({
   currency: z.string().default("USD"),
 });
 
+const CourseRecommendationSchema = z.object({
+  name: z.string(),
+  platform: z.string(),
+  price: z.string().default("Free"),
+  url_hint: z.string().default(""),
+  is_company_benefit: z.boolean().default(false),
+});
+
+const CertificationSchema = z.object({
+  name: z.string(),
+  provider: z.string(),
+  price: z.string().default(""),
+  duration: z.string().default(""),
+});
+
+const FreeResourceSchema = z.object({
+  name: z.string(),
+  type: z.string(),
+  url_hint: z.string().default(""),
+});
+
+const SkillLearningPlanSchema = z.object({
+  skill: z.string(),
+  company_course: CourseRecommendationSchema.nullable().default(null),
+  courses: z.array(CourseRecommendationSchema).default([]),
+  certifications: z.array(CertificationSchema).default([]),
+  free_resources: z.array(FreeResourceSchema).default([]),
+  timeline: z.string().default(""),
+  first_step: z.string().default(""),
+});
+
+const RoadmapPhaseSchema = z.object({
+  months: z.string(),
+  skill: z.string(),
+  why: z.string(),
+  milestone: z.string(),
+});
+
+const LearningRoadmapSchema = z.object({
+  total_duration: z.string().default("6 months"),
+  phases: z.array(RoadmapPhaseSchema).default([]),
+  summary: z.string().default(""),
+});
+
 export const DiagnosisResponseSchema = z.object({
   salary_diagnosis: z.object({
     current_range: SalaryRangeSchema,
@@ -115,6 +159,8 @@ export const DiagnosisResponseSchema = z.object({
   ),
   market_summary: z.string(),
   value_narrative: z.string(),
+  skill_learning_plans: z.array(SkillLearningPlanSchema).default([]),
+  learning_roadmap: LearningRoadmapSchema.nullable().default(null),
 });
 
 export const WhatIfRequestSchema = z.object({

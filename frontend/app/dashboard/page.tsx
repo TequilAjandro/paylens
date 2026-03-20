@@ -12,6 +12,7 @@ import SalaryDiagnosis from "@/components/dashboard/SalaryDiagnosis";
 import ScoreGauge from "@/components/dashboard/ScoreGauge";
 import SkillRadarChart from "@/components/dashboard/RadarChart";
 import OpportunityCards from "@/components/dashboard/OpportunityCards";
+import LearningRoadmap from "@/components/dashboard/LearningRoadmap";
 import WhatIfSimulator from "@/components/dashboard/WhatIfSimulator";
 import SkillHeatmap from "@/components/dashboard/Heatmap";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,7 @@ const DASHBOARD_SECTIONS = [
   { id: "score", label: "Score" },
   { id: "radar", label: "Radar" },
   { id: "opportunities", label: "Opportunities" },
+  { id: "roadmap", label: "Roadmap" },
   { id: "what-if", label: "What-if" },
   { id: "trends", label: "Trends" },
   { id: "summary", label: "Summary" },
@@ -312,11 +314,21 @@ export default function DashboardPage() {
 
               <AnimatedSection index={5}>
                 <section id="opportunities" className="scroll-mt-24">
-                  <OpportunityCards opportunities={diagnosis.opportunities} currency={currency} />
+                  <OpportunityCards
+                    opportunities={diagnosis.opportunities}
+                    currency={currency}
+                    learningPlans={diagnosis.skill_learning_plans}
+                  />
                 </section>
               </AnimatedSection>
 
               <AnimatedSection index={6}>
+                <section id="roadmap" className="scroll-mt-24">
+                  <LearningRoadmap roadmap={diagnosis.learning_roadmap} />
+                </section>
+              </AnimatedSection>
+
+              <AnimatedSection index={7}>
                 <section id="what-if" className="scroll-mt-24">
                   <WhatIfSimulator
                     currentSkills={profile.skills}
@@ -329,13 +341,13 @@ export default function DashboardPage() {
                 </section>
               </AnimatedSection>
 
-              <AnimatedSection index={7}>
+              <AnimatedSection index={8}>
                 <section id="trends" className="scroll-mt-24">
                   <SkillHeatmap entries={diagnosis.demand_heatmap} />
                 </section>
               </AnimatedSection>
 
-              <AnimatedSection index={8}>
+              <AnimatedSection index={9}>
                 <Card id="summary" className="relative overflow-hidden rounded-2xl border-amber-400/30 bg-gradient-to-br from-amber-950/35 via-slate-900/85 to-violet-950/35 shadow-[0_24px_70px_rgba(217,119,6,0.2)] scroll-mt-24">
                   <div className="pointer-events-none absolute -right-10 -top-16 h-40 w-40 rounded-full bg-amber-400/15 blur-3xl" />
                   <CardHeader className="pb-2">
@@ -369,7 +381,7 @@ export default function DashboardPage() {
                 </Card>
               </AnimatedSection>
 
-              <AnimatedSection index={9}>
+              <AnimatedSection index={10}>
                 <Card className="relative overflow-hidden rounded-2xl border-violet-400/30 bg-gradient-to-br from-violet-950/60 via-[#171332] to-slate-950 shadow-[0_24px_75px_rgba(139,92,246,0.22)]">
                   <div className="pointer-events-none absolute -left-12 bottom-0 h-44 w-44 rounded-full bg-violet-400/15 blur-3xl" />
                   <CardHeader className="pb-2">
@@ -404,7 +416,7 @@ export default function DashboardPage() {
               </AnimatedSection>
             </div>
 
-            <AnimatedSection index={10}>
+            <AnimatedSection index={11}>
               <div className="flex justify-center pt-2">
                 <Button
                   type="button"
