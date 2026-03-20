@@ -1,88 +1,31 @@
 """
-LLM Service â€” Multi-provider with LiteLLM Router + hardcoded fallback.
+LLM Service — Gemini 2.5 Flash only, with hardcoded fallback.
 
-Fallback chain:
-1. Groq (llama-3.1-70b-versatile) â€” fast, 30 RPM free tier       
-2. Gemini (gemini-2.0-flash) â€” quality, 15 RPM free tier
-3. Ollama local (qwen3.5:9b-q4_K_M) â€” zero network dependency    
-4. Hardcoded response â€” nuclear fallback, never fails
-
-Timeout: 10s per call. If all providers fail, return hardcoded text.
+If Gemini fails (no API key, rate limit, error), returns hardcoded text.
+Never raises — always returns a string.
 """
 
 import os
 import logging
-from litellm import Router
+from google import genai
 
 logger = logging.getLogger(__name__)
 
-# --- LiteLLM Router Configuration (VERBATIM from DEFINITIVE_ROADMAP) ---
+GEMINI_MODEL = "gemini-2.5-flash"
 
-def _build_model_list() -> list[dict]:
-    """Build the model list dynamically based on available API keys."""
-    models = []
-
-    groq_key = os.getenv("GROQ_API_KEY")
-    if groq_key:
-        models.append({
-            "model_name": "analysis",
-            "litellm_params": {
-                "model": "groq/llama-3.1-70b-versatile",
-                "api_key": groq_key,
-            },
-        })
-
-    gemini_key = os.getenv("GEMINI_API_KEY")
-    if gemini_key:
-        models.append({
-            "model_name": "analysis",
-            "litellm_params": {
-                "model": "gemini/gemini-2.0-flash",
-                "api_key": gemini_key,
-            },
-        })
-
-    ollama_host = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-    models.append({
-        "model_name": "analysis",
-        "litellm_params": {
-            "model": "ollama/qwen3.5:9b",
-            "api_base": ollama_host,
-        },
-    })
-
-    return models
+# Lazy client
+_client = None
 
 
-def _get_router() -> Router | None:
-    """Create and return a LiteLLM Router instance."""
-    model_list = _build_model_list()
-    if not model_list:
-        return None
-
-    try:
-        return Router(
-            model_list=model_list,
-            fallbacks=[{"analysis": ["analysis"]}],
-            num_retries=2,
-            allowed_fails=1,
-            cooldown_time=30,
-            timeout=10,
-        )
-    except Exception as e:
-        logger.warning(f"Failed to create LiteLLM Router: {e}")    
-        return None
-
-
-# Lazy initialization
-_router: Router | None = None
-
-
-def _ensure_router() -> Router | None:
-    global _router
-    if _router is None:
-        _router = _get_router()
-    return _router
+def _get_client():
+    global _client
+    if _client is None:
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            logger.warning("GEMINI_API_KEY not set — using hardcoded fallback")
+            return None
+        _client = genai.Client(api_key=api_key)
+    return _client
 
 
 # --- Hardcoded Fallback Responses ---
@@ -96,7 +39,7 @@ FALLBACK_DIAGNOSIS_NARRATIVE = (
 )
 
 FALLBACK_OPPORTUNITIES_TEXT = (
-    "Your biggest opportunity is Kubernetes â€” it has 140% growth in demand and commands "
+    "Your biggest opportunity is Kubernetes — it has 140% growth in demand and commands "
     "a 30% salary premium. Combined with CI/CD skills, you could unlock over 79 new "
     "positions and increase your ceiling by $20,000/year within 3-6 months of focused learning."
 )
@@ -112,37 +55,38 @@ FALLBACK_NEGOTIATION_RESPONSE = (
 # --- Public API ---
 
 async def generate_text(prompt: str, system_prompt: str = "", timeout: int = 10) -> str:
-    """Generic LLM call with full fallback chain.
+    """Generic LLM call via Gemini 2.5 Flash.
 
     Args:
         prompt: The user prompt / content
         system_prompt: System instruction for the model
-        timeout: Max seconds to wait
+        timeout: Kept for signature compatibility
 
     Returns:
-        Generated text string. Never raises â€” returns fallback on all failures.
+        Generated text string. Returns fallback on all failures.
     """
-    router = _ensure_router()
-
-    if router is None:
-        logger.warning("No LLM router available, returning fallback")
+    client = _get_client()
+    if client is None:
         return FALLBACK_DIAGNOSIS_NARRATIVE
 
-    messages = []
+    contents = []
     if system_prompt:
-        messages.append({"role": "system", "content": system_prompt})
-    messages.append({"role": "user", "content": prompt})
+        contents.append({"role": "user", "parts": [system_prompt]})
+        contents.append({"role": "model", "parts": ["Understood. I will follow those instructions."]})
+    contents.append({"role": "user", "parts": [prompt]})
 
     try:
-        response = await router.acompletion(
-            model="analysis",
-            messages=messages,
-            timeout=timeout,
+        response = client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=contents,
         )
-        return response.choices[0].message.content
+        text = response.text
+        if text and len(text) > 20:
+            return text
     except Exception as e:
-        logger.warning(f"All LLM providers failed: {e}")
-        return FALLBACK_DIAGNOSIS_NARRATIVE
+        logger.warning(f"Gemini API failed: {e}")
+
+    return FALLBACK_DIAGNOSIS_NARRATIVE
 
 
 async def generate_diagnosis_narrative(
@@ -157,10 +101,9 @@ async def generate_diagnosis_narrative(
 ) -> str:
     """Generate a personalized market diagnosis narrative.
 
-    Uses the diagnosis system prompt from MASTER_PLAN section 13.  
     Falls back to hardcoded text if LLM fails.
     """
-    from prompts.diagnosis import DIAGNOSIS_NARRATIVE_PROMPT       
+    from prompts.diagnosis import DIAGNOSIS_NARRATIVE_PROMPT
 
     user_context = (
         f"Profile: {role}, {seniority} level, {years_experience} years experience, "
@@ -219,26 +162,33 @@ async def generate_negotiation_response(
 
     Args:
         conversation_history: List of {"role": "user"|"assistant", "content": "..."}
-        system_prompt: Company-specific negotiation system prompt  
+        system_prompt: Company-specific negotiation system prompt
 
     Returns:
         AI hiring manager's response text.
     """
-    router = _ensure_router()
-
-    if router is None:
+    client = _get_client()
+    if client is None:
         return FALLBACK_NEGOTIATION_RESPONSE
 
-    messages = [{"role": "system", "content": system_prompt}]      
-    messages.extend(conversation_history)
+    # Build contents: system prompt as first exchange, then conversation history
+    contents = [
+        {"role": "user", "parts": [system_prompt]},
+        {"role": "model", "parts": ["Understood. I will act as the hiring manager."]},
+    ]
+    for msg in conversation_history:
+        role = "model" if msg["role"] == "assistant" else "user"
+        contents.append({"role": role, "parts": [msg["content"]]})
 
     try:
-        response = await router.acompletion(
-            model="analysis",
-            messages=messages,
-            timeout=15,  # Negotiation gets a bit more time        
+        response = client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=contents,
         )
-        return response.choices[0].message.content
+        text = response.text
+        if text and len(text) > 5:
+            return text
     except Exception as e:
-        logger.warning(f"Negotiation LLM failed: {e}")
-        return FALLBACK_NEGOTIATION_RESPONSE
+        logger.warning(f"Gemini negotiation failed: {e}")
+
+    return FALLBACK_NEGOTIATION_RESPONSE
