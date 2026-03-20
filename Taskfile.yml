@@ -1,0 +1,85 @@
+version: '3'
+
+tasks:
+  dev:
+    desc: Start backend + frontend in parallel
+    deps:
+      - dev:back
+      - dev:front
+
+  dev:back:
+    desc: Start backend with hot reload
+    dir: backend
+    cmds:
+      - uv run uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  dev:front:
+    desc: Start frontend with bun dev
+    dir: frontend
+    cmds:
+      - bun dev
+
+  docker:build:
+    desc: Build Docker images
+    cmds:
+      - docker compose build
+
+  docker:up:
+    desc: Start production containers
+    cmds:
+      - docker compose up -d
+
+  docker:down:
+    desc: Stop Docker containers
+    cmds:
+      - docker compose down
+
+  docker:dev:
+    desc: Start dev containers with hot reload
+    cmds:
+      - docker compose -f docker-compose.dev.yml up
+
+  docker:logs:
+    desc: Follow Docker logs
+    cmds:
+      - docker compose logs -f
+
+  docker:clean:
+    desc: Stop containers and remove volumes (keep images)
+    cmds:
+      - docker compose down -v
+      - echo "Containers and volumes removed"
+
+  docker:nuke:
+    desc: Complete cleanup - remove containers, volumes, and images
+    cmds:
+      - docker compose down --rmi all -v --remove-orphans
+      - echo "All containers, volumes, and images removed"
+
+  docker:rebuild:
+    desc: Full rebuild from scratch (nuke + build + up)
+    cmds:
+      - task: docker:nuke
+      - task: docker:build
+      - task: docker:up
+
+  docker:restart:
+    desc: Restart all containers
+    cmds:
+      - docker compose restart
+
+  docker:ps:
+    desc: Show running containers
+    cmds:
+      - docker compose ps
+
+  health:
+    desc: Check backend health
+    cmds:
+      - curl http://localhost:8000/health
+
+  tsc:
+    desc: TypeScript check frontend
+    dir: frontend
+    cmds:
+      - bunx tsc --noEmit
