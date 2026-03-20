@@ -1,11 +1,5 @@
 ## ------------------------------- Builder Stage ------------------------------ ##
-FROM python:3.12-bookworm AS builder
-
-# Install uv
-ADD https://astral.sh/uv/install.sh /uv-installer.sh
-RUN chmod +x /uv-installer.sh && sh /uv-installer.sh && rm /uv-installer.sh
-
-ENV PATH="/root/.local/bin:${PATH}"
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm AS builder
 
 WORKDIR /app
 
